@@ -53,6 +53,7 @@ csdp2 <- function(C, A, b, K, control = csdp.control(printlevel = 0))
 {
   prob.info <- Rcsdp:::get.prob.info(K, length(b))
   Rcsdp:::validate.data(C, A, b, prob.info)
+  browser()
   prob.data <- Rcsdp:::prepare.data(C, A, b, prob.info)
   # Rcsdp:::write.control.file(control)
   ret <- .Call("csdp", as.integer(sum(prob.info$block.sizes)),
