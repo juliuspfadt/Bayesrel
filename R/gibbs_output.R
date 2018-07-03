@@ -2,17 +2,11 @@
 #' and the credible intervals together with the posterior distribution objects
 #' to be passed on for forther analysis
 
-gibbsFun <- function(data, n.iter, n.burnin, estimates, interval, omega.cov.samp, returnSamples = FALSE){
+gibbsFun <- function(data, n.iter, n.burnin, estimates, interval, omega.cov.samp){
   if ("alpha" %in% estimates || "l2" %in% estimates || "l6" %in% estimates || "glb" %in% estimates || omega.cov.samp){
     C <- covSamp2(data, n.iter, n.burnin)
-  } else {
-  	C <- NULL
   }
-  if (returnSamples) {
-  	res <- list(samp = list(C = C))
-  } else {
-  	res <- list()
-  }
+  res <- list()
 
   if ("alpha" %in% estimates){
     res$samp$gibbs.alpha <- coda::as.mcmc(apply(C, MARGIN = 1, applyAlpha))
