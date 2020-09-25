@@ -1,9 +1,4 @@
-//
-//  customsdp.h
-//
-//
-//  Created by Julius Pfadt on 02.09.20.
-//
+
 
 #ifndef customsdp_h
 #define customsdp_h

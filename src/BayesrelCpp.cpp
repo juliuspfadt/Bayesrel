@@ -3,8 +3,8 @@
 //#include <Rinternals.h>
 //#include <stdlib.h> // for NULL
 //#include <R_ext/Rdynload.h>
+//#include <stdio.h>
 
-#include <stdio.h>
 #include <RcppArmadillo.h>
 extern "C" {
 #include "declarations.h"
@@ -13,8 +13,6 @@ extern "C" {
 
 
 //[[Rcpp::depends(RcppArmadillo)]]
-using namespace Rcpp;
-using namespace arma;
 
 int custom_sdp(
     int,
