@@ -7,7 +7,7 @@
 using namespace Rcpp;
 
 // csdpArma
-Rcpp::List csdpArma(int n_p, int nconstraints_p, int nblocks_p, arma::ivec blocktypes_p, arma::ivec blocksizes_p, Rcpp::List C_p, Rcpp::List A_p, arma::dvec b_p);
+Rcpp::List csdpArma(int n_p, int nconstraints_p, int nblocks_p, const arma::ivec& blocktypes_p, const arma::ivec& blocksizes_p, const Rcpp::List& C_p, const Rcpp::List& A_p, const arma::dvec& b_p);
 RcppExport SEXP _Bayesrel_csdpArma(SEXP n_pSEXP, SEXP nconstraints_pSEXP, SEXP nblocks_pSEXP, SEXP blocktypes_pSEXP, SEXP blocksizes_pSEXP, SEXP C_pSEXP, SEXP A_pSEXP, SEXP b_pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -15,11 +15,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type n_p(n_pSEXP);
     Rcpp::traits::input_parameter< int >::type nconstraints_p(nconstraints_pSEXP);
     Rcpp::traits::input_parameter< int >::type nblocks_p(nblocks_pSEXP);
-    Rcpp::traits::input_parameter< arma::ivec >::type blocktypes_p(blocktypes_pSEXP);
-    Rcpp::traits::input_parameter< arma::ivec >::type blocksizes_p(blocksizes_pSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type C_p(C_pSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type A_p(A_pSEXP);
-    Rcpp::traits::input_parameter< arma::dvec >::type b_p(b_pSEXP);
+    Rcpp::traits::input_parameter< const arma::ivec& >::type blocktypes_p(blocktypes_pSEXP);
+    Rcpp::traits::input_parameter< const arma::ivec& >::type blocksizes_p(blocksizes_pSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type C_p(C_pSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type A_p(A_pSEXP);
+    Rcpp::traits::input_parameter< const arma::dvec& >::type b_p(b_pSEXP);
     rcpp_result_gen = Rcpp::wrap(csdpArma(n_p, nconstraints_p, nblocks_p, blocktypes_p, blocksizes_p, C_p, A_p, b_p));
     return rcpp_result_gen;
 END_RCPP

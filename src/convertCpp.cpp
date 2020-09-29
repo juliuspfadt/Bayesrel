@@ -26,7 +26,7 @@ dvec double_vector_csdp2RArma(int n, double *y)
     return dvec(y, n+1);
 }
 
-int * int_vector_R2csdpArma(int n, ivec y)
+int * int_vector_R2csdpArma(int n, const ivec& y)
 {
   // return y.memptr(); // <- this should also work
   int *ret;
@@ -41,7 +41,7 @@ int * int_vector_R2csdpArma(int n, ivec y)
 
 
 
-double * double_vector_R2csdpArma(int n, dvec y)
+double * double_vector_R2csdpArma(int n, const dvec& y)
 {
   // return y.memptr(); // <- this should also work
   double *ret;
@@ -59,7 +59,7 @@ double * double_vector_R2csdpArma(int n, dvec y)
  the input of this function is a kind of list but of class csdpBlkMat
  dont know if a Rcpp type list can also work
 */
-struct blockmatrix blkmatrix_R2csdpArma(List X)
+struct blockmatrix blkmatrix_R2csdpArma(const List& X)
 {
     struct blockmatrix ret;
     int nblocks = X["nblocks"];
@@ -87,7 +87,7 @@ struct blockmatrix blkmatrix_R2csdpArma(List X)
 }
 
 
-List blkmatrix_csdp2RArma(struct blockmatrix X)
+List blkmatrix_csdp2RArma(const blockmatrix& X)
 {
     List ret;
     dvec data;
@@ -119,7 +119,7 @@ List blkmatrix_csdp2RArma(struct blockmatrix X)
 }
 
 
-struct constraintmatrix *constraints_R2csdpArma(List A)
+struct constraintmatrix *constraints_R2csdpArma(const List& A)
 {
     struct constraintmatrix *constraints;
     struct sparseblock *blockptr;

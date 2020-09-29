@@ -32,11 +32,11 @@ Rcpp::List csdpArma(
               int n_p,
               int nconstraints_p,
               int nblocks_p,
-              arma::ivec blocktypes_p,
-              arma::ivec blocksizes_p,
-              Rcpp::List C_p,
-              Rcpp::List A_p,
-              arma::dvec b_p)
+              const arma::ivec& blocktypes_p,
+              const arma::ivec& blocksizes_p,
+              const Rcpp::List& C_p,
+              const Rcpp::List& A_p,
+              const arma::dvec& b_p)
 {
 
 

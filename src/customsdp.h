@@ -9,20 +9,20 @@ arma::ivec int_vector_csdp2RArma(int n, int *y);
 
 arma::dvec double_vector_csdp2RArma(int n, double *y);
 
-int * int_vector_R2csdpArma(int n, arma::ivec y);
+int * int_vector_R2csdpArma(int n, const arma::ivec& y);
 
-double * double_vector_R2csdpArma(int n, arma::dvec y);
+double * double_vector_R2csdpArma(int n, const arma::dvec& y);
 
-struct blockmatrix blkmatrix_R2csdpArma(Rcpp::List X);
+struct blockmatrix blkmatrix_R2csdpArma(const Rcpp::List& X);
 
-Rcpp::List blkmatrix_csdp2RArma(struct blockmatrix X);
+Rcpp::List blkmatrix_csdp2RArma(const blockmatrix& X);
 
-struct constraintmatrix *constraints_R2csdpArma(Rcpp::List A);
+struct constraintmatrix *constraints_R2csdpArma(const Rcpp::List& A);
 
 int custom_sdpCpp(
     int n,
     int k,
-    struct blockmatrix C,
+    const blockmatrix& C,
     double *a,
     struct constraintmatrix *constraints,
     double constant_offset,

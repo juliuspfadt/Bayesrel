@@ -65,7 +65,7 @@ extern "C" {
 int custom_sdpCpp(
      int n,
      int k,
-     struct blockmatrix C,
+     const blockmatrix& C,
      double *a,
      struct constraintmatrix *constraints,
      double constant_offset,
