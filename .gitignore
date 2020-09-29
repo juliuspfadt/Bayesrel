@@ -3,3 +3,9 @@
 .RData
 .Ruserdata
 inst/doc
+autom4te.cache
+config.log
+config.status
+*.o
+*.so
+*.a
