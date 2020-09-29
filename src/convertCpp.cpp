@@ -104,8 +104,9 @@ List blkmatrix_csdp2RArma(struct blockmatrix X)
 
         if (X.blocks[j].blockcategory == MATRIX) {
             allocsize = X.blocks[j].blocksize * X.blocks[j].blocksize;
+            data.set_size(allocsize);
             for (k=0; k<allocsize; k++)
-                data[k] = X.blocks[j].data.mat[k];
+                data(k) = X.blocks[j].data.mat[k];
         } else {
             data = double_vector_csdp2RArma(X.blocks[j].blocksize, X.blocks[j].data.vec);
         }
