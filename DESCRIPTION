@@ -5,7 +5,10 @@ Version: 0.6.6
 Authors@R: c(person("Julius M.", "Pfadt", email = "julius.pfadt@gmail.com",
                   role = c("aut", "cre")),
              person("Don", "van den Bergh",
-                  role = c("aut")))
+                  role = c("aut")), 
+             person("Joris", "Goosen", 
+                    role = c("ctb"))
+                  )
 Description: Functionality for the most common single test reliability estimates is provided:  
     Coefficient alpha, 'Guttman's' lambda-2/-4/-6, the greatest lower bound and coefficient omega. 
     The Bayesian estimates are provided with credible intervals. 
@@ -30,10 +33,7 @@ LazyData: true
 Imports: LaplacesDemon, Rcsdp, MASS, ggplot2, ggridges, lavaan, plotrix, coda, methods, stats, graphics, Rdpack, Rcpp (>= 1.0.4.6)
 LinkingTo: Rcpp, RcppArmadillo
 RdMacros: Rdpack
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Depends: R (>= 2.10)
 Suggests: 
-    testthat (>= 2.1.0),
-    knitr,
-    rmarkdown
-VignetteBuilder: knitr
+    testthat (>= 2.1.0)
