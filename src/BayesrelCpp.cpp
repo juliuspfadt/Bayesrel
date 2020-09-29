@@ -92,7 +92,7 @@ Rcpp::List csdpArma(
     arma::dvec y_p = double_vector_csdp2RArma(nconstraints_p, y);
 
 
-    free_prob(n_p,nconstraints_p,C,b,constraints,X,y,Z);
+    free_probArma(n_p,nconstraints_p,C,b,constraints,X,y,Z);
 
     Rcpp::List ret;
     ret.push_back(X_p);
