@@ -13,20 +13,18 @@ extern "C" {
 
 
 //[[Rcpp::depends(RcppArmadillo)]]
-using namespace Rcpp;
-using namespace arma;
 
-ivec int_vector_csdp2RArma(int n, int *y)
+arma::ivec int_vector_csdp2RArma(int n, int *y)
 {
-    return ivec(y, n+1);
+    return arma::ivec(y, n+1);
 }
 
-dvec double_vector_csdp2RArma(int n, double *y)
+arma::dvec double_vector_csdp2RArma(int n, double *y)
 {
-    return dvec(y, n+1);
+    return arma::dvec(y, n+1);
 }
 
-int * int_vector_R2csdpArma(int n, const ivec& y)
+int * int_vector_R2csdpArma(int n, const arma::ivec& y)
 {
   // return y.memptr(); // <- this should also work
   int *ret;
@@ -41,7 +39,7 @@ int * int_vector_R2csdpArma(int n, const ivec& y)
 
 
 
-double * double_vector_R2csdpArma(int n, const dvec& y)
+double * double_vector_R2csdpArma(int n, const arma::dvec& y)
 {
   // return y.memptr(); // <- this should also work
   double *ret;
@@ -59,15 +57,15 @@ double * double_vector_R2csdpArma(int n, const dvec& y)
  the input of this function is a kind of list but of class csdpBlkMat
  dont know if a Rcpp type list can also work
 */
-struct blockmatrix blkmatrix_R2csdpArma(const List& X)
+struct blockmatrix blkmatrix_R2csdpArma(const Rcpp::List& X)
 {
     struct blockmatrix ret;
     int nblocks = X["nblocks"];
-    List blocks = X["blocks"];
+    Rcpp::List blocks = X["blocks"];
     ret.nblocks = nblocks;
     ret.blocks = (struct blockrec *) malloc((nblocks + 1) * sizeof(struct blockrec));
     for (int j=1; j<=nblocks; j++) {
-      List cur_block = blocks[j-1];
+      Rcpp::List cur_block = blocks[j-1];
       int blksize = cur_block["blocksize"];
       ret.blocks[j].blocksize = blksize;
       int blktype = cur_block["blockcategory"];
@@ -75,7 +73,7 @@ struct blockmatrix blkmatrix_R2csdpArma(const List& X)
       if (blktype == 1) {
         int allocsize = blksize*blksize;
         ret.blocks[j].data.mat = (double *) malloc(allocsize * sizeof(double));
-        dvec dblvec = cur_block["data"];
+        arma::dvec dblvec = cur_block["data"];
         for (int k=0; k<allocsize; k++)
             ret.blocks[j].data.mat[k] = dblvec[k];
       }
@@ -87,11 +85,12 @@ struct blockmatrix blkmatrix_R2csdpArma(const List& X)
 }
 
 
-List blkmatrix_csdp2RArma(const blockmatrix& X)
+Rcpp::List blkmatrix_csdp2RArma(const blockmatrix& X)
 {
-    List ret;
-    dvec data;
-    List blocks;
+    Rcpp::List ret;
+    arma::dvec data;
+    Rcpp::List blocks;
+    Rcpp::List tmp = Rcpp::List::create(Rcpp::_["blocksize"], Rcpp::_["blockcategory"], Rcpp::_["data"]);
 
     int j,k, allocsize;
 
@@ -110,8 +109,10 @@ List blkmatrix_csdp2RArma(const blockmatrix& X)
         } else {
             data = double_vector_csdp2RArma(X.blocks[j].blocksize, X.blocks[j].data.vec);
         }
-        blocks.insert(j-1, List::create(Named("blocksize")=blocksize, _["blockcategory"]=blockcategory,
-                                        _["data"] = data));
+        tmp["blocksize"] = blocksize;
+        tmp["blockcategory"] = blockcategory;
+        tmp["data"] = data;
+        blocks.insert(j-1, tmp);
 
     }
     ret.push_back(blocks, "blocks");
@@ -119,17 +120,17 @@ List blkmatrix_csdp2RArma(const blockmatrix& X)
 }
 
 
-struct constraintmatrix *constraints_R2csdpArma(const List& A)
+struct constraintmatrix *constraints_R2csdpArma(const Rcpp::List& A)
 {
     struct constraintmatrix *constraints;
     struct sparseblock *blockptr;
 
-    int nconstraints, nblocks;
-    List Ai, Aij;
+    int nblocks;
+    Rcpp::List Ai, Aij;
 
     int i,j;
 
-    nconstraints = A.length();
+    int nconstraints = A.length();
     constraints = (struct constraintmatrix *) malloc((nconstraints + 1) * sizeof(struct constraintmatrix));
 
     for (i=1; i<=nconstraints; i++) {
@@ -171,9 +172,8 @@ struct constraintmatrix *constraints_R2csdpArma(const List& A)
             blockptr->next=constraints[i].blocks;
             constraints[i].blocks=blockptr;
         }
-
     }
-  return constraints;
+    return constraints;
 }
 
 

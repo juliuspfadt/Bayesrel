@@ -39,7 +39,6 @@ Rcpp::List csdpArma(
               const arma::dvec& b_p)
 {
 
-
     struct blockmatrix C;
     struct constraintmatrix *constraints;
     struct blockmatrix X, Z;
