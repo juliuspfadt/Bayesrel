@@ -230,7 +230,6 @@ glbOnArray_nocpp <- function(Cov, callback = function(){}) {
 
   glbs <- numeric(nSamples)
   for (i in seq_len(nSamples)) {
-
     cv <- Cov[i, , ]
     Var <- cv[idx]
     # Var <- diag(cv)

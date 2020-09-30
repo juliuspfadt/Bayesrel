@@ -171,104 +171,10 @@ struct constraintmatrix *constraints_R2csdpArma(const List& A)
             blockptr->next=constraints[i].blocks;
             constraints[i].blocks=blockptr;
         }
+
     }
   return constraints;
 }
-
-
-void free_matArma(const blockmatrix& A)
-{
-  int blk;
-
-
-  /*
-   *  First, free the space for  each block.
-   */
-
-  for (blk=1; blk <=A.nblocks; blk++)
-  {
-    switch (A.blocks[blk].blockcategory)
-    {
-    case DIAG:
-      free(A.blocks[blk].data.vec);
-      break;
-    case MATRIX:
-      free(A.blocks[blk].data.mat);
-      break;
-    default:
-      exit(12);
-    };
-  };
-
-  /*
-   * Then free space for the block records.
-   */
-
-  free(A.blocks);
-
-}
-
-
-void free_probArma(
-  int n,
-  int k,
-  const blockmatrix& C,
-  double *a,
-  struct constraintmatrix *constraints,
-  const blockmatrix& X,
-  double *y,
-  const blockmatrix& Z)
-{
-  int i;
-  struct sparseblock *ptr;
-  struct sparseblock *oldptr;
-
-  /*
-   * First, free the vectors of doubles.
-   */
-
-  free(y);
-  free(a);
-
-  /*
-   * Now, the block matrices.
-   */
-
-  free_matArma(C);
-  free_matArma(X);
-  free_matArma(Z);
-
-  /*
-   * Finally, get rid of the constraints.
-   */
-
-  if (constraints != NULL)
-  {
-    for (i=1; i<=k; i++)
-    {
-      /*
-       * Get rid of constraint i.
-       */
-
-      ptr=constraints[i].blocks;
-      while (ptr != NULL)
-      {
-        free(ptr->entries);
-        free(ptr->iindices);
-        free(ptr->jindices);
-        oldptr=ptr;
-        ptr=ptr->next;
-        free(oldptr);
-      };
-    };
-    /*
-     * Finally, free the constraints array.
-     */
-
-    free(constraints);
-  };
-}
-
 
 
 

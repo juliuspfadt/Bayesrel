@@ -19,19 +19,6 @@ Rcpp::List blkmatrix_csdp2RArma(const blockmatrix& X);
 
 struct constraintmatrix *constraints_R2csdpArma(const Rcpp::List& A);
 
-void free_matArma(const blockmatrix& A);
-
-void free_probArma(
-        int n,
-        int k,
-        const blockmatrix& C,
-        double *a,
-        struct constraintmatrix *constraints,
-        const blockmatrix& X,
-        double *y,
-        const blockmatrix& Z);
-
-
 
 int custom_sdpCpp(
     int n,

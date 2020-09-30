@@ -14,52 +14,6 @@ extern "C" {
 #include "declarations.h"
 }
 
-//
-//extern "C" {
-//   void alloc_mat_packed(struct blockmatrix, struct blockmatrix *);
-//   void free_mat_packed(struct blockmatrix);
-//   int structnnz(int, int, struct blockmatrix, struct constraintmatrix *);
-//   void sort_entries(int, struct blockmatrix, struct constraintmatrix *);
-//   double norm2(int, double *);
-//   double norminf(int, double *);
-//   double Fnorm(struct blockmatrix);
-//   double trace_prod(struct blockmatrix, struct blockmatrix);
-//   double pinfeas(int, struct constraintmatrix *,
-//                  struct blockmatrix, double *, double *);
-//   double dinfeas(int, struct blockmatrix,
-//                  struct constraintmatrix *, double *,
-//                  struct blockmatrix, struct blockmatrix);
-//   double dimacserr3(int, struct blockmatrix,
-//                     struct constraintmatrix *, double *,
-//                     struct blockmatrix, struct blockmatrix);
-//   void op_a(int, struct constraintmatrix *,
-//             struct blockmatrix, double *);
-//   void op_at(int, double *, struct constraintmatrix *,
-//              struct blockmatrix);
-//   void makefill(int, struct blockmatrix,
-//                 struct constraintmatrix *,
-//                 struct constraintmatrix *, struct blockmatrix,
-//                 int);
-//   void addscaledmat(struct blockmatrix, double, struct blockmatrix,
-//                     struct blockmatrix);
-//   void alloc_mat(struct blockmatrix, struct blockmatrix *);
-//   void free_mat(struct blockmatrix);
-//   int sdp(int, int, struct blockmatrix, double *, double,
-//           struct constraintmatrix *, struct sparseblock **,
-//           struct constraintmatrix, struct blockmatrix, double *,
-//           struct blockmatrix, struct blockmatrix,
-//           struct blockmatrix, double *, double *,
-//           struct blockmatrix, struct blockmatrix,
-//           struct blockmatrix,
-//           double *, double *,
-//           double *, double *, double *,
-//           double *, double *, double *,
-//           double *, struct blockmatrix, double *,
-//           struct blockmatrix, struct blockmatrix, double *,
-//           double *, struct blockmatrix, struct blockmatrix,
-//           double *, double *, double *, int,
-//           struct paramstruc);
-//}
 
 
 int custom_sdpCpp(
