@@ -19,7 +19,6 @@ Rcpp::List blkmatrix_csdp2RArma(const blockmatrix& X);
 
 struct constraintmatrix *constraints_R2csdpArma(const Rcpp::List& A);
 
-
 int custom_sdpCpp(
     int n,
     int k,
@@ -33,6 +32,8 @@ int custom_sdpCpp(
     double *ppobj,
     double *pdobj);
 
+void printBlockMat(const blockmatrix& C);
 
+void printConstMat(const constraintmatrix& S, int k);
 
 #endif /* customsdp_h */

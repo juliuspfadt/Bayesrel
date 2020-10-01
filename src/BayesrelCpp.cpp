@@ -1,9 +1,4 @@
 
-//#include <R.h>
-//#include <Rinternals.h>
-//#include <stdlib.h> // for NULL
-//#include <R_ext/Rdynload.h>
-//#include <stdio.h>
 
 #include <RcppArmadillo.h>
 extern "C" {
@@ -13,19 +8,6 @@ extern "C" {
 
 
 //[[Rcpp::depends(RcppArmadillo)]]
-
-int custom_sdp(
-    int,
-    int,
-    struct blockmatrix,
-    double *,
-    struct constraintmatrix *,
-    double,
-    struct blockmatrix *,
-    double **,
-    struct blockmatrix *,
-    double *,
-    double *);
 
 //[[Rcpp::export]]
 Rcpp::List csdpArma(
@@ -105,13 +87,3 @@ Rcpp::List csdpArma(
 }
 
 
-//static const R_CallMethodDef CallEntries[] = {
-//  {"csdpArma",          (DL_FUNC) &csdpArma,          8},
-//  {NULL, NULL, 0}
-//};
-//
-//void R_init_Bayesrel(DllInfo *dll)
-//{
-//  R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
-//  R_useDynamicSymbols(dll, FALSE);
-//}

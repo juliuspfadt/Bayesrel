@@ -22,6 +22,7 @@ glbOnArray_custom <- function(Cov, callback = function(){}) {
     b[i] <- 1
     A[[i]] <- list(diag(b), -b, b)
   }
+
   K <- list(type = c("s", "l", "l"), size = rep(p, 3))
 
   prob.info <- get.prob.info2(K, length(b))

@@ -10,10 +10,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+
 extern "C" {
 #include "declarations.h"
 }
-
+#include "customsdp.h"
 
 
 int custom_sdpCpp(
@@ -402,25 +403,42 @@ int custom_sdpCpp(
     *
     */
 
-   makefill(k,C,constraints,&fill,work1,printlevel);
+    makefill(k,C,constraints,&fill,work1,printlevel);
 
-   /*
-    * Compute the nonzero structure of O.
-    */
+    /*
+     * Compute the nonzero structure of O.
+     */
 
-   nnz=structnnz(n,k,C,constraints);
+    nnz=structnnz(n,k,C,constraints);
 
-   /*
-    * Sort entries in diagonal blocks of constraints.
-    */
+    /*
+     * Sort entries in diagonal blocks of constraints.
+     */
 
-   sort_entries(k,C,constraints);
+    sort_entries(k,C,constraints);
 
-   /*
-    *  Now, call sdp().
-    */
+    /*
+     *  Now, call sdp().
+     */
 
-   ret=sdp(n,k,C,a,constant_offset,constraints,byblocks,fill,*pX,*py,*pZ,
+    /*
+     equal across runs are: n, k, constant_offset, ppobj, pdobj, *besty, *a, **py, *O, *rhs, *dy, *dy1,
+                            *Fp, printlevel, params
+                blockmatrix: C, *pX, cholxinv, cholzinv, work1, work2, work3, bestx, bestz, dZ, dX
+     unequal across runs:
+            pointers: workvec1, workvec2, workvec3, workvec4, workvec5, workvec6, workvec7, workvec8, diag0
+            blockmatrix: *pZ, ?Zi
+            constraintmatrix: fill
+     unable to retrieve:
+            constraintmatrix: constraints
+            sparseblock: byblocks
+
+     */
+//    printBlockMat(dX);
+//    printConstMat(constraints, k);
+//    Rcpp::Rcout << "------" << std::endl;
+
+    ret=sdp(n,k,C,a,constant_offset,constraints,byblocks,fill,*pX,*py,*pZ,
        cholxinv,cholzinv,ppobj,pdobj,work1,work2,work3,workvec1,
        workvec2,workvec3,workvec4,workvec5,workvec6,workvec7,workvec8,
        diagO,bestx,besty,bestz,Zi,O,rhs,dZ,dX,dy,dy1,Fp,
