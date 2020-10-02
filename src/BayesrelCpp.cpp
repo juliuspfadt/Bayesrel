@@ -10,7 +10,7 @@ extern "C" {
 //[[Rcpp::depends(RcppArmadillo)]]
 
 //[[Rcpp::export]]
-Rcpp::List csdpArma(
+double csdpArma(
               int n_p,
               int nconstraints_p,
               int nblocks_p,
@@ -25,7 +25,7 @@ Rcpp::List csdpArma(
     struct constraintmatrix *constraints;
     struct blockmatrix X, Z;
     double *y, *b;
-    double pobj, dobj;
+    double pobj, dobj, ret;
     int status;
 
 
@@ -72,18 +72,11 @@ Rcpp::List csdpArma(
     /* Copy y */
     arma::dvec y_p = double_vector_csdp2RArma(nconstraints_p, y);
 
-
     free_prob(n_p,nconstraints_p,C,b,constraints,X,y,Z);
 
-    Rcpp::List ret;
-    ret.push_back(X_p);
-    ret.push_back(Z_p);
-    ret.push_back(y_p);
-    ret.push_back(pobj);
-    ret.push_back(dobj);
-    ret.push_back(status);
-
-  return ret;
+    y_p(0) = 0;
+    ret = arma::accu(y_p);
+    return ret;
 }
 
 

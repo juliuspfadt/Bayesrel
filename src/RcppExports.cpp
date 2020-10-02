@@ -7,7 +7,7 @@
 using namespace Rcpp;
 
 // csdpArma
-Rcpp::List csdpArma(int n_p, int nconstraints_p, int nblocks_p, const arma::ivec& blocktypes_p, const arma::ivec& blocksizes_p, const Rcpp::List& C_p, const Rcpp::List& A_p, const arma::dvec& b_p);
+double csdpArma(int n_p, int nconstraints_p, int nblocks_p, const arma::ivec& blocktypes_p, const arma::ivec& blocksizes_p, const Rcpp::List& C_p, const Rcpp::List& A_p, const arma::dvec& b_p);
 RcppExport SEXP _Bayesrel_csdpArma(SEXP n_pSEXP, SEXP nconstraints_pSEXP, SEXP nblocks_pSEXP, SEXP blocktypes_pSEXP, SEXP blocksizes_pSEXP, SEXP C_pSEXP, SEXP A_pSEXP, SEXP b_pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
