@@ -421,22 +421,6 @@ int custom_sdpCpp(
      *  Now, call sdp().
      */
 
-    /*
-     equal across runs are: n, k, constant_offset, ppobj, pdobj, *besty, *a, **py, *O, *rhs, *dy, *dy1,
-                            *Fp, printlevel, params
-                blockmatrix: C, *pX, cholxinv, cholzinv, work1, work2, work3, bestx, bestz, dZ, dX
-     unequal across runs:
-            pointers: workvec1, workvec2, workvec3, workvec4, workvec5, workvec6, workvec7, workvec8, diag0
-            blockmatrix: *pZ, ?Zi
-            constraintmatrix: fill
-     unable to retrieve:
-            constraintmatrix: constraints
-            sparseblock: byblocks
-
-     */
-//    printBlockMat(dX);
-//    printConstMat(constraints, k);
-//    Rcpp::Rcout << "------" << std::endl;
 
     ret=sdp(n,k,C,a,constant_offset,constraints,byblocks,fill,*pX,*py,*pZ,
        cholxinv,cholzinv,ppobj,pdobj,work1,work2,work3,workvec1,
