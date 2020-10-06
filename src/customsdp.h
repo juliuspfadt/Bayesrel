@@ -19,8 +19,7 @@ Rcpp::List blkmatrix_csdp2RArma(const blockmatrix& X);
 
 struct constraintmatrix *constraints_R2csdpArma(const Rcpp::List& A);
 
-int custom_sdpCpp(
-    int n,
+int custom_sdpCpp(int n,
     int k,
     const blockmatrix& C,
     double *a,
@@ -30,32 +29,8 @@ int custom_sdpCpp(
     double **py,
     struct blockmatrix *pZ,
     double *ppobj,
-    double *pdobj);
+    double *pdobj,
+    const arma::cube& car, arma::dvec& out);
 
-void printBlockMat(const blockmatrix& C);
 
-void printConstMat(const constraintmatrix& S, int k);
-
-/*
- A block record describes an individual block within a matrix.
- */
-
-struct blockrec2 {
-    union blockdatarec data;
-    enum blockcat blockcategory;
-#ifndef NOSHORTS
-    unsigned short blocksize;
-#else
-    int blocksize;
-#endif
-};
-
-/*
- A block matrix contains an entire matrix in block diagonal form.
- */
-
-struct blockmatrix2 {
-    int nblocks;
-    struct blockrec2 *blocks;
-};
 #endif /* customsdp_h */

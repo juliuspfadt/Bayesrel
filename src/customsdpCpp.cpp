@@ -28,7 +28,9 @@ int custom_sdpCpp(
      double **py,
      struct blockmatrix *pZ,
      double *ppobj,
-     double *pdobj)
+     double *pdobj,
+     const arma::cube& car,
+     arma::dvec& out)
 {
   int ret;
   struct constraintmatrix fill;
@@ -420,13 +422,38 @@ int custom_sdpCpp(
     /*
      *  Now, call sdp().
      */
+// initialise a long vector for all matrix elements with diagonal of zeros, and a vector for the negative variances
+    arma::dvec matvecnovar;
+    arma::dvec negvar(k+1);
+    arma::dvec y_p;
+    struct blockmatrix Cnew = C;
 
 
-    ret=sdp(n,k,C,a,constant_offset,constraints,byblocks,fill,*pX,*py,*pZ,
-       cholxinv,cholzinv,ppobj,pdobj,work1,work2,work3,workvec1,
-       workvec2,workvec3,workvec4,workvec5,workvec6,workvec7,workvec8,
-       diagO,bestx,besty,bestz,Zi,O,rhs,dZ,dX,dy,dy1,Fp,
-       printlevel,params);
+    negvar(0) = 0; // is somehow needed
+
+    for(i=0; i<car.n_slices; i++) {
+        negvar.tail(k) = -car.slice(i).diag();
+
+        matvecnovar = arma::vectorise(arma::diagmat(car.slice(i).diag()) - car.slice(i));
+
+        for (j=0; j<k*k; j++)
+            Cnew.blocks[1].data.mat[j] = matvecnovar(j);
+
+        for (j=0; j<k+1; j++)
+            Cnew.blocks[2].data.vec[j] = negvar(j);
+
+        ret=sdp(n,k,Cnew,a,constant_offset,constraints,byblocks,fill,*pX,*py,*pZ,
+           cholxinv,cholzinv,ppobj,pdobj,work1,work2,work3,workvec1,
+           workvec2,workvec3,workvec4,workvec5,workvec6,workvec7,workvec8,
+           diagO,bestx,besty,bestz,Zi,O,rhs,dZ,dX,dy,dy1,Fp,
+           printlevel,params);
+
+        y_p = double_vector_csdp2RArma(k, *py);
+        y_p(0) = 0;
+        out(i) = arma::accu(y_p);
+    }
+
+
 
 
    /*
