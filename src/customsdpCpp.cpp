@@ -24,9 +24,6 @@ int custom_sdpCpp(
      double *a,
      struct constraintmatrix *constraints,
      double constant_offset,
-     struct blockmatrix *pX,
-     double **py,
-     struct blockmatrix *pZ,
      double *ppobj,
      double *pdobj,
      const arma::cube& car,
@@ -72,6 +69,8 @@ int custom_sdpCpp(
   struct sparseblock *q;
   struct sparseblock *prev=NULL;
   int nnz;
+  struct blockmatrix X, Z;
+  double *y;
 
    /*
     *  Initialize the parameters.
@@ -98,6 +97,11 @@ int custom_sdpCpp(
   /*
    *  Allocate working storage
    */
+
+  // allocate storage for X, y , Z, that was previously done in initsoln
+  alloc_mat(C,&X);
+  alloc_mat(C,&Z);
+  y=(double *)malloc(sizeof(double)*(k+1));
 
   alloc_mat(C,&work1);
   alloc_mat(C,&work2);
@@ -442,13 +446,15 @@ int custom_sdpCpp(
         for (j=0; j<k+1; j++)
             Cnew.blocks[2].data.vec[j] = negvar(j);
 
-        ret=sdp(n,k,Cnew,a,constant_offset,constraints,byblocks,fill,*pX,*py,*pZ,
+        initArma(n,k,C,a,constraints,&X,&y,&Z);
+
+        ret=sdp(n,k,Cnew,a,constant_offset,constraints,byblocks,fill,X,y,Z,
            cholxinv,cholzinv,ppobj,pdobj,work1,work2,work3,workvec1,
            workvec2,workvec3,workvec4,workvec5,workvec6,workvec7,workvec8,
            diagO,bestx,besty,bestz,Zi,O,rhs,dZ,dX,dy,dy1,Fp,
            printlevel,params);
 
-        y_p = double_vector_csdp2RArma(k, *py);
+        y_p = double_vector_csdp2RArma(k, y);
         y_p(0) = 0;
         out(i) = arma::accu(y_p);
     }
@@ -488,6 +494,10 @@ int custom_sdpCpp(
    free(O);
    free(diagO);
    free(byblocks);
+// free up the memory for X, y, Z, that was previosuly done in the parent function with free_prob
+   free(y);
+   free_mat(X);
+   free_mat(Z);
 
    /*
     * Free up the fill data structure.

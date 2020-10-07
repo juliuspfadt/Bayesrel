@@ -24,8 +24,7 @@ arma::dvec csdpArma(
 
     struct blockmatrix C;
     struct constraintmatrix *constraints;
-    struct blockmatrix X, Z;
-    double *y, *b;
+    double *b;
     double pobj, dobj;
     int status;
     arma::dvec out(car.n_slices);
@@ -47,21 +46,46 @@ arma::dvec csdpArma(
     b = double_vector_R2csdpArma(nconstraints_p,b_p);
 
     /*
-     * Create an initial solution. This allocates space for X, y, and Z,
-     * and sets initial values
-     */
-    initsoln(n_p,nconstraints_p,C,b,constraints,&X,&y,&Z);
-
-    /*
      * Solve the problem
      */
-    status = custom_sdpCpp(n_p,nconstraints_p,C,b,constraints,0.0,&X,&y,&Z,&pobj,&dobj, car, out);
+    status = custom_sdpCpp(n_p,nconstraints_p,C,b,constraints,0.0,&pobj,&dobj, car, out);
 
+
+    // free_prob(n_p,nconstraints_p,C,b,constraints,X,y,Z);
     /*
-     * Grab the results
+     * freeing up the memory, copied from free_prob
      */
+    free(b);
+    free_mat(C);
 
-    free_prob(n_p,nconstraints_p,C,b,constraints,X,y,Z);
+    int i;
+    struct sparseblock *ptr;
+    struct sparseblock *oldptr;
+    if (constraints != NULL)
+    {
+        for (i=1; i<=nconstraints_p; i++)
+        {
+            /*
+             * Get rid of constraint i.
+             */
+
+            ptr=constraints[i].blocks;
+            while (ptr != NULL)
+            {
+                free(ptr->entries);
+                free(ptr->iindices);
+                free(ptr->jindices);
+                oldptr=ptr;
+                ptr=ptr->next;
+                free(oldptr);
+            };
+        };
+        /*
+         * Finally, free the constraints array.
+         */
+
+        free(constraints);
+    };
 
     return out;
 }

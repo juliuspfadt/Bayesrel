@@ -19,15 +19,21 @@ Rcpp::List blkmatrix_csdp2RArma(const blockmatrix& X);
 
 struct constraintmatrix *constraints_R2csdpArma(const Rcpp::List& A);
 
+void initArma(int n,
+              int k,
+              struct blockmatrix C,
+              double *a,
+              struct constraintmatrix *constraints,
+              struct blockmatrix *pX0,
+              double **py0,
+              struct blockmatrix *pZ0);
+
 int custom_sdpCpp(int n,
     int k,
     const blockmatrix& C,
     double *a,
     struct constraintmatrix *constraints,
     double constant_offset,
-    struct blockmatrix *pX,
-    double **py,
-    struct blockmatrix *pZ,
     double *ppobj,
     double *pdobj,
     const arma::cube& car, arma::dvec& out);
