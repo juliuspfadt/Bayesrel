@@ -1,10 +1,6 @@
 
 # Bayesrel
 
-<!-- badges: start -->
-[![Travis build status](https://travis-ci.org/juliuspf/Bayesrel.svg?branch=Cpp)](https://travis-ci.org/juliuspf/Bayesrel)
-<!-- badges: end -->
-
 The goal of Bayesrel is to provide popular single-test reliability coefficients in the Bayesian statistis framework.
 These coefficients include alpha, lambda2, lambda6, the glb, and omega.
 
