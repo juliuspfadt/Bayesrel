@@ -5,9 +5,9 @@ on:
     branches:
       - master
       - Cpp
-  pull_request:
-    branches:
-      - master
+  # pull_request:
+  #   branches:
+  #     - master
 
 name: R-CMD-check
 
