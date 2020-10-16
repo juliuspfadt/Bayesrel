@@ -10,7 +10,7 @@ extern "C" {
 //[[Rcpp::depends(RcppArmadillo)]]
 
 //[[Rcpp::export]]
-double csdpArma(
+arma::dvec csdpArma(
               int n_p,
               int nconstraints_p,
               int nblocks_p,
@@ -18,15 +18,16 @@ double csdpArma(
               const arma::ivec& blocksizes_p,
               const Rcpp::List& C_p,
               const Rcpp::List& A_p,
-              const arma::dvec& b_p)
+              const arma::dvec& b_p,
+              const arma::cube& car)
 {
 
     struct blockmatrix C;
     struct constraintmatrix *constraints;
-    struct blockmatrix X, Z;
-    double *y, *b;
-    double pobj, dobj, ret;
+    double *b;
+    double pobj, dobj;
     int status;
+    arma::dvec out(car.n_slices);
 
 
     /*
@@ -45,36 +46,46 @@ double csdpArma(
     b = double_vector_R2csdpArma(nconstraints_p,b_p);
 
     /*
-     * Create an initial solution. This allocates space for X, y, and Z,
-     * and sets initial values
-     */
-    initsoln(n_p,nconstraints_p,C,b,constraints,&X,&y,&Z);
-
-    /*
      * Solve the problem
      */
-    status = custom_sdpCpp(n_p,nconstraints_p,C,b,constraints,0.0,&X,&y,&Z,&pobj,&dobj);
+    status = custom_sdpCpp(n_p,nconstraints_p,C,b,constraints,0.0,&pobj,&dobj, car, out);
 
+
+    // free_prob(n_p,nconstraints_p,C,b,constraints,X,y,Z);
     /*
-     * Grab the results
+     * freeing up the memory, copied from free_prob
      */
+    free(b);
+    free_mat(C);
 
-    /*
-     * Grab X
-     */
-    Rcpp::List X_p = blkmatrix_csdp2RArma(X);
+    int i;
+    struct sparseblock *ptr;
+    struct sparseblock *oldptr;
+    if (constraints != NULL)
+    {
+        for (i=1; i<=nconstraints_p; i++)
+        {
+            /*
+             * Get rid of constraint i.
+             */
 
-    /*
-     * Grab Z
-     */
-    Rcpp::List Z_p = blkmatrix_csdp2RArma(Z);
+            ptr=constraints[i].blocks;
+            while (ptr != NULL)
+            {
+                free(ptr->entries);
+                free(ptr->iindices);
+                free(ptr->jindices);
+                oldptr=ptr;
+                ptr=ptr->next;
+                free(oldptr);
+            };
+        };
+        /*
+         * Finally, free the constraints array.
+         */
 
-    /* Copy y */
-    arma::dvec y_p = double_vector_csdp2RArma(nconstraints_p, y);
+        free(constraints);
+    };
 
-    free_prob(n_p,nconstraints_p,C,b,constraints,X,y,Z);
-
-    y_p(0) = 0;
-    ret = arma::accu(y_p);
-    return ret;
+    return out;
 }

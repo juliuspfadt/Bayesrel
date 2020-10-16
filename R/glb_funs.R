@@ -46,34 +46,24 @@ glbOnArray_custom <- function(Cov, callback = function(){}) {
   arg5 <- as.integer(c(0, prob.info$block.sizes))
 
   idx <- cbind(1:p, 1:p)
+  Cov <- aperm(Cov, c(2, 3, 1))
+  ret <- Bayesrel:::csdpArma(
+    arg1,
+    arg2,
+    arg3,
+    arg4,
+    arg5,
+    prob.data$C,
+    prob.data$A,
+    prob.data$b,
+    Cov
+  )
 
-  glbs <- numeric(nSamples)
+  scv <- apply(Cov, 3, sum)
+  vars <- apply(Cov, 3, diag)
+  svars <- apply(vars, 2, sum)
+  glbs <- (scv - svars + ret) / scv
 
-  for (i in seq_len(nSamples)) {
-
-    cv <- Cov[i, , ]
-    Var <- cv[idx]
-
-    prob.data$C$blocks[[1L]]$data <- as.double(diag(Var) - cv)
-    prob.data$C$blocks[[2L]]$data <- as.double(c(0, -Var))
-
-
-    ret <- csdpArma(
-      arg1,
-      arg2,
-      arg3,
-      arg4,
-      arg5,
-      prob.data$C,
-      prob.data$A,
-      prob.data$b
-    )
-
-    scv <- sum(cv)
-
-    glbs[i] <- (scv - sum(Var) + ret) / scv
-    callback()
-  }
   return(glbs)
 }
 
@@ -267,14 +257,6 @@ glbOnArray_nocpp <- function(Cov, callback = function(){}) {
 }
 
 
-prepListArray <- function(A, Cblocks) {
-  p <- dim(A)[1]
-  idx <- cbind(1:p, 1:p)
-  Var <- A[idx]
-  Cblocks[[1]]$data <- as.double(diag(Var) - A)
-  Cblocks[[2]]$data <- as.double(c(0, -Var))
 
-  return(Cblocks)
-}
 
 
