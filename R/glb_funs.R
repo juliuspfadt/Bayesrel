@@ -47,7 +47,7 @@ glbOnArray_custom <- function(Cov, callback = function(){}) {
 
   idx <- cbind(1:p, 1:p)
   Cov <- aperm(Cov, c(2, 3, 1))
-  ret <- Bayesrel:::csdpArma(
+  ret <- csdpArma(
     arg1,
     arg2,
     arg3,

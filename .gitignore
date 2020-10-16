@@ -9,3 +9,4 @@ config.status
 *.o
 *.so
 *.a
+.DS_Store
