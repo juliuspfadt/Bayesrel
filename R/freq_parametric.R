@@ -20,11 +20,10 @@ freqFun_para <- function(data, n.boot, estimates, interval, omega.freq.method,
       "lambda2" %in% estimates | "lambda4" %in% estimates | "lambda6" %in% estimates |
       "glb" %in% estimates | ("omega" %in% estimates & omega.freq.method == "pfa")){
 
-    boot_data <- array(0, c(n.boot, n, p))
     boot_cov <- array(0, c(n.boot, p, p))
     for (i in 1:n.boot){
-      boot_data[i, , ] <- MASS::mvrnorm(n, colMeans(data, na.rm = T), cc)
-      boot_cov[i, , ] <- cov(boot_data[i, , ])
+      boot_data <- MASS::mvrnorm(n, colMeans(data, na.rm = T), cc)
+      boot_cov[i, , ] <- cov(boot_data)
       callback()
     }
 
@@ -32,10 +31,8 @@ freqFun_para <- function(data, n.boot, estimates, interval, omega.freq.method,
   }
   if (item.dropped){
     Ctmp <- array(0, c(p, p - 1, p - 1))
-    Dtmp <- array(0, c(p, n, p - 1))
     for (i in 1:p){
       Ctmp[i, , ] <- cc[-i, -i]
-      Dtmp[i, , ] <- data[, -i]
     }
   }
 
@@ -130,13 +127,12 @@ freqFun_para <- function(data, n.boot, estimates, interval, omega.freq.method,
     if (omega.freq.method == "cfa"){
       out <- omegaFreqData(data, interval, omega.int.analytic, pairwise, n.boot, callback, parametric)
       res$fit.object <- out$fit.object
-      if (any(is.null(out))) {
+      if (is.null(res$fit.object)) {
         if (is.null(boot_cov)) {
-          boot_data <- array(0, c(n.boot, n, p))
           boot_cov <- array(0, c(n.boot, p, p))
           for (i in 1:n.boot){
-            boot_data[i, , ] <- MASS::mvrnorm(n, colMeans(data, na.rm = T), cc)
-            boot_cov[i, , ] <- cov(boot_data[i, , ])
+            boot_data<- MASS::mvrnorm(n, colMeans(data, na.rm = T), cc)
+            boot_cov[i, , ] <- cov(boot_data)
             callback()
           }
         }
@@ -168,7 +164,11 @@ freqFun_para <- function(data, n.boot, estimates, interval, omega.freq.method,
 
 
         if (item.dropped){
-          res$ifitem$omega <- apply(Dtmp, 1, applyomega_cfa_data, interval=interval, pairwise=pairwise)
+          res$ifitem$omega <- numeric(p)
+          for (i in 1:p) {
+            dtmp <- data[, -i]
+            res$ifitem$omega[i] <- applyomega_cfa_data(dtmp, interval = interval, pairwise = pairwise)
+          }
           if (any(is.na(res$ifitem$omega))) {
             res$ifitem$omega <- apply(Ctmp, 1, applyomega_pfa)
             res$omega.item.error <- TRUE

@@ -24,5 +24,4 @@ the items are ordered in from top to bottom from most change to least change in 
 \examples{
 plot_strel_id(strel(asrm, "lambda2", freq = FALSE, item.dropped = TRUE, n.chains = 2,
 n.iter = 200), "lambda2")
-
 }

@@ -183,7 +183,6 @@ plotShadePrior <- function(dens, xx, cols, criteria, blackwhite){
 #' or "kl" for the Kublack Leibler divergence
 #' @examples plot_strel_id(strel(asrm, "lambda2", freq = FALSE, item.dropped = TRUE, n.chains = 2,
 #' n.iter = 200), "lambda2")
-#'
 #' @export
 plot_strel_id <- function(x, estimate, distance = NULL){
 
@@ -203,6 +202,12 @@ plot_strel_id <- function(x, estimate, distance = NULL){
   dat_del <- t(as.matrix(as.data.frame(apply(x$Bayes$ifitem$samp[[posi]], 3, as.vector))))
 
   names <- colnames(x$data)
+  if (is.null(names)) {
+    names <- NULL
+    for(i in n_row:1){
+      names[i] <- paste0("x", i)
+    }
+  }
 
   for (i in n_row:1){
     tmp <- as.data.frame(dat_del[i, ])

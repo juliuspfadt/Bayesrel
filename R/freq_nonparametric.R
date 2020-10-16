@@ -25,11 +25,10 @@ freqFun_nonpara <- function(data, n.boot, estimates, interval, omega.freq.method
       "lambda2" %in% estimates | "lambda4" %in% estimates | "lambda6" %in% estimates |
       "glb" %in% estimates | ("omega" %in% estimates & omega.freq.method == "pfa")){
 
-    boot_data <- array(0, c(n.boot, n, p))
     boot_cov <- array(0, c(n.boot, p, p))
     for (i in 1:n.boot){
-      boot_data[i, , ] <- as.matrix(data[sample.int(n, size = n, replace = TRUE), ])
-      boot_cov[i, , ] <- cov(boot_data[i, , ], use = use.cases)
+      boot_data <- as.matrix(data[sample.int(n, size = n, replace = TRUE), ])
+      boot_cov[i, , ] <- cov(boot_data, use = use.cases)
       callback()
     }
 
@@ -47,10 +46,8 @@ freqFun_nonpara <- function(data, n.boot, estimates, interval, omega.freq.method
   }
   if (item.dropped){
     Ctmp <- array(0, c(p, p - 1, p - 1))
-    Dtmp <- array(0, c(p, n, p - 1))
     for (i in 1:p){
       Ctmp[i, , ] <- cc[-i, -i]
-      Dtmp[i, , ] <- data[, -i]
     }
   }
 
@@ -147,11 +144,10 @@ freqFun_nonpara <- function(data, n.boot, estimates, interval, omega.freq.method
       res$fit.object <- out$fit.object
       if (is.null(res$fit.object)) {
         if (is.null(boot_cov)) {
-          boot_data <- array(0, c(n.boot, n, p))
           boot_cov <- array(0, c(n.boot, p, p))
           for (i in 1:n.boot){
-            boot_data[i, , ] <- as.matrix(data[sample.int(n, size = n, replace = TRUE), ])
-            boot_cov[i, , ] <- cov(boot_data[i, , ], use = use.cases)
+            boot_data <- as.matrix(data[sample.int(n, size = n, replace = TRUE), ])
+            boot_cov[i, , ] <- cov(boot_data, use = use.cases)
           }
         }
         res$est$freq_omega <- applyomega_pfa(cc)
@@ -159,8 +155,7 @@ freqFun_nonpara <- function(data, n.boot, estimates, interval, omega.freq.method
         if (length(unique(round(omega_obj, 4))) == 1){
           res$conf$low$freq_omega <- NA
           res$conf$up$freq_omega <- NA
-        }
-        else{
+        } else {
           res$conf$low$freq_omega <- quantile(omega_obj, probs = (1 - interval)/2, na.rm = T)
           res$conf$up$freq_omega <- quantile(omega_obj, probs = interval + (1 - interval)/2, na.rm = T)
         }
@@ -182,7 +177,11 @@ freqFun_nonpara <- function(data, n.boot, estimates, interval, omega.freq.method
 
 
         if (item.dropped){
-          res$ifitem$omega <- apply(Dtmp, 1, applyomega_cfa_data, interval = interval, pairwise = pairwise)
+          res$ifitem$omega <- numeric(p)
+          for (i in 1:p) {
+            dtmp <- data[, -i]
+            res$ifitem$omega[i] <- applyomega_cfa_data(dtmp, interval = interval, pairwise = pairwise)
+          }
           if (any(is.na(res$ifitem$omega))) {
             res$ifitem$omega <- apply(Ctmp, 1, applyomega_pfa)
             # for (i in 1:p) {
