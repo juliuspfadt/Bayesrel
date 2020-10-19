@@ -1,5 +1,5 @@
 dnl R interface to CSDP semidefinite programming library
-dnl 
+dnl
 dnl By default the included CSDP code is built and linked, otherwise the user can supply
 dnl the location of the csdp library and includes, or the location of the csdp installation directory
 dnl
@@ -11,7 +11,7 @@ dnl 3) If none of these are given the included CSDP code is built and linked
 dnl
 dnl Compiler flags for csdp can be given using --with-csdp-cflags
 
-AC_INIT([Rcsdp], 0.1.1)
+AC_INIT([Bayesrel], 0.7.0)
 
 FOUND_ALL=""
 
@@ -82,12 +82,12 @@ if test [-n "$FOUND_ALL"] ; then
     LIBS="${PKG_LIBS}"
     CFLAGS="${CFLAGS} ${PKG_CFLAGS}"
     CPPFLAGS="${CPPFLAGS} ${PKG_CPPFLAGS}"
-    
+
     AC_CHECK_HEADER(declarations.h)
     if test "${ac_cv_header_declarations_h}" == no; then
 	AC_MSG_ERROR([CSDP header declarations.h not found in provided location])
     fi
-    
+
     AC_SEARCH_LIBS(easy_sdp,sdp,,AC_MSG_ERROR([Could not link CSDP library using $PKG_LIBS]))
 fi
 
