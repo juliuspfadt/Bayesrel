@@ -7,6 +7,8 @@ inst/doc
 autom4te.cache
 config.log
 config.status
+configure
+Makevars
 *.o
 *.so
 *.a
