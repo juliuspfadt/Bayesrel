@@ -622,6 +622,7 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 CSDP_TS
 PKG_LIBS
+PKG_CXXFLAGS
 PKG_CPPFLAGS
 PKG_CFLAGS
 EGREP
@@ -2173,6 +2174,15 @@ LAPACK_LIBS=`"${R_HOME}/bin/R" CMD config LAPACK_LIBS`
 BLAS_LIBS=`"${R_HOME}/bin/R" CMD config BLAS_LIBS`
 FLIBS=`"${R_HOME}/bin/R" CMD config FLIBS`
 
+PKG_LIBS="${PKG_LIBS} -lsdp ${LAPACK_LIBS} ${BLAS_LIBS} ${FLIBS} -lm"
+PKG_CFLAGS="-DNOSHORTS ${CSDP_CFLAGS}"
+
+## add some stuff for Rcpparmadillo
+## Use R to set CXX and CXXFLAGS
+CXX=$(${R_HOME}/bin/R CMD config CXX)
+CXXFLAGS=$("${R_HOME}/bin/R" CMD config CXXFLAGS)
+
+## We are using C++
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -3099,16 +3109,6 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
-
-PKG_LIBS="${PKG_LIBS} -lsdp ${LAPACK_LIBS} ${BLAS_LIBS} ${FLIBS} -lm"
-PKG_CFLAGS="-DNOSHORTS ${CSDP_CFLAGS}"
-
-## add some stuff for Rcpparmadillo
-## Use R to set CXX and CXXFLAGS
-CXX=$(${R_HOME}/bin/R CMD config CXX)
-CXXFLAGS=$("${R_HOME}/bin/R" CMD config CXXFLAGS)
-
-## We are using C++
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4102,6 +4102,7 @@ fi
 fi
 
 ## substitute in src/Makevars.in
+
 
 
 

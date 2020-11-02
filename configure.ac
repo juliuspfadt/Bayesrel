@@ -74,9 +74,6 @@ LAPACK_LIBS=`"${R_HOME}/bin/R" CMD config LAPACK_LIBS`
 BLAS_LIBS=`"${R_HOME}/bin/R" CMD config BLAS_LIBS`
 FLIBS=`"${R_HOME}/bin/R" CMD config FLIBS`
 
-AC_PROG_CC
-AC_PROG_CPP
-
 PKG_LIBS="${PKG_LIBS} -lsdp ${LAPACK_LIBS} ${BLAS_LIBS} ${FLIBS} -lm"
 PKG_CFLAGS="-DNOSHORTS ${CSDP_CFLAGS}"
 
@@ -86,6 +83,8 @@ CXX=$(${R_HOME}/bin/R CMD config CXX)
 CXXFLAGS=$("${R_HOME}/bin/R" CMD config CXXFLAGS)
 
 ## We are using C++
+AC_PROG_CC
+AC_PROG_CPP
 AC_LANG(C++)
 AC_REQUIRE_CPP
 AC_PROG_CXX
