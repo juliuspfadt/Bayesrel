@@ -1,21 +1,21 @@
-dnl R interface to CSDP semidefinite programming library
-dnl
-dnl By default the included CSDP code is built and linked, otherwise the user can supply
-dnl the location of the csdp library and includes, or the location of the csdp installation directory
-dnl
-dnl 1) If the user sets PKG_CFLAGS, PKG_CPPFLAGS and PKG_LIBS (all three) then these are used
-dnl
-dnl 2) If user provides location of the csdp installation we use the lib and include directories there
-dnl     --with-csdp=<location of csdp DIR>
-dnl 3) If none of these are given the included CSDP code is built and linked
-dnl
-dnl Compiler flags for csdp can be given using --with-csdp-cflags
+## R interface to CSDP semidefinite programming library
+##
+## By default the included CSDP code is built and linked, otherwise the user can supply
+## the location of the csdp library and includes, or the location of the csdp installation directory
+##
+## 1) If the user sets PKG_CFLAGS, PKG_CPPFLAGS and PKG_LIBS (all three) then these are used
+##
+## 2) If user provides location of the csdp installation we use the lib and include directories there
+##     --with-csdp=<location of csdp DIR>
+## 3) If none of these are given the included CSDP code is built and linked
+##
+## Compiler flags for csdp can be given using --with-csdp-cflags
 
 AC_INIT([Bayesrel], 0.7.0)
 
 FOUND_ALL=""
 
-dnl Check if global variables are already set, if so we are done
+## Check if global variables are already set, if so we are done
 if test [-n "$PKG_CFLAGS" -a -n "$PKG_CPPFLAGS" -a -n "$PKG_LIBS"] ; then
     FOUND_ALL="yes"
 else
@@ -24,7 +24,7 @@ else
     fi
 fi
 
-dnl get arguments
+## get arguments
 AC_ARG_WITH([csdp-cflags],
     [AS_HELP_STRING([--with-csdp-cflags],[compiler flags for csdp])],
     CSDP_CFLAGS=$withval,
@@ -45,7 +45,7 @@ if test [-z "$FOUND_ALL" -a -n "$CSDP_DIR"] ; then
     FOUND_ALL="yes"
 fi
 
-dnl No location given so build and link provided csdp
+## No location given so build and link provided csdp
 if test [-z "$FOUND_ALL"] ; then
     echo "Using bundled CSDP"
     PKG_CPPFLAGS="-ICsdp/include"
@@ -55,7 +55,7 @@ else
     CSDP_TS=""
 fi
 
-dnl Find the R home directory.
+## Find the R home directory.
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
   echo "Could not determine R_HOME."
@@ -63,7 +63,7 @@ if test -z "${R_HOME}"; then
 fi
 
 CC=`"${R_HOME}/bin/R" CMD config CC`
-dnl CPP=`"${R_HOME}/bin/R" CMD config CPP`
+## CPP=`"${R_HOME}/bin/R" CMD config CPP`
 CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
 CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 
@@ -77,7 +77,7 @@ AC_PROG_CPP
 PKG_LIBS="${PKG_LIBS} -lsdp ${LAPACK_LIBS} ${BLAS_LIBS} ${FLIBS} -lm"
 PKG_CFLAGS="-DNOSHORTS ${CSDP_CFLAGS}"
 
-dnl if given by user, check header and library
+## if given by user, check header and library
 if test [-n "$FOUND_ALL"] ; then
     LIBS="${PKG_LIBS}"
     CFLAGS="${CFLAGS} ${PKG_CFLAGS}"
@@ -91,7 +91,7 @@ if test [-n "$FOUND_ALL"] ; then
     AC_SEARCH_LIBS(easy_sdp,sdp,,AC_MSG_ERROR([Could not link CSDP library using $PKG_LIBS]))
 fi
 
-dnl substitute in src/Makevars.in
+## substitute in src/Makevars.in
 AC_SUBST(PKG_CFLAGS)
 AC_SUBST(PKG_CPPFLAGS)
 AC_SUBST(PKG_LIBS)
