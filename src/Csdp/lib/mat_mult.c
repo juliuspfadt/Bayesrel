@@ -90,14 +90,14 @@ void mat_mult_raw(n,scale1,scale2,ap,bp,cp)
      double *bp;
      double *cp;
 {
-#ifdef NOUNDERBLAS
-#ifdef CAPSBLAS
+#ifdef ARMA_BLAS_UNDERSCORE
+#ifdef ARMA_BLAS_CAPITALS
 	  DGEMM("N","N",&n,&n,&n,&scale1,ap,&n,bp,&n,&scale2,cp,&n);
 #else
 	  dgemm("N","N",&n,&n,&n,&scale1,ap,&n,bp,&n,&scale2,cp,&n);
 #endif
 #else
-#ifdef CAPSBLAS
+#ifdef ARMA_BLAS_CAPITALS
 	  DGEMM_("N","N",&n,&n,&n,&scale1,ap,&n,bp,&n,&scale2,cp,&n);
 #else
 	  dgemm_("N","N",&n,&n,&n,&scale1,ap,&n,bp,&n,&scale2,cp,&n);

@@ -220,7 +220,6 @@ int bisect_(int *n, double *eps1, double *d, double *e, double *e2,
 
 #endif
 
-
 #ifdef  DEFINE_FUNCTIONS_LAPACK_BLAS
 	#ifdef CAPSBLAS
 		#ifdef NOUNDERBLAS
