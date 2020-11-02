@@ -11,6 +11,9 @@
 ##
 ## Compiler flags for csdp can be given using --with-csdp-cflags
 
+## require at least autoconf 2.61
+AC_PREREQ(2.61)
+
 AC_INIT([Bayesrel], 0.7.0)
 
 FOUND_ALL=""
@@ -63,7 +66,7 @@ if test -z "${R_HOME}"; then
 fi
 
 CC=`"${R_HOME}/bin/R" CMD config CC`
-## CPP=`"${R_HOME}/bin/R" CMD config CPP`
+CPP=`"${R_HOME}/bin/R" CMD config CPP`
 CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
 CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 
@@ -76,6 +79,16 @@ AC_PROG_CPP
 
 PKG_LIBS="${PKG_LIBS} -lsdp ${LAPACK_LIBS} ${BLAS_LIBS} ${FLIBS} -lm"
 PKG_CFLAGS="-DNOSHORTS ${CSDP_CFLAGS}"
+
+## add some stuff for Rcpparmadillo
+## Use R to set CXX and CXXFLAGS
+CXX=$(${R_HOME}/bin/R CMD config CXX)
+CXXFLAGS=$("${R_HOME}/bin/R" CMD config CXXFLAGS)
+
+## We are using C++
+AC_LANG(C++)
+AC_REQUIRE_CPP
+AC_PROG_CXX
 
 ## if given by user, check header and library
 if test [-n "$FOUND_ALL"] ; then
