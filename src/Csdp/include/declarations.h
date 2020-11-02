@@ -201,90 +201,11 @@ void tweakgap(int n, int k, double *a, struct constraintmatrix *constraints,
 int bisect_(int *n, double *eps1, double *d, double *e, double *e2,
 	    double *lb, double *ub, int *mm, int *m, double *w, int *ind,
 	    int *ierr, double *rv4, double *rv5);
-//
-// /*
-//   BLAS and LINPACK stuff.
-//   */
-//
-// /*
-//   First, BLAS routines.
-//  */
-//
-// #ifdef CAPSBLAS
-// #ifdef NOUNDERBLAS
-// double DNRM2();
-// double DASUM();
-// double DDOT();
-// int IDAMAX();
-// void DGEMM();
-// void DGEMV();
-// void DGER();
-// void DTRSM();
-// void DTRMV();
-// #else
-// double DNRM2_();
-// double DASUM_();
-// double DDOT_();
-// int IDAMAX_();
-// void DGEMM_();
-// void DGEMV_();
-// void DGER_();
-// void DTRSM_();
-// void DTRMV_();
-// #endif
-// #else
-// #ifdef NOUNDERBLAS
-// double dnrm2();
-// double dasum();
-// double ddot();
-// int idamax();
-// void dgemm();
-// void dgemv();
-// void dger();
-// void dtrsm();
-// void dtrmv();
-// #else
-// double dnrm2_();
-// double dasum_();
-// double ddot_();
-// int idamax_();
-// void dgemm_();
-// void dgemv_();
-// void dger_();
-// void dtrsm_();
-// void dtrmv_();
-// #endif
-// #endif
-//
-// /*
-//   LAPACK next.
-//  */
-//
-// #ifdef CAPSLAPACK
-// #ifdef NOUNDERLAPACK
-// void DPOTRF();
-// void DPOTRS();
-// void DPOTRI();
-// void DTRTRI();
-// #else
-// void DPOTRF_();
-// void DPOTRS_();
-// void DPOTRI_();
-// void DTRTRI_();
-// #endif
-// #else
-// #ifdef NOUNDERLAPACK
-// void dpotrf();
-// void dpotrs();
-// void dpotri();
-// void dtrtri();
-// #else
-// void dpotrf_();
-// void dpotrs_();
-// void dpotri_();
-// void dtrtri_();
-// #endif
-// #endif
+
+/*
+  BLAS and LINPACK stuff should come from Rcpp Armadillo
+  */
+
 
 
 #endif

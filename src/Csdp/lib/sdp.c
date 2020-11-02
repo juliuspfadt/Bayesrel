@@ -764,14 +764,14 @@ int sdp(n,k,C,a,constant_offset,constraints,byblocks,fill,X,y,Z,cholxinv,
 	   t1=(double)tp.tv_sec+(1.0e-6)*tp.tv_usec;
 #endif
 
-#ifdef NOUNDERLAPACK
-  #ifdef CAPSLAPACK
+#ifdef ARMA_BLAS_UNDERSCORE
+  #ifdef ARMA_BLAS_CAPITALS
 	   DPOTRF("U",&m,O,&ldam,&info);
   #else
 	   dpotrf("U",&m,O,&ldam,&info);
   #endif
 #else
-  #ifdef CAPSLAPACK
+  #ifdef ARMA_BLAS_CAPITALS
 	   DPOTRF_("U",&m,O,&ldam,&info);
   #else
 	   dpotrf_("U",&m,O,&ldam,&info);

@@ -19,14 +19,14 @@ int solvesys(m,ldam,A,rhs)
 
   incx=1;
 
-#ifdef NOUNDERLAPACK
-  #ifdef CAPSLAPACK
+#ifdef ARMA_BLAS_UNDERSCORE
+  #ifdef ARMA_BLAS_CAPITALS
 	   DPOTRS("U",&m,&incx,A,&ldam,rhs+1,&ldam,&info);
   #else
 	   dpotrs("U",&m,&incx,A,&ldam,rhs+1,&ldam,&info);
   #endif
 #else
-  #ifdef CAPSLAPACK	
+  #ifdef ARMA_BLAS_CAPITALS	
 	   DPOTRS_("U",&m,&incx,A,&ldam,rhs+1,&ldam,&info);
   #else
 	   dpotrs_("U",&m,&incx,A,&ldam,rhs+1,&ldam,&info);
