@@ -1,8 +1,8 @@
 PKG_CFLAGS=-DNOSHORTS
-PKG_CPPFLAGS=-ICsdp/include
+PKG_CPPFLAGS=-ICsdp/include -DNOSHORTS
 PKG_LIBS=-LCsdp/lib -lsdp ${LAPACK_LIBS} ${BLAS_LIBS} ${FLIBS} -lm
 
-$(SHLIB): Csdp.ts 
+$(SHLIB): Csdp.ts
 
 Csdp.ts:
 	cd Csdp/lib && $(MAKE) libsdp.a CC="$(CC)" CFLAGS="$(CFLAGS) $(CPICFLAGS) -DNOSHORTS -I../include" AR=$(AR) RANLIB=$(RANLIB)
