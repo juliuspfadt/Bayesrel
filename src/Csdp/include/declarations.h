@@ -24,6 +24,22 @@
 #endif
 
 
+#ifndef RcppArmadillo__RcppArmadillo__h
+//Try to get info from RcppArmadillo because someone already made a nice config.hpp that tells us what we can expect
+#include <armadillo_bits/config.hpp>
+#endif
+
+#ifndef ARMA_BLAS_UNDERSCORE
+	#define NOUNDERBLAS
+	#define NOUNDERLAPACK
+#endif
+
+#ifdef ARMA_BLAS_CAPITALS
+	#define CAPSBLAS
+	#define CAPSLAPACK
+#endif
+
+
 /*
   Other important includes that we need.
  */
