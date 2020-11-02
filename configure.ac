@@ -77,7 +77,7 @@ FLIBS=`"${R_HOME}/bin/R" CMD config FLIBS`
 PKG_LIBS="${PKG_LIBS} -lsdp ${LAPACK_LIBS} ${BLAS_LIBS} ${FLIBS} -lm"
 PKG_CFLAGS="-DNOSHORTS ${CSDP_CFLAGS}"
 
-## add some stuff for Rcpparmadillo
+## add some stuff for RcppArmadillo
 ## Use R to set CXX and CXXFLAGS
 CXX=$(${R_HOME}/bin/R CMD config CXX)
 CXXFLAGS=$("${R_HOME}/bin/R" CMD config CXXFLAGS)
