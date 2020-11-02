@@ -75,7 +75,7 @@ BLAS_LIBS=`"${R_HOME}/bin/R" CMD config BLAS_LIBS`
 FLIBS=`"${R_HOME}/bin/R" CMD config FLIBS`
 
 PKG_LIBS="${PKG_LIBS} -lsdp ${LAPACK_LIBS} ${BLAS_LIBS} ${FLIBS} -lm"
-PKG_CFLAGS="-DNOSHORTS ${CSDP_CFLAGS}"
+PKG_CFLAGS="-I${R_HOME}/R/library/RcppArmadillo/include -DNOSHORTS ${CSDP_CFLAGS}"
 
 ## add some stuff for RcppArmadillo
 ## Use R to set CXX and CXXFLAGS
