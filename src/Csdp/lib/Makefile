@@ -8,6 +8,10 @@
 # want to turn on optimizations. You may also have to use some of the 
 # following flags:
 #
+#  -DCAPSBLAS         if BLAS routine names are capitalized.
+#  -DCAPSLAPACK       if LAPACK routine names are capitalized.
+#  -DNOUNDERBLAS      if BLAS routine names have no underscore.
+#  -DNOUNDERLAPACK    if LAPACK routine names have no underscore.
 #  -DBIT64            For I32LP64 systems.
 #  -DNOSHORTS         Allow for (LP) blocks of more than 65535 variables.
 #  -DUSEOPENMP        Build an OpenMP parallel version.
@@ -17,12 +21,6 @@
 #  -DUSEGETTIME       Use ANSI C gettime() routine to determine clock
 #                     time used in different parts of the code.
 #  -DUSEATLAS         Turns on some special code for use with the ATLAS BLAS.
-#
-# the following defines have been replaced by the ARMADILLO ones: ARMA_BLAS_CAPITALS & ARMA_BLAS_UNDERSCORE
-#  -DCAPSBLAS         if BLAS routine names are capitalized.
-#  -DCAPSLAPACK       if LAPACK routine names are capitalized.
-#  -DNOUNDERBLAS      if BLAS routine names have no underscore.
-#  -DNOUNDERLAPACK    if LAPACK routine names have no underscore.
 #
 # The default settings for gcc:
 #
@@ -41,7 +39,8 @@ CFLAGS=-O3 -ansi -Wall -DNOSHORTS -DUSEGETTIME -I../include
 #
 # 3. By default, we assume that BLAS routines have names like ddot_(),
 #    but some systems use ddot(), DDOT(), or DDOT_() instead.  A similar issue
-#    effects the LAPACK routines.
+#    effects the LAPACK routines.  The flags -DCAPSBLAS, -DCAPSLAPACK, 
+#    -DNOUNDERBLAS. and -DNOUNDERLAPACK are used to handle such situations.
 # 
 # 4. The code can be built on 64 bit systems that use an I32LP64 model
 #    in which int's are 32 bits, long's and pointers are 64 bits.  Note that 

@@ -48,14 +48,14 @@ void matvec(A,x,y)
 
 	  scale1=1.0;
 	  scale2=0.0;
-#ifdef ARMA_BLAS_UNDERSCORE
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef NOUNDERBLAS
+#ifdef CAPSBLAS
 	  DGEMV("N",&n,&n,&scale1,ap,&n,x+p,&inc,&scale2,y+p,&inc);
 #else
 	  dgemv("N",&n,&n,&scale1,ap,&n,x+p,&inc,&scale2,y+p,&inc);
 #endif
 #else
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef CAPSBLAS
 	  DGEMV_("N",&n,&n,&scale1,ap,&n,x+p,&inc,&scale2,y+p,&inc);
 #else
 	  dgemv_("N",&n,&n,&scale1,ap,&n,x+p,&inc,&scale2,y+p,&inc);

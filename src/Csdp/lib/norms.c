@@ -12,14 +12,14 @@ double norm2(n,x)
   double nrm;
   int incx=1;
 
-#ifdef ARMA_BLAS_UNDERSCORE
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef NOUNDERBLAS
+#ifdef CAPSBLAS
   nrm=DNRM2(&n,x,&incx);
 #else
   nrm=dnrm2(&n,x,&incx);
 #endif
 #else
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef CAPSBLAS
   nrm=DNRM2_(&n,x,&incx);
 #else
   nrm=dnrm2_(&n,x,&incx);
@@ -36,14 +36,14 @@ double norm1(n,x)
   double nrm;
   int incx=1;
 
-#ifdef ARMA_BLAS_UNDERSCORE
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef NOUNDERBLAS
+#ifdef CAPSBLAS
   nrm=DASUM(&n,x,&incx);
 #else
   nrm=dasum(&n,x,&incx);
 #endif
 #else
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef CAPSBLAS
   nrm=DASUM_(&n,x,&incx);
 #else
   nrm=dasum_(&n,x,&incx);
@@ -61,8 +61,8 @@ double norminf(n,x)
   double nrm;
   int incx=1;
 
-#ifdef ARMA_BLAS_UNDERSCORE
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef NOUNDERBLAS
+#ifdef CAPSBLAS
   i=IDAMAX(&n,x,&incx);
   nrm=fabs(x[i-1]);
 #else
@@ -70,7 +70,7 @@ double norminf(n,x)
   nrm=fabs(x[i-1]);
 #endif
 #else
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef CAPSBLAS
   i=IDAMAX_(&n,x,&incx);
   nrm=fabs(x[i-1]);
 #else

@@ -15,14 +15,14 @@ double calc_dobj(k,a,y,constant_offset)
 
   s=0.0;
 
-#ifdef ARMA_BLAS_UNDERSCORE
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef NOUNDERBLAS
+#ifdef CAPSBLAS
     s=s+DDOT(&k,a+1,&incx,y+1,&incx);
 #else
     s=s+ddot(&k,a+1,&incx,y+1,&incx);
 #endif
 #else
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef CAPSBLAS
     s=s+DDOT_(&k,a+1,&incx,y+1,&incx);
 #else
     s=s+ddot_(&k,a+1,&incx,y+1,&incx);

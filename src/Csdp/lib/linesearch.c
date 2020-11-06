@@ -164,14 +164,14 @@ double linesearch(n,dX,work1,work2,work3,cholinv,q,z,workvec,
       scale2=0.0;
       inc=1;
       
-#ifdef ARMA_BLAS_UNDERSCORE
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef NOUNDERBLAS
+#ifdef CAPSBLAS
       DGEMV("T",&n,&j,&scale1,lanczosvectors,&n,z+1,&inc,&scale2,reorth+1,&inc);
 #else
       dgemv("T",&n,&j,&scale1,lanczosvectors,&n,z+1,&inc,&scale2,reorth+1,&inc);
 #endif
 #else
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef CAPSBLAS
       DGEMV_("T",&n,&j,&scale1,lanczosvectors,&n,z+1,&inc,&scale2,reorth+1,&inc);
 #else
       dgemv_("T",&n,&j,&scale1,lanczosvectors,&n,z+1,&inc,&scale2,reorth+1,&inc);
@@ -182,14 +182,14 @@ double linesearch(n,dX,work1,work2,work3,cholinv,q,z,workvec,
       scale2=1.0;
       inc=1;
 
-#ifdef ARMA_BLAS_UNDERSCORE
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef NOUNDERBLAS
+#ifdef CAPSBLAS
       DGEMV("N",&n,&j,&scale1,lanczosvectors,&n,reorth+1,&inc,&scale2,z+1,&inc);
 #else
       dgemv("N",&n,&j,&scale1,lanczosvectors,&n,reorth+1,&inc,&scale2,z+1,&inc);
 #endif
 #else
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef CAPSBLAS
       DGEMV_("N",&n,&j,&scale1,lanczosvectors,&n,reorth+1,&inc,&scale2,z+1,&inc);
 #else
       dgemv_("N",&n,&j,&scale1,lanczosvectors,&n,reorth+1,&inc,&scale2,z+1,&inc);
@@ -200,14 +200,14 @@ double linesearch(n,dX,work1,work2,work3,cholinv,q,z,workvec,
       scale2=0.0;
       inc=1;
       
-#ifdef ARMA_BLAS_UNDERSCORE
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef NOUNDERBLAS
+#ifdef CAPSBLAS
       DGEMV("T",&n,&j,&scale1,lanczosvectors,&n,z+1,&inc,&scale2,reorth+1,&inc);
 #else
       dgemv("T",&n,&j,&scale1,lanczosvectors,&n,z+1,&inc,&scale2,reorth+1,&inc);
 #endif
 #else
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef CAPSBLAS
       DGEMV_("T",&n,&j,&scale1,lanczosvectors,&n,z+1,&inc,&scale2,reorth+1,&inc);
 #else
       dgemv_("T",&n,&j,&scale1,lanczosvectors,&n,z+1,&inc,&scale2,reorth+1,&inc);
@@ -218,14 +218,14 @@ double linesearch(n,dX,work1,work2,work3,cholinv,q,z,workvec,
       scale2=1.0;
       inc=1;
 
-#ifdef ARMA_BLAS_UNDERSCORE
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef NOUNDERBLAS
+#ifdef CAPSBLAS
       DGEMV("N",&n,&j,&scale1,lanczosvectors,&n,reorth+1,&inc,&scale2,z+1,&inc);
 #else
       dgemv("N",&n,&j,&scale1,lanczosvectors,&n,reorth+1,&inc,&scale2,z+1,&inc);
 #endif
 #else
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef CAPSBLAS
       DGEMV_("N",&n,&j,&scale1,lanczosvectors,&n,reorth+1,&inc,&scale2,z+1,&inc);
 #else
       dgemv_("N",&n,&j,&scale1,lanczosvectors,&n,reorth+1,&inc,&scale2,z+1,&inc);

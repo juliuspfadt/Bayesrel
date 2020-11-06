@@ -21,14 +21,14 @@ int chol_blk(n,lda,A)
   info=0;
 
 
-#ifdef ARMA_BLAS_UNDERSCORE
-  #ifdef ARMA_BLAS_CAPITALS
+#ifdef NOUNDERLAPACK
+  #ifdef CAPSLAPACK
     DPOTRF("U",&n,A,&lda,&info);
   #else
     dpotrf("U",&n,A,&lda,&info);
   #endif
 #else
-  #ifdef ARMA_BLAS_CAPITALS
+  #ifdef CAPSLAPACK
     DPOTRF_("U",&n,A,&lda,&info);
   #else
     dpotrf_("U",&n,A,&lda,&info);
@@ -177,14 +177,14 @@ void chol_inv(A,work)
 	  ap=work.blocks[blk].data.mat;
           scale=1.0;
 
-#ifdef ARMA_BLAS_UNDERSCORE
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef NOUNDERLAPACK
+#ifdef CAPSLAPACK
 	  DTRTRI("U","N",&n,ap,&n,&info);
 #else
 	  dtrtri("U","N",&n,ap,&n,&info);
 #endif
 #else
-#ifdef ARMA_BLAS_CAPITALS
+#ifdef CAPSLAPACK
 	  DTRTRI_("U","N",&n,ap,&n,&info);
 #else
 	  dtrtri_("U","N",&n,ap,&n,&info);
