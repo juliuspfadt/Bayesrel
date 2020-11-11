@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - master
-      - Cpp
-      - CppJoris
+      - devel
   # pull_request:
   #   branches:
   #     - master
