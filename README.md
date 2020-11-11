@@ -1,7 +1,7 @@
 
 # Bayesrel
 
-The goal of Bayesrel is to provide popular single-test reliability coefficients in the Bayesian statistis framework.
+The goal of Bayesrel is to provide popular single-test reliability coefficients in the Bayesian statistics framework.
 These coefficients include alpha, lambda2, lambda6, the glb, and omega.
 
 ## Installation

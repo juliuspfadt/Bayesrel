@@ -9,7 +9,7 @@
   rating from 1 to 5 on a Likert scale, 10 \% missings were inserted at random}
 \usage{asrm_mis}
 \format{
-  The format is a 5-column datamatrix containing 78 observations, missing are NA
+  The format is a 5-column data matrix containing 78 observations, missing are NA
 }
 \source{
   article}
