@@ -1,8 +1,5 @@
 
 
-
-set.seed(1234)
-
 test_that("Estimates lambda2 and omega are correct", {
 
   data(asrm, package = "Bayesrel")
@@ -14,7 +11,7 @@ test_that("Estimates lambda2 and omega are correct", {
   expect_equal(ee$Bayes$est$Bayes_omega, 0.7708523, tolerance = 1e-3)
   expect_equal(ee$freq$est$freq_omega, 0.7919616, tolerance = 1e-3)
   expect_equal(ee$Bayes$cred$low$Bayes_omega, 0.6719616, tolerance = 1e-3)
-  if (as.numeric(R.Version()$minor) > 6) {
+  if (as.numeric(R.Version()$major) + trunc(as.numeric(R.Version()$minor)) > 3.5) {
     expect_equal(as.numeric(ee$freq$conf$up$freq_lambda2), 0.865121, tolerance = 1e-3)
   } # because of the change in the RNG brought by the new R version
 
@@ -82,12 +79,12 @@ test_that("Omega results with missing data are correct", {
 
 })
 
-test_that("Frequentist Lambda6 results with missing data are correct", {
+test_that("Frequentist Lambda6 results with missing data and parametric bootstrap are correct", {
 
   data(asrm_mis, package = "Bayesrel")
   set.seed(1234)
-  ee <- Bayesrel::strel(asrm_mis, estimates = c("lambda6"), Bayes = F, n.boot = 100)
-  expect_equal(as.numeric(ee$freq$conf$low$freq_lambda6), c(0.7005416),
+  ee <- Bayesrel::strel(asrm_mis, estimates = c("lambda6"), Bayes = F, n.boot = 100, para.boot = T)
+  expect_equal(as.numeric(ee$freq$conf$low$freq_lambda6), c(0.7188984),
                tolerance = 1e-3)
 
 })
@@ -104,3 +101,4 @@ test_that("Results with input cov matrix are correct", {
                tolerance = 1e-3)
 
 })
+
