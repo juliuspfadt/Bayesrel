@@ -90,7 +90,14 @@ test_that("Frequentist Lambda6 results with missing data and parametric bootstra
   expect_equal(as.numeric(ee$freq$est$freq_lambda6), c(0.7927271),
                tolerance = 1e-3)
   if (as.numeric(R.Version()$major >= 4)) {
-    expect_equal(as.numeric(ee$freq$conf$low$freq_lambda6), 0.7188984, tolerance = 1e-3)
+    es <- extSoftVersion()
+    blas   <- as.character(es["BLAS"])
+    lapack <- La_library()
+    if (grepl("atlas", tolower(blas)) || grepl("atlas", tolower(lapack)))
+      tol <- 1e-2
+    else
+      tol <- 1e-3
+    expect_equal(as.numeric(ee$freq$conf$low$freq_lambda6), 0.7188984, tolerance = tol)
   } # because of the change in the RNG brought by the new R version
 
 
@@ -107,7 +114,14 @@ test_that("Results with input cov matrix are correct", {
   expect_equal(as.numeric(ee$freq$est$freq_lambda2), c(0.7960336),
                tolerance = 1e-3)
   if (as.numeric(R.Version()$major >= 4)) {
-    expect_equal(as.numeric(ee$freq$conf$low$freq_lambda2), 0.7724344, tolerance = 1e-3)
+    es <- extSoftVersion()
+    blas   <- as.character(es["BLAS"])
+    lapack <- La_library()
+    if (grepl("atlas", tolower(blas)) || grepl("atlas", tolower(lapack)))
+      tol <- 1e-2
+    else
+      tol <- 1e-3
+    expect_equal(as.numeric(ee$freq$conf$low$freq_lambda2), 0.7724344, tolerance = tol)
   } # because of the change in the RNG brought by the new R version
 
 })
