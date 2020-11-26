@@ -25,10 +25,6 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
     ss <- drawStart(n, p, pars)
     wi <- ss$wi
     phi <- ss$phi
-    # prepare matrices for saving lambda and psi and omega:
-    La <- matrix(0, n.iter, p)
-    Psi <- matrix(0, n.iter, p)
-    oms <- numeric(n.iter)
 
     if (pairwise) { # missing data
       dat_complete <- data
@@ -36,7 +32,7 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
       ms <- rep(0, p)
 
       for (i in 1:n.iter) {
-        out <- sampleFMParams(wi, dat_complete, phi, pars)
+        out <- sampleFMUniParams(wi, dat_complete, phi, pars)
         wi <- out$wi
         phi <- out$phi
         cc <- out$cc
@@ -97,7 +93,7 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
 
 
 
-sampleFMParams <- function(wi, data, phi, pars) {
+sampleFMUniParams <- function(wi, data, phi, pars) {
   n <- nrow(data)
   p <- ncol(data)
 
