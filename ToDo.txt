@@ -1,3 +1,2 @@
 To Do: 
 
-Make a function for only the lower bounds and omega. 

@@ -28,6 +28,7 @@ int custom_sdpCpp(
      double *pdobj,
      const arma::cube& car,
      arma::dvec& out,
+	 Rcpp::Function func,
      const int printlevel)
 {
   int ret;
@@ -446,6 +447,11 @@ int custom_sdpCpp(
            diagO,bestx,besty,bestz,Zi,O,rhs,dZ,dX,dy,dy1,Fp,
            printlevel,params);
 
+		if (i % 500 == 0)
+		{
+			func();
+		}
+		
 		out(i) = 0;
 		for (j = 1; j < k+1; j++)
 			out(i) += y[j];

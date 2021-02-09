@@ -32,7 +32,7 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
       ms <- rep(0, p)
 
       for (i in 1:n.iter) {
-        out <- sampleFMUniParams(wi, dat_complete, phi, pars)
+        out <- sampleFMParams(wi, dat_complete, phi, pars)
         wi <- out$wi
         phi <- out$phi
         cc <- out$cc
@@ -93,7 +93,7 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
 
 
 
-sampleFMUniParams <- function(wi, data, phi, pars) {
+sampleFMParams <- function(wi, data, phi, pars) {
   n <- nrow(data)
   p <- ncol(data)
 
