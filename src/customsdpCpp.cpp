@@ -422,6 +422,7 @@ int custom_sdpCpp(
      */
 
     sort_entries(k,C,constraints);
+	
 
 	for(i=0; i<car.n_rows; i++) {
 
@@ -446,8 +447,8 @@ int custom_sdpCpp(
            workvec2,workvec3,workvec4,workvec5,workvec6,workvec7,workvec8,
            diagO,bestx,besty,bestz,Zi,O,rhs,dZ,dX,dy,dy1,Fp,
            printlevel,params);
-
-		if (i % 500 == 0)
+		
+		if (i % (car.n_rows/3) == 0)
 		{
 			func();
 		}
