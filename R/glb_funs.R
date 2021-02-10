@@ -56,6 +56,7 @@ glbOnArray_custom <- function(Cov, callback = function(){}, printlevel = 0) {
     prob.data$A,
     prob.data$b,
     Cov,
+    callback,
     printlevel
   )
   return(ret)

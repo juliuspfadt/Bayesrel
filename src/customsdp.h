@@ -37,6 +37,7 @@ int custom_sdpCpp(int n,
     double *ppobj,
     double *pdobj,
     const arma::cube& car, arma::dvec& out,
+	Rcpp::Function func,
     const int printlevel = 0);
 
 

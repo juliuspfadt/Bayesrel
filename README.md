@@ -1,12 +1,11 @@
 
-# Bayesrel
 
 <!-- badges: start -->
 [![R build status](https://github.com/juliuspf/Bayesrel/workflows/R-CMD-check/badge.svg)](https://github.com/juliuspf/Bayesrel/actions)
 <!-- badges: end -->
 
-The goal of Bayesrel is to provide popular single-test reliability coefficients in the Bayesian statistics framework.
-These coefficients include alpha, lambda2, lambda6, the glb, and omega.
+# Bayesrel - devel
+This is the development branch of the Bayesrel-package.
 
 ## Installation
 

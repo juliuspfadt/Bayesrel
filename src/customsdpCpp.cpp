@@ -28,6 +28,7 @@ int custom_sdpCpp(
      double *pdobj,
      const arma::cube& car,
      arma::dvec& out,
+	 Rcpp::Function func,
      const int printlevel)
 {
   int ret;
@@ -421,6 +422,7 @@ int custom_sdpCpp(
      */
 
     sort_entries(k,C,constraints);
+	
 
 	for(i=0; i<car.n_rows; i++) {
 
@@ -445,7 +447,12 @@ int custom_sdpCpp(
            workvec2,workvec3,workvec4,workvec5,workvec6,workvec7,workvec8,
            diagO,bestx,besty,bestz,Zi,O,rhs,dZ,dX,dy,dy1,Fp,
            printlevel,params);
-
+		
+		if (i % (car.n_rows/3) == 0)
+		{
+			func();
+		}
+		
 		out(i) = 0;
 		for (j = 1; j < k+1; j++)
 			out(i) += y[j];

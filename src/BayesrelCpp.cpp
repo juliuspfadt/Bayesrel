@@ -20,6 +20,7 @@ arma::dvec csdpArma(
               const Rcpp::List& A_p,
               const arma::dvec& b_p,
               const arma::cube& car,
+					Rcpp::Function func,
               const int printlevel = 0)
 {
 
@@ -49,7 +50,7 @@ arma::dvec csdpArma(
     /*
      * Solve the problem
      */
-    status = custom_sdpCpp(n_p,nconstraints_p,C,b,constraints,0.0,&pobj,&dobj, car, out, printlevel);
+    status = custom_sdpCpp(n_p,nconstraints_p,C,b,constraints,0.0,&pobj,&dobj, car, out, func, printlevel);
 
 
     // free_prob(n_p,nconstraints_p,C,b,constraints,X,y,Z);
