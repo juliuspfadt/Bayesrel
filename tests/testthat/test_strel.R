@@ -126,3 +126,15 @@ test_that("Results with input cov matrix are correct", {
 
 })
 
+test_that("Frequentist glb is correct", {
+
+  data(asrm, package = "Bayesrel")
+  set.seed(1234)
+  ee <- Bayesrel::strel(asrm, estimates = "glb", n.boot = 100, freq = TRUE, Bayes = FALSE)
+
+  expect_equal(c(ee$freq$est$freq_glb), 0.8459531, tolerance = 1e-3)
+  expect_equal(c(ee$freq$conf$up$freq_glb, use.names = FALSE), 0.9011926, tolerance = 1e-3)
+
+
+})
+

@@ -29,6 +29,7 @@ int custom_sdpCpp(
      const arma::cube& car,
      arma::dvec& out,
 	 Rcpp::Function func,
+	 const bool carHasMoreThan1Row,
      const int printlevel)
 {
   int ret;
@@ -423,8 +424,9 @@ int custom_sdpCpp(
 
     sort_entries(k,C,constraints);
 	
-
-	for(i=0; i<car.n_rows; i++) {
+		
+	for(i=0; i<car.n_rows; i++)
+	{
 
 		for (j=0; j<k-1; j++) for (int j2 = j+1; j2<k; j2++)
 		{
@@ -432,23 +434,24 @@ int custom_sdpCpp(
 			C.blocks[1].data.mat[j  + k*j2] = -car(i, j2, j);
 		}
 
-        for (j=0; j<k; j++)
+		for (j=0; j<k; j++)
 		{
 			C.blocks[2].data.vec[j+1] = -car(i, j, j);
 		}
 
+		initArma(n,k,C,a,constraints,&X,&y,&Z);
 
-
-
-        initArma(n,k,C,a,constraints,&X,&y,&Z);
-
-        ret=sdp(n,k,C,a,constant_offset,constraints,byblocks,fill,X,y,Z,
-           cholxinv,cholzinv,ppobj,pdobj,work1,work2,work3,workvec1,
-           workvec2,workvec3,workvec4,workvec5,workvec6,workvec7,workvec8,
-           diagO,bestx,besty,bestz,Zi,O,rhs,dZ,dX,dy,dy1,Fp,
-           printlevel,params);
+		ret=sdp(n,k,C,a,constant_offset,constraints,byblocks,fill,X,y,Z,
+		   cholxinv,cholzinv,ppobj,pdobj,work1,work2,work3,workvec1,
+		   workvec2,workvec3,workvec4,workvec5,workvec6,workvec7,workvec8,
+		   diagO,bestx,besty,bestz,Zi,O,rhs,dZ,dX,dy,dy1,Fp,
+		   printlevel,params);
 		
-		if (i % (car.n_rows/3) == 0)
+		/*
+		 * if single covariance matrix is supplied, the empty func should not be called, because the counting condition leads to an error
+		 */
+
+		if (carHasMoreThan1Row && i % (car.n_rows/3) == 0)
 		{
 			func();
 		}
@@ -465,8 +468,7 @@ int custom_sdpCpp(
 
 		out(i) = (scv - svars + out(i)) / scv;
 
-    }
-
+	}
 
 
 
