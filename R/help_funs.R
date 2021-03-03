@@ -122,7 +122,7 @@ createUnidimCovMat <- function(avg, p) {
 }
 
 try_smc <- function(M) {
-  return(try(1 - 1 / diag(solve(cov2cor(M))), silent = T))
+  return(try(1 - 1 / diag(solve(cov2cor(M))), silent = TRUE))
 }
 
 try_psd <- function(M) {
