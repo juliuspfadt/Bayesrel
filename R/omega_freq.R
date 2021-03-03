@@ -13,7 +13,6 @@ omegaFreqData <- function(data, interval, omega.int.analytic, pairwise, n.boot =
   model <- paste0("f1 =~ ")
   loadings <- paste(paste(lam_names, "*", file$names, sep = ""),
                        collapse = " + ")
-  factors <- "f1 ~~ 1*f1\n"
   errors <- paste(paste(file$names, " ~~ ", err_names, "*",
                            file$names, sep = ""), collapse = "\n")
   sum_loads <- paste("loading :=", paste(lam_names, collapse = " + "),
@@ -21,7 +20,7 @@ omegaFreqData <- function(data, interval, omega.int.analytic, pairwise, n.boot =
   sum_errs <- paste("error :=", paste(err_names, collapse = " + "),
                     "\n")
   omega <- "omega := (loading^2) / ((loading^2) + error) \n"
-  mod <- paste(model, loadings, "\n", factors, errors,
+  mod <- paste(model, loadings, "\n", errors,
                  "\n", sum_loads, sum_errs, omega)
 
   if (pairwise) {

@@ -1,7 +1,7 @@
 Package: Bayesrel
 Type: Package
 Title: Bayesian Reliability Estimation
-Version: 0.7.0.5
+Version: 0.7.0.6
 Authors@R: c(person("Julius M.", "Pfadt", email = "julius.pfadt@icloud.com",
                   role = c("aut", "cre")),
              person("Don", "van den Bergh",

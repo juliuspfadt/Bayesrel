@@ -11,6 +11,7 @@ test_that("Estimates lambda2 and omega are correct", {
   expect_equal(ee$Bayes$est$Bayes_omega, 0.7708523, tolerance = 1e-3)
   expect_equal(ee$freq$est$freq_omega, 0.7919616, tolerance = 1e-3)
   expect_equal(ee$Bayes$cred$low$Bayes_omega, 0.6719616, tolerance = 1e-3)
+  expect_equal(ee$freq$conf$low$freq_omega, 0.7194611, tolerance = 1e-3)
   if (as.numeric(R.Version()$major >= 4)) {
     expect_equal(as.numeric(ee$freq$conf$up$freq_lambda2), 0.865121, tolerance = 1e-3)
   } # because of the change in the RNG brought by the new R version
