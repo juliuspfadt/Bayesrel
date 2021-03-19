@@ -1,10 +1,17 @@
 # gives freq omega, and loadings and errors
 #
 
-omegaFreqData <- function(data, interval, omega.int.analytic, pairwise, n.boot = 1e3, callback = function(){},
-                          parametric = F
-                          ){
+omegaFreqData <- function(
+  data,
+  interval,
+  omega.int.analytic,
+  pairwise,
+  n.boot = 1e3,
+  callback = function(){},
+  parametric = FALSE){
+
   p <- ncol(data)
+  n <- nrow(data)
   file <- lavOneFile(data)
   colnames(data) <- file$names
 
@@ -28,6 +35,7 @@ omegaFreqData <- function(data, interval, omega.int.analytic, pairwise, n.boot =
   } else {
     fit <- fitmodel(mod, data)
   }
+
   if (is.null(fit)) {
     return(list(omega = NA, fit.object = NULL))
   } else {
@@ -37,41 +45,61 @@ omegaFreqData <- function(data, interval, omega.int.analytic, pairwise, n.boot =
       om_low <- params$ci.lower[params$lhs=="omega"]
       om_up <- params$ci.upper[params$lhs=="omega"]
       om_obj <- NA
-    } else {
+    } else { # omega cfa with bootstrapping:
       if (parametric) {
-        bb <- lavaan::bootstrapLavaan(fit, type = "parametric", R = n.boot)
-        if (dim(bb)[1] < 2) {
-          om_low <- NA
-          om_up <- NA
-          om_obj <- NA
+        if (pairwise) {
+          cc <- cov(data, use = "pairwise.complete.obs")
         } else {
-          llow <- apply(bb[, 1:p], 2, quantile, prob = (1-interval)/2)
-          elow <- apply(bb[, (p+1):(p*2)], 2, quantile, prob = (1-interval)/2)
-          lup <- apply(bb[, 1:p], 2, quantile, prob = interval+(1-interval)/2)
-          eup <- apply(bb[, (p+1):(p*2)], 2, quantile, prob = interval+(1-interval)/2)
-          om_low <- omegaBasic(llow, elow)
-          om_up <- omegaBasic(lup, eup)
-          suml <- apply(bb[, 1:p], 1, sum)
-          sume <- apply(bb[, (p+1):(p*2)], 1, sum)
-          om_obj <- suml^2 / (suml^2 + sume)
+          cc <- cov(data)
+        }
+        om_obj <- numeric(n.boot)
+        for (i in 1:n.boot){
+          boot_data <- MASS::mvrnorm(n, colMeans(data, na.rm = TRUE), cc)
+          fit <- fitmodel(mod, boot_data)
+          callback()
+          if (!is.null(fit)) {
+            params <- lavaan::parameterestimates(fit, level = interval)
+            om_obj[i] <- params$est[params$lhs=="omega"]
+          } else {
+            om_obj[i] <- NA
+          }
         }
 
-      } else {
-        bb <- lavaan::bootstrapLavaan(fit, type = "nonparametric", R = n.boot)
-        if (dim(bb)[1] < 2) {
+        if (sum(!is.na(om_obj)) > 1) {
+          om_low <- quantile(om_obj, prob = (1 - interval) / 2, na.rm = TRUE)
+          om_up <- quantile(om_obj, prob = interval + (1 - interval) / 2, na.rm = TRUE)
+        } else {
           om_low <- NA
           om_up <- NA
           om_obj <- NA
+        }
+
+      } else { # bootstrap non parametric
+
+        om_obj <- numeric(n.boot)
+        for (i in 1:n.boot){
+          boot_data <- as.matrix(data[sample.int(n, size = n, replace = TRUE), ])
+          if (pairwise) {
+            fit <- fitmodel_mis(mod, boot_data)
+          } else {
+            fit <- fitmodel(mod, boot_data)
+          }
+          callback()
+          if (!is.null(fit)) {
+            params <- lavaan::parameterestimates(fit, level = interval)
+            om_obj[i] <- params$est[params$lhs=="omega"]
+          } else {
+            om_obj[i] <- NA
+          }
+        }
+
+        if (sum(!is.na(om_obj)) > 1) {
+          om_low <- quantile(om_obj, prob = (1 - interval) / 2, na.rm = TRUE)
+          om_up <- quantile(om_obj, prob = interval + (1 - interval) / 2, na.rm = TRUE)
         } else {
-          llow <- apply(bb[, 1:p], 2, quantile, prob = (1-interval)/2)
-          elow <- apply(bb[, (p+1):(p*2)], 2, quantile, prob = (1-interval)/2)
-          lup <- apply(bb[, 1:p], 2, quantile, prob = interval+(1-interval)/2)
-          eup <- apply(bb[, (p+1):(p*2)], 2, quantile, prob = interval+(1-interval)/2)
-          om_low <- omegaBasic(llow, elow)
-          om_up <- omegaBasic(lup, eup)
-          suml <- apply(bb[, 1:p], 1, sum)
-          sume <- apply(bb[, (p+1):(p*2)], 1, sum)
-          om_obj <- suml^2 / (suml^2 + sume)
+          om_low <- NA
+          om_up <- NA
+          om_obj <- NA
         }
       }
     }
@@ -81,7 +109,6 @@ omegaFreqData <- function(data, interval, omega.int.analytic, pairwise, n.boot =
                fit_tmp["rmsea"], fit_tmp["rmsea.ci.lower"], fit_tmp["rmsea.ci.upper"],
                fit_tmp["srmr"])
   }
-  callback()
   return(list(omega = omega, omega_lower = om_low, omega_upper = om_up, indices = indic, fit.object = fit,
               omega_boot = om_obj))
 }
