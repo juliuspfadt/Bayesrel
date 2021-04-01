@@ -108,10 +108,10 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
     res$cred$up$Bayes_omega<- int[2]
     res$est$Bayes_omega <- mean(res$samp$Bayes_omega)
 
-    if (item.dropped){
+    if (item.dropped) {
       om_samp_ifitem <- array(0, c(n.chains, length(seq(1, n.iter-n.burnin, thin)), p))
       for (i in 1:p){
-        tmp <- data[-i, -i]
+        tmp <- data[, -i]
         om_samp_ifitem[, , i] <- omegaSampler(tmp, n.iter, n.burnin, thin, n.chains, pairwise, callback)$omega
       }
       res$ifitem$samp$omega <- om_samp_ifitem
