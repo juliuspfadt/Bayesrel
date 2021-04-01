@@ -12,7 +12,7 @@
 #'
 #' @export
 #'
-omega_fit <- function(x){
+omega_fit <- function(x) {
   if (!("omega" %in% x$estimates)) {return(warning("please run the analysis with omega as an estimate"))}
   if (!is.null(x$freq$omega.pfa)) {warning("cannot compute fit.measures for the pfa method")}
 
@@ -22,29 +22,29 @@ omega_fit <- function(x){
     } else {
       sigma <- cov(x$data, use = "complete.obs")
     }
+
     lambda <- x$Bayes$loadings
     psi <- x$Bayes$resid_var
-    cimpl <- lambda %*% t(lambda) + diag(psi)
-    ymax <- max(eigen(cimpl)$values, eigen(sigma)$values) * 1.3
-    ee_impl <- matrix(0, 1e3, ncol(x$data))
-    for (i in 1:1e3) {
-      dtmp <- MASS::mvrnorm(nrow(x$data), rep(0, ncol(sigma)), cimpl)
-      ee_impl[i, ] <- eigen(cov(dtmp))$values
+
+    nsamp <- nrow(lambda)
+    ee_impl <- matrix(0, nsamp, ncol(sigma))
+    for (i in 1:nsamp) {
+      ctmp <- lambda[i, ] %*% t(lambda[i, ]) + diag(psi[i, ])
+      dtmp <- MASS::mvrnorm(nrow(x$data), rep(0, ncol(sigma)), ctmp)
+      ee_impl[i, ] <- eigen(cov(dtmp), only.values = TRUE)$values
     }
     qq_ee_low <- apply(ee_impl, 2, quantile, prob = .025)
     qq_ee_up <- apply(ee_impl, 2, quantile, prob = .975)
 
+    ymax <- max(ee_impl, eigen(sigma, only.values = TRUE)$values)
+
     plot(eigen(sigma)$values, axes = F, ylim = c(0, ymax), ylab = "Eigenvalue", xlab = "Eigenvalue No.",
          pch = 8, cex = 0)
-    # lines(qq_ee_low, col = "gray50", lty = 2)
-    # lines(qq_ee_up, col = "gray50", lty = 2)
-    # graphics::polygon(x = c(1:ncol(sigma), rev(1:ncol(sigma))), y = c(qq_ee_up, rev(qq_ee_low)),
-    #                   col = adjustcolor("gray", alpha.f = .7), border = NA)
+
     arrows(x0 = seq(1:ncol(sigma)), x1 = seq(1:ncol(sigma)), y0 = qq_ee_low, y1 = qq_ee_up,
-           col = "gray50", angle=90, code = 3, length = .06, lwd = 1)
-    # lines(eigen(sigma)$values, type = "l", lwd = 2)
-    # lines(eigen(sigma)$values, type = "p")
-    lines(eigen(sigma)$values, type = "p", pch = 8, cex =.6)
+           col = "gray55", angle=90, code = 3, length = .06, lwd = 2.5)
+
+    lines(eigen(sigma)$values, type = "p", pch = 8, cex =.7)
     axis(side = 1, at = seq(1:ncol(sigma)))
     axis(side = 2, las = 1)
     # title(main = "Posterior Predictive Check for Omega 1-Factor-Model")

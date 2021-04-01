@@ -53,7 +53,8 @@
 #' @importFrom Rcpp evalCpp
 #'
 #' @export
-strel <- function(data = NULL, estimates = c("alpha", "lambda2", "glb", "omega"),
+strel <- function(data = NULL,
+                  estimates = c("alpha", "lambda2", "glb", "omega"),
                   cov.mat = NULL,
                   interval = .95,
                   n.iter = 1000, n.burnin = 50, thin = 1, n.chains = 3,
