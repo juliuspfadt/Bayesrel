@@ -1,5 +1,5 @@
 # forces a quadratic matrix to be symmetrical
-make_symmetric <- function(a, lower.tri=TRUE){
+make_symmetric <- function(a, lower.tri = TRUE) {
   if (lower.tri){
     ind <- upper.tri(a)
     a[ind] <- t(a)[ind]
@@ -7,7 +7,7 @@ make_symmetric <- function(a, lower.tri=TRUE){
     ind <- lower.tri(a)
     a[ind] <- t(a)[ind]
   }
-  a
+  return(a)
 }
 
 # computes alpha analytical interval with given bounds
@@ -15,7 +15,7 @@ make_symmetric <- function(a, lower.tri=TRUE){
 # Bonett, D. G., & Wright, T. A. (2015). Cronbach’s alpha reliability:
 # Interval estimation, hypothesis testing, and sample size planning. Journal of Organizational Behavior,36(1), 3–15.
 #
-ciAlpha <- function(palpha, n, V){
+ciAlpha <- function(palpha, n, V) {
   p <- ncol(V)
   z <- qnorm(1 - palpha/2)
   b <- log(n/ (n - 1))
@@ -44,7 +44,7 @@ quantiles <- function(samp, length_out = 2e3){
 
 se <- function(x) {
   b <- length(x)
-  se <- sqrt(1/(b-1) * sum((x - mean(x))^2))
+  se <- sqrt(1 / (b-1) * sum((x - mean(x))^2))
   se
 }
 
@@ -54,7 +54,7 @@ se <- function(x) {
 lavOneFile <- function(data){
   p <- ncol(data)
   v <- 0
-  for(i in 1:p){
+  for (i in 1:p) {
     v[i] <- paste0("x", i)
   }
   v <- paste0(v, collapse = "+")
@@ -63,7 +63,7 @@ lavOneFile <- function(data){
 
   # column names specify
   names <- 0
-  for(i in 1:p){
+  for (i in 1:p) {
     names[i] <- paste0("x", i)
   }
   return(list(names = names, model = mod))
@@ -72,26 +72,26 @@ lavOneFile <- function(data){
 
 # calculate omega from loadings and residual (error variances)
 
-omegaBasic <- function(l, e){
+omegaBasic <- function(l, e) {
   o <- sum(l)^2 / (sum(l)^2 + sum(e))
   return(o)
 }
 
 # calculate the kolomogorov smirnov distances between some samples and the original sample
-ks.test.statistic <- function(x, y) {
+KSTestStatistic <- function(x, y) {
   t <- stats::ks.test(x, y)
-  t$statistic
+  return(t$statistic)
 }
 
 # calculate the kublack leibler distance between two samples
-KLD.statistic <- function(x, y) {
+KLDStatistic <- function(x, y) {
   # transform the samples to PDFs:
   xdf <- get_approx_density(x)
   ydf <- get_approx_density(y)
 
   xx <- seq(0, 1, length.out = 1e3)
   t <- LaplacesDemon::KLD(xdf(xx), ydf(xx))
-  t$sum.KLD.py.px
+  return(t$sum.KLD.py.px)
 }
 
 hpdHelp <- function(x) {
@@ -116,7 +116,8 @@ createUnidimCovMat <- function(avg, p) {
     cormat <- cov2cor(tmpCov)
     mean_cor <- (sum(cormat) - p) / (p*p - p)
     counter <- counter + 1
-    if (counter == 1e4) return(print("solution has not been found"))
+    if (counter == 1e4)
+      return(print("solution has not been found"))
   }
   return(tmpCov)
 }

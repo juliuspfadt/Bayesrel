@@ -74,13 +74,6 @@ get.prob.info2 <- function(K, m) {
   return(ret)
 }
 
-write.control.file2 <- function(control) {
-  fileptr <- file("param.csdp", "w")
-  for (i in 1:length(control)) cat(names(control)[i], "=", control[[i]], "\n", sep = "", file = fileptr)
-  close(fileptr)
-}
-
-
 vector_R2csdp <- function(x) c(0, x)
 
 simple_triplet_sym_matrix <- function(i, j, v, n = max(c(i, j)), check.ind = FALSE) {
@@ -167,7 +160,11 @@ constraints_R2csdp2 <- function(A, prob.info) {
     lapply(seq_along(A), do.one.constraint)
 }
 
-
+# write.control.file2 <- function(control) {
+#   fileptr <- file("param.csdp", "w")
+#   for (i in 1:length(control)) cat(names(control)[i], "=", control[[i]], "\n", sep = "", file = fileptr)
+#   close(fileptr)
+# }
 
 # # adjusted code from Rcsdp package:
 # glbOnArray_nocpp <- function(Cov, callback = function(){}, printlevel = 0) {

@@ -10,8 +10,9 @@
 #' @examples
 #' p_strel(strel(asrm, "lambda2", n.chains = 2, n.iter = 100, freq = FALSE), "lambda2", .80)
 #' @export
-p_strel <- function(x, estimate, low.bound){
-  posi1 <- grep(estimate, x$estimates, ignore.case = T)
+p_strel <- function(x, estimate, low.bound) {
+
+  posi1 <- grep(estimate, x$estimates, ignore.case = TRUE)
   samp <- as.vector(x$Bayes$samp[[posi1]])
   obj <- ecdf(samp)
   post_prob <- 1 - obj(low.bound)
@@ -22,7 +23,7 @@ p_strel <- function(x, estimate, low.bound){
     prior <- density(unlist(priorSamp(n.item, estimate)), from = 0, to = 1, n = 512)
   } else {
     prior_all <- priors[[as.character(n.item)]]
-    posi2 <- grep(estimate, prior_all, ignore.case = T)
+    posi2 <- grep(estimate, prior_all, ignore.case = TRUE)
     prior <- prior_all[[posi2]]
   }
   end <- length(prior[["x"]])
@@ -33,8 +34,3 @@ p_strel <- function(x, estimate, low.bound){
   return(out)
 }
 
-# probic <- function(x, low.bound){
-#   obj <- ecdf(x)
-#   est_prob <- 1 - obj(low.bound)
-#   return(est_prob)
-# }

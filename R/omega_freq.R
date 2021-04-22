@@ -7,8 +7,8 @@ omegaFreqData <- function(
   omega.int.analytic,
   pairwise,
   n.boot = 1e3,
-  callback = function(){},
-  parametric = FALSE){
+  parametric = FALSE,
+  callback = function(){}) {
 
   p <- ncol(data)
   n <- nrow(data)
@@ -117,7 +117,7 @@ omegaFreqData <- function(
 fitmodel <- function(mod, data) {
   out <- tryCatch(
     {
-      lavaan::cfa(mod, data, std.lv = T)
+      lavaan::cfa(mod, data, std.lv = TRUE)
     },
     error = function(cond) {
       return(NULL)
@@ -133,7 +133,7 @@ fitmodel <- function(mod, data) {
 fitmodel_mis <- function(mod, data) {
   out <- tryCatch(
     {
-      lavaan::cfa(mod, data, std.lv = T, missing = "ML")
+      lavaan::cfa(mod, data, std.lv = TRUE, missing = "ML")
     },
     error = function(cond) {
       return(NULL)

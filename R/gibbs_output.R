@@ -3,7 +3,7 @@
 # to be passed on for forther analysis
 
 gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval, item.dropped, pairwise,
-                     callback = function(){}){
+                     callback = function(){}) {
   p <- ncol(data)
   res <- list()
   if ("alpha" %in% estimates || "lambda2" %in% estimates || "lambda4" %in% estimates || "lambda6" %in% estimates ||
@@ -15,19 +15,19 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
     res$data_mis_samp_cov <- tmp_out$dat_mis_samp_cov
     if (item.dropped) {
       Ctmp <- array(0, c(n.chains, length(seq(1, n.iter-n.burnin, thin)), p, p - 1, p - 1))
-      for (i in 1:p){
+      for (i in 1:p) {
         Ctmp[, , i, , ] <- C[ , , -i, -i]
       }
     }
   }
 
-  if ("alpha" %in% estimates){
+  if ("alpha" %in% estimates) {
     res$samp$Bayes_alpha <- coda::mcmc(apply(C, MARGIN = c(1, 2), applyalpha, callback))
     int <- coda::HPDinterval(coda::mcmc(as.vector(res$samp$Bayes_alpha)), prob = interval)
     res$cred$low$Bayes_alpha <- int[1]
     res$cred$up$Bayes_alpha <- int[2]
     res$est$Bayes_alpha <- mean(res$samp$Bayes_alpha)
-    if (item.dropped){
+    if (item.dropped) {
       res$ifitem$samp$alpha <- (apply(Ctmp, c(1, 2, 3), applyalpha, callback))
       res$ifitem$est$alpha <- apply(res$ifitem$samp$alpha, 3, mean)
       res$ifitem$cred$alpha <- coda::HPDinterval(coda::mcmc(apply(res$ifitem$samp$alpha, 3, as.vector)),
@@ -35,13 +35,13 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
     }
   }
 
-  if ("lambda2" %in% estimates){
+  if ("lambda2" %in% estimates) {
     res$samp$Bayes_lambda2 <- coda::mcmc(apply(C, MARGIN = c(1, 2), applylambda2, callback))
     int <- coda::HPDinterval(coda::mcmc(as.vector(res$samp$Bayes_lambda2)), prob = interval)
     res$cred$low$Bayes_lambda2 <- int[1]
     res$cred$up$Bayes_lambda2 <- int[2]
     res$est$Bayes_lambda2<- mean(res$samp$Bayes_lambda2)
-    if (item.dropped){
+    if (item.dropped) {
       res$ifitem$samp$lambda2 <- apply(Ctmp, c(1, 2, 3), applylambda2, callback)
       res$ifitem$est$lambda2 <- apply(res$ifitem$samp$lambda2, 3, mean)
       res$ifitem$cred$lambda2 <- coda::HPDinterval(coda::mcmc(apply(res$ifitem$samp$lambda2, 3, as.vector)),
@@ -49,7 +49,7 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
     }
   }
 
-  if ("lambda4" %in% estimates){
+  if ("lambda4" %in% estimates) {
     res$samp$Bayes_lambda4 <- coda::mcmc(apply(C, MARGIN = c(1, 2), applylambda4_nocpp, callback))
     int <- coda::HPDinterval(coda::mcmc(as.vector(res$samp$Bayes_lambda4)), prob = interval)
     res$cred$low$Bayes_lambda4 <- int[1]
@@ -63,7 +63,7 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
     }
   }
 
-  if ("lambda6" %in% estimates){
+  if ("lambda6" %in% estimates) {
     res$samp$Bayes_lambda6 <- coda::mcmc(apply(C, MARGIN = c(1, 2), applylambda6, callback))
     int <- coda::HPDinterval(coda::mcmc(as.vector(res$samp$Bayes_lambda6)), prob = interval)
     res$cred$low$Bayes_lambda6 <- int[1]
@@ -77,7 +77,7 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
     }
   }
 
-  if ("glb" %in% estimates){
+  if ("glb" %in% estimates) {
     res$samp$Bayes_glb <- coda::mcmc(t(apply(C, c(1), glbOnArray_custom, callback)))
     if (sum(is.na(res$samp$Bayes_glb) > 0)) {
       int <- c(NA, NA)
@@ -96,7 +96,7 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
   }
 
   # special case omega -----------------------------------------------------------------
-  if ("omega" %in% estimates){
+  if ("omega" %in% estimates) {
     om_samp <- omegaSampler(data, n.iter, n.burnin, thin, n.chains, pairwise, callback)
     res$samp$Bayes_omega <- om_samp$omega
     res$data_mis_samp_fm <- om_samp$dat_mis_samp_fm
@@ -110,7 +110,7 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
 
     if (item.dropped) {
       om_samp_ifitem <- array(0, c(n.chains, length(seq(1, n.iter-n.burnin, thin)), p))
-      for (i in 1:p){
+      for (i in 1:p) {
         tmp <- data[, -i]
         om_samp_ifitem[, , i] <- omegaSampler(tmp, n.iter, n.burnin, thin, n.chains, pairwise, callback)$omega
       }

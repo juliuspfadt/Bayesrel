@@ -12,7 +12,7 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
   lll <- array(0, c(n.chains, n.iter, p))
   ppp <- array(0, c(n.chains, n.iter, p))
 
-  inds <- which(is.na(data), arr.ind = T)
+  inds <- which(is.na(data), arr.ind = TRUE)
   dat_imp <- array(0, c(n.chains, n.iter, nrow(inds)))
 
   # hyperparameters
@@ -28,7 +28,7 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
 
     if (pairwise) { # missing data
       dat_complete <- data
-      dat_complete[inds] <- colMeans(data, na.rm = T)[inds[, 2]]
+      dat_complete[inds] <- colMeans(data, na.rm = TRUE)[inds[, 2]]
       ms <- rep(0, p)
 
       for (i in 1:n.iter) {
@@ -74,21 +74,20 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
     }
   }
 
-  omm_burned <- omm[, (n.burnin+1):n.iter, drop = F]
-  omm_out <- omm_burned[, seq(1, dim(omm_burned)[2], thin), drop = F]
+  omm_burned <- omm[, (n.burnin+1):n.iter, drop = FALSE]
+  omm_out <- omm_burned[, seq(1, dim(omm_burned)[2], thin), drop = FALSE]
 
-  lll_burned <- lll[, (n.burnin+1):n.iter, , drop = F]
-  ppp_burned <- ppp[, (n.burnin+1):n.iter, , drop = F]
-  lll_out <- lll_burned[, seq(1, dim(lll_burned)[2], thin), , drop = F]
-  ppp_out <- ppp_burned[, seq(1, dim(ppp_burned)[2], thin), , drop = F]
+  lll_burned <- lll[, (n.burnin+1):n.iter, , drop = FALSE]
+  ppp_burned <- ppp[, (n.burnin+1):n.iter, , drop = FALSE]
+  lll_out <- lll_burned[, seq(1, dim(lll_burned)[2], thin), , drop = FALSE]
+  ppp_out <- ppp_burned[, seq(1, dim(ppp_burned)[2], thin), , drop = FALSE]
 
-  dat_imp_burned <- dat_imp[, (n.burnin + 1):n.iter, , drop = F]
-  dat_out <- dat_imp_burned[, seq(1, dim(dat_imp_burned)[2], thin), , drop = F]
+  dat_imp_burned <- dat_imp[, (n.burnin + 1):n.iter, , drop = FALSE]
+  dat_out <- dat_imp_burned[, seq(1, dim(dat_imp_burned)[2], thin), , drop = FALSE]
 
 
   return(list(omega = coda::mcmc(omm_out), lambda = coda::mcmc(lll_out), psi = coda::mcmc(ppp_out),
-              dat_mis_samp_fm = coda::mcmc(dat_out)
-  ))
+              dat_mis_samp_fm = coda::mcmc(dat_out)))
 }
 
 
@@ -135,7 +134,7 @@ sampleFMParams <- function(wi, data, phi, pars) {
 
   cc <- lambda %*% phi %*% t(lambda) + diag(psi) # phi = 1 is bad!
 
-  return(list(psi=psi, lambda=lambda, phi=phi, wi=wi, cc=cc))
+  return(list(psi = psi, lambda = lambda, phi = phi, wi = wi, cc = cc))
 }
 
 

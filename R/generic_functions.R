@@ -27,10 +27,10 @@ print.strel <- function(x, ...) {
 }
 
 #'@export
-summary.strel <- function(object, ...){
+summary.strel <- function(object, ...) {
 
   out_matrix <- list()
-  if (!is.null(object$freq) & !is.null(object$Bayes)){
+  if (!is.null(object$freq) & !is.null(object$Bayes)) {
     out_matrix$est <- rbind(as.data.frame(as.matrix(object$Bayes$est)),
                             as.data.frame(as.matrix(object$freq$est)))
     out_matrix$int$low <- rbind(as.data.frame(as.matrix(object$Bayes$cred$low)),
@@ -76,7 +76,6 @@ summary.strel <- function(object, ...){
     out_matrix$para.boot <- object$para.boot
     out_matrix$inv.mat <- object$freq$inv.mat
 
-
   } else {
     return(warning("no estimates calculated"))
   }
@@ -91,7 +90,7 @@ summary.strel <- function(object, ...){
 }
 
 #'@export
-print.summary.strel <- function(x, ...){
+print.summary.strel <- function(x, ...) {
   n_row <- length(x$est$V1)
   mat <- data.frame(matrix(0, n_row, 0))
   mat[, 1] <- x$est
@@ -105,7 +104,7 @@ print.summary.strel <- function(x, ...){
   print.default(x$call)
   cat("\n")
   cat("Results: \n")
-  print(mat, right = F)
+  print(mat, right = FALSE)
   cat("\n")
   cat("uncertainty interval: ")
   cat(x$interval, "\n")
@@ -137,7 +136,7 @@ print.summary.strel <- function(x, ...){
       cat(x$inv.mat)
       cat(" because some bootstrapped matrices were singular\n")
     }
-    if ("omega" %in% x$estimates){
+    if ("omega" %in% x$estimates) {
       if (!is.null(x$omega.pfa) & !is.null(x$omega.error)) {
         cat("frequentist omega method is pfa\n")
         cat("omega confidence interval is estimated with bootstrap because the cfa did not find a solution\n")
@@ -168,7 +167,7 @@ print.summary.strel <- function(x, ...){
   }
 
 
-  if (!is.null(x$ifitem$bay_est)){
+  if (!is.null(x$ifitem$bay_est)) {
     n_row <- length(unlist(x$ifitem$bay_est[1])) + 1
     n_col <- 3
     names <- NULL
@@ -192,7 +191,7 @@ print.summary.strel <- function(x, ...){
     }
   }
 
-  if (!is.null(x$ifitem$freq_tab)){
+  if (!is.null(x$ifitem$freq_tab)) {
       n_row <- length(unlist(x$ifitem$freq_tab[1])) + 1
       n_col <- length(x$estimates)
       names <- NULL
@@ -212,7 +211,7 @@ print.summary.strel <- function(x, ...){
       cat("Frequentist point estimate if item dropped: \n")
       print(mat_ifitem_freq)
 
-      if ("omega" %in% x$estimates){
+      if ("omega" %in% x$estimates) {
         if (!is.null(x$omega.item.error)) {
           cat("frequentist omega method for item.dropped statistic is pfa because the cfa did not find a solution\n")
         }

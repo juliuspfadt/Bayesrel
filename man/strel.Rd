@@ -7,22 +7,22 @@
 strel(
   data = NULL,
   estimates = c("alpha", "lambda2", "glb", "omega"),
-  cov.mat = NULL,
   interval = 0.95,
   n.iter = 1000,
   n.burnin = 50,
   thin = 1,
   n.chains = 3,
   n.boot = 1000,
-  omega.freq.method = "cfa",
+  cov.mat = NULL,
   n.obs = NULL,
-  alpha.int.analytic = TRUE,
-  omega.int.analytic = TRUE,
   freq = TRUE,
   Bayes = TRUE,
   para.boot = FALSE,
   item.dropped = FALSE,
   missing = "pairwise",
+  omega.freq.method = "cfa",
+  omega.int.analytic = TRUE,
+  alpha.int.analytic = TRUE,
   callback = function() { }
 )
 }
@@ -31,9 +31,6 @@ strel(
 
 \item{estimates}{A character vector containing the estimands, we recommend using lambda4 with only a few items
 due to the computation time}
-
-\item{cov.mat}{A covariance matrix can be supplied instead of a dataset,
-but number of observations needs to be specified}
 
 \item{interval}{A number specifying the uncertainty interval}
 
@@ -47,16 +44,11 @@ but number of observations needs to be specified}
 
 \item{n.boot}{A number for the bootstrap samples}
 
-\item{omega.freq.method}{A character string for the method of frequentist omega, either "pfa" or "cfa",
-with "pfa" the interval is always bootstrapped}
+\item{cov.mat}{A covariance matrix can be supplied instead of a dataset,
+but number of observations needs to be specified}
 
 \item{n.obs}{A number for the sample observations when a covariance matrix is supplied
 and the factor model is calculated}
-
-\item{alpha.int.analytic}{A logical for calculating the alpha confidence interval analytically}
-
-\item{omega.int.analytic}{A logical for calculating the omega confidence interval analytically,
-only works with cfa as the omega.freq.method}
 
 \item{freq}{A logical for calculating the frequentist estimates}
 
@@ -71,13 +63,35 @@ only works with cfa as the omega.freq.method}
 from the joint conditional distribution, in the frequentist paradigm this means using the 'pairwise' covariance
 matrix and the full information ML method for omega}
 
-\item{callback}{step count for external use}
+\item{omega.freq.method}{A character string for the method of frequentist omega, either "cfa"
+(confirmatory factor analysis), or "pfa" (principal factor analysis), with "pfa" the interval is always bootstrapped}
+
+\item{omega.int.analytic}{A logical for calculating the omega confidence interval analytically,
+only works with cfa as the omega.freq.method}
+
+\item{alpha.int.analytic}{A logical for calculating the alpha confidence interval analytically}
+
+\item{callback}{empty function call for external use}
 }
 \description{
-calculate Bayesian and frequentist single test reliability measures.
-Reported are Bayesian credible intervals (HDI) and frequentist confidence intervals (non parametric or parametric bootstrap).
-The estimates supported are Cronbach alpha, lambda2/4/6, the glb, and Mcdonald omega. Beware of lambda4 with many indicators,
-the computational effort is considerable
+Reported are Bayesian credible intervals
+(highest posterior density) and frequentist confidence intervals
+(non parametric or parametric bootstrap).
+The estimates supported are Cronbach alpha, Guttman's lambda2/4/6, the glb,
+and Mcdonald's omega. Beware of lambda4 with many indicators,
+the computational effort is considerable.
+The glb method uses adjusted code from the 'Rcsdp' package by
+'Hector Corrada Bravo', <https://CRAN.R-project.org/package=Rcsdp>.
+This process applies a slightly adjusted solving algorithm from the 'CSDP'
+library by 'Brian Borchers' <https://github.com/coin-or/Csdp/wiki>,
+<doi:10.1080/10556789908805765>, but is wrapped in 'RcppArmadillo'.
+Guttman's Lambda-4 method is from 'Benton' (2015)
+<doi:10.1007/978-3-319-07503-7_19>. The principal factor analysis (pfa) for a
+version of frequentist omega can be found in 'Rencher' (2007) and is described
+in 'Schlegel' (2017)
+<https://www.r-bloggers.com/2017/03/iterated-principal-factor-method-of-factor-analysis-with-r/>.
+The analytic confidence interval of alpha is from
+'Bonett' and 'Wright' (2015) <doi:10.1002/job.1960>.
 }
 \examples{
 summary(strel(asrm, estimates = "lambda2", n.chains = 2, n.iter = 200, n.boot = 200))
@@ -88,7 +102,16 @@ n.iter = 100, n.boot = 200))
 }
 \references{
 {
-  \insertRef{murphy2007}{Bayesrel}
-  \insertRef{lee2007}{Bayesrel}
+
+\insertRef{Bonett2015}{Bayesrel}
+
+\insertRef{Murphy2007}{Bayesrel}
+
+\insertRef{Lee2007}{Bayesrel}
+
+\insertRef{Pfadt2021Basic}{Bayesrel}
+
+\insertRef{Rencher2002}{Bayesrel}
+
 }
 }

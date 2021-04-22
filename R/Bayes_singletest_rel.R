@@ -1,9 +1,23 @@
 #'
-#' calculate single test reliability estimates
-#' @description calculate Bayesian and frequentist single test reliability measures.
-#' Reported are Bayesian credible intervals (HDI) and frequentist confidence intervals (non parametric or parametric bootstrap).
-#' The estimates supported are Cronbach alpha, lambda2/4/6, the glb, and Mcdonald omega. Beware of lambda4 with many indicators,
-#' the computational effort is considerable
+#' Calculate single test reliability estimates
+#' @description Reported are Bayesian credible intervals
+#' (highest posterior density) and frequentist confidence intervals
+#' (non parametric or parametric bootstrap).
+#' The estimates supported are Cronbach alpha, Guttman's lambda2/4/6, the glb,
+#' and Mcdonald's omega. Beware of lambda4 with many indicators,
+#' the computational effort is considerable.
+#' The glb method uses adjusted code from the 'Rcsdp' package by
+#' 'Hector Corrada Bravo', <https://CRAN.R-project.org/package=Rcsdp>.
+#' This process applies a slightly adjusted solving algorithm from the 'CSDP'
+#' library by 'Brian Borchers' <https://github.com/coin-or/Csdp/wiki>,
+#' <doi:10.1080/10556789908805765>, but is wrapped in 'RcppArmadillo'.
+#' Guttman's Lambda-4 method is from 'Benton' (2015)
+#' <doi:10.1007/978-3-319-07503-7_19>. The principal factor analysis (pfa) for a
+#' version of frequentist omega can be found in 'Rencher' (2007) and is described
+#' in 'Schlegel' (2017)
+#' <https://www.r-bloggers.com/2017/03/iterated-principal-factor-method-of-factor-analysis-with-r/>.
+#' The analytic confidence interval of alpha is from
+#' 'Bonett' and 'Wright' (2015) <doi:10.1002/job.1960>.
 #'
 #' @param data The dataset to be analyzed, observations are rows, items are columns
 #' @param estimates A character vector containing the estimands, we recommend using lambda4 with only a few items
@@ -16,8 +30,8 @@
 #' @param thin A number for the thinning of the MCMC samples
 #' @param n.chains A number for the chains to run for the MCMC sampling
 #' @param n.boot A number for the bootstrap samples
-#' @param omega.freq.method A character string for the method of frequentist omega, either "pfa" or "cfa",
-#' with "pfa" the interval is always bootstrapped
+#' @param omega.freq.method A character string for the method of frequentist omega, either "cfa"
+#' (confirmatory factor analysis), or "pfa" (principal factor analysis), with "pfa" the interval is always bootstrapped
 #' @param n.obs A number for the sample observations when a covariance matrix is supplied
 #' and the factor model is calculated
 #' @param alpha.int.analytic A logical for calculating the alpha confidence interval analytically
@@ -31,7 +45,7 @@
 #' 'pairwise' in the Bayesian paradigm means sampling the missing values as additional parameters
 #' from the joint conditional distribution, in the frequentist paradigm this means using the 'pairwise' covariance
 #' matrix and the full information ML method for omega
-#' @param callback step count for external use
+#' @param callback empty function call for external use
 #'
 #' @examples
 #' summary(strel(asrm, estimates = "lambda2", n.chains = 2, n.iter = 200, n.boot = 200))
@@ -40,8 +54,17 @@
 #'
 #'
 #' @references{
-#'   \insertRef{murphy2007}{Bayesrel}
-#'   \insertRef{lee2007}{Bayesrel}
+#'
+#' \insertRef{Bonett2015}{Bayesrel}
+#'
+#' \insertRef{Murphy2007}{Bayesrel}
+#'
+#' \insertRef{Lee2007}{Bayesrel}
+#'
+#' \insertRef{Pfadt2021Basic}{Bayesrel}
+#'
+#' \insertRef{Rencher2002}{Bayesrel}
+#'
 #' }
 #' @importFrom grDevices adjustcolor recordPlot
 #' @importFrom graphics arrows axis legend lines par plot text title
@@ -55,18 +78,18 @@
 #' @export
 strel <- function(data = NULL,
                   estimates = c("alpha", "lambda2", "glb", "omega"),
-                  cov.mat = NULL,
                   interval = .95,
                   n.iter = 1000, n.burnin = 50, thin = 1, n.chains = 3,
                   n.boot = 1000,
-                  omega.freq.method = "cfa",
+                  cov.mat = NULL,
                   n.obs = NULL,
-                  alpha.int.analytic = TRUE,
-                  omega.int.analytic = TRUE,
                   freq = TRUE, Bayes = TRUE,
                   para.boot = FALSE,
                   item.dropped = FALSE,
                   missing = "pairwise",
+                  omega.freq.method = "cfa",
+                  omega.int.analytic = TRUE,
+                  alpha.int.analytic = TRUE,
                   callback = function(){}) {
 
   default <- c("alpha", "lambda2", "lambda4", "lambda6", "glb", "omega")
@@ -82,14 +105,14 @@ strel <- function(data = NULL,
   use.cases <- "everything"
   if (any(is.na(data))) {
     if (missing == "listwise") {
-      pos <- which(is.na(data), arr.ind = T)[, 1]
+      pos <- which(is.na(data), arr.ind = TRUE)[, 1]
       data <- data[-pos, ]
       ncomp <- nrow(data)
       sum_res$complete <- ncomp
       use.cases <- "complete.obs"
     } else if (missing == "pairwise") {
-      pairwise <- T
-      sum_res$miss_pairwise <- T
+      pairwise <- TRUE
+      sum_res$miss_pairwise <- TRUE
       use.cases <- "pairwise.complete.obs"
     } else return(warning("missing values in data detected, please remove and run again"))
   }
@@ -100,16 +123,16 @@ strel <- function(data = NULL,
       return(warning("number of observations (n.obs) needs to be specified when entering a covariance matrix"))
     if (sum(cov.mat[lower.tri(cov.mat)] != t(cov.mat)[lower.tri(cov.mat)]) > 0)
       return(warning("input matrix is not symmetric"))
-    if (!("matrix" %in% class(try(solve(cov.mat),silent=TRUE))))
+    if (!("matrix" %in% class(try(solve(cov.mat), silent = TRUE))))
       return(warning("Data covariance matrix is not invertible"))
     data <- MASS::mvrnorm(n.obs, rep(0, ncol(cov.mat)), cov.mat, empirical = TRUE)
     colnames(data) <- colnames(cov.mat)
   }
 
-  if (!("matrix" %in% class(try(solve(cov(data, use = use.cases)), silent=TRUE))))
+  if (!("matrix" %in% class(try(solve(cov(data, use = use.cases)), silent = TRUE))))
       return(warning("Data covariance matrix is not invertible"))
 
-  data <- scale(data, scale = F) # needed for Bayes omega
+  data <- scale(data, scale = FALSE) # needed for Bayes omega
 
   if (Bayes) {
     sum_res$Bayes <- gibbsFun(data, estimates, n.iter, n.burnin, thin, n.chains, interval, item.dropped, pairwise,
@@ -131,8 +154,10 @@ strel <- function(data = NULL,
                                     alpha.int.analytic, omega.int.analytic, pairwise, callback)
     }
 
-    if(alpha.int.analytic) {sum_res$alpha.interval = "analytic"}
-    if(omega.int.analytic) {sum_res$omega.interval = "analytic"}
+    if (alpha.int.analytic)
+      sum_res$alpha.interval <- "analytic"
+    if (omega.int.analytic)
+      sum_res$omega.interval <- "analytic"
 
     sum_res$n.boot <- n.boot
     sum_res$para.boot <- para.boot
