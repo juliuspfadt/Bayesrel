@@ -15,30 +15,31 @@ applylambda2 <- function(M, callback = function(){}){
 }
 
 applylambda6 <- function(M, callback = function(){}){
-  eig <- try_psd(M)
-  if (class(eig) == "try-error" || any(eig <= 0)) {
+
+  lambda6 <- try(l6Arma(M), silent = TRUE)
+  if (inherits(lambda6, "try-error")) {
     lambda6 <- NaN
     warning("singular bootstrapped covariance matrices encountered when computing lambda6")
-  } else {
-    lambda6 <- l6Arma(M)
   }
+
   callback()
   return(lambda6)
 }
 
 applyomega_pfa <- function(m, callback = function(){}){
-  eig <- try_psd(m)
-  if (class(eig) == "try-error" || any(eig <= 0)) {
+
+  f <- try(pfaArma(m), silent = TRUE)
+  if (inherits(f, "try-error")) {
     om <- NaN
     warning("singular bootstrapped covariance matrices encountered when computing omega")
   } else {
-    f <- pfaArma(m)
     l_fa <- f$loadings
     er_fa <- f$err_var
     om <- sum(l_fa)^2 / (sum(l_fa)^2 + sum(er_fa))
     if (om < 0 || om > 1 || is.na(om))
       om <- NaN
   }
+
   callback()
 
   return(om)
