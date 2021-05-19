@@ -20,6 +20,7 @@ applylambda6 <- function(M, callback = function(){}){
   if (inherits(lambda6, "try-error")) {
     lambda6 <- NaN
     warning("singular bootstrapped covariance matrices encountered when computing lambda6")
+
   }
 
   callback()
