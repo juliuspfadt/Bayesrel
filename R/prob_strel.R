@@ -20,7 +20,7 @@ p_strel <- function(x, estimate, low.bound) {
   # prior prob
   n.item <- dim(x$Bayes$covsamp)[3]
   if (n.item > 50) {
-    prior <- density(unlist(priorSamp(n.item, estimate)), from = 0, to = 1, n = 512)
+    prior <- density(unlist(priorSampUni(n.item, estimate)), from = 0, to = 1, n = 512)
   } else {
     prior_all <- priors[[as.character(n.item)]]
     posi2 <- grep(estimate, prior_all, ignore.case = TRUE)
@@ -34,3 +34,35 @@ p_strel <- function(x, estimate, low.bound) {
   return(out)
 }
 
+#'
+#'@export
+p_omegas <- function(x, cutoff.t = .80, cutoff.h = .60) {
+
+  sampt <- as.vector(x$omega_t$chains)
+  samph <- as.vector(x$omega_h$chains)
+  objt <- ecdf(sampt)
+  objh <- ecdf(samph)
+  post_prob_t <- 1 - objt(cutoff.t)
+  post_prob_h <- 1 - objh(cutoff.h)
+
+  # prior prob
+  priors <- omegas_prior(x$k, x$n.factors)
+  priort <- ecdf(priors$omt_prior)
+  priorh <- ecdf(priors$omh_prior)
+
+  prior_prob_t <- 1 - priort(cutoff.t)
+  prior_prob_h <- 1 - priorh(cutoff.h)
+
+  # end_h <- length(priorh[["x"]])
+  # poslow_h <- end_h - sum(priorh[["x"]] > cutoff.h)
+  # prior_prob_h <- sum(priorh[["y"]][poslow_h:end_h]) / sum(priorh[["y"]])
+  #
+  # end_t <- length(priort[["x"]])
+  # poslow_t <- end_t - sum(priort[["x"]] > cutoff.t)
+  # prior_prob_t <- sum(priort[["y"]][poslow_t:end_t]) / sum(priort[["y"]])
+
+  out <- matrix(c(prior_prob_t, prior_prob_h, post_prob_t, post_prob_h, cutoff.t, cutoff.h), 3, 2, byrow = TRUE)
+  colnames(out) <- c("omega_t", "omega_h")
+  rownames(out) <- c("prior_prob", "posterior_prob", "cutoff")
+  return(out)
+}
