@@ -1,16 +1,30 @@
 
-omegaMulti_F <- function(data, n.factors, interval, pairwise) {
+omegaMulti_F <- function(data, n.factors, interval, pairwise, model.type) {
 
   k <- ncol(data)
-  modfile <- lavMultiFile_seco(k, n.factors)
-  mod <- modfile$model
-  colnames(data) <- modfile$names
+  if (model.type == "higherorder") {
+    modfile <- lavMultiFile_seco(k, n.factors)
+    mod <- modfile$model
+    colnames(data) <- modfile$names
 
-  if (pairwise) {
-    fit <- lavaan::cfa(modfile$model, data, std.lv = T, orthogonal = F, missing = "ML")
-  } else {
-    fit <- lavaan::cfa(modfile$model, data, std.lv = T, orthogonal = F)
+    if (pairwise) {
+      fit <- lavaan::cfa(modfile$model, data, std.lv = T, orthogonal = F, missing = "ml")
+    } else {
+      fit <- lavaan::cfa(modfile$model, data, std.lv = T, orthogonal = F)
+    }
+
+  } else { # model.type is bifactor
+    modfile <- lavMultiFile_bif(k, n.factors)
+    mod <- modfile$model
+    colnames(data) <- modfile$names
+
+    if (pairwise) {
+      fit <- lavaan::cfa(modfile$model, data, std.lv = T, orthogonal = T, missing = "ml")
+    } else {
+      fit <- lavaan::cfa(modfile$model, data, std.lv = T, orthogonal = T)
+    }
   }
+
 
   sts <- lavaan::parameterestimates(fit, level = interval)
 

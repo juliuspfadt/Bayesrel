@@ -217,3 +217,50 @@ lavMultiFile_seco <- function(k, ns) {
   return(out <- list(names = names, model = mod))
 }
 
+
+lavMultiFile_bif <- function(k, n.factors) {
+
+  beta_names <- paste("gl", 1:k, sep = "")
+  lambda_names <- matrix(paste("sl", 1:k, sep = ""), k/ns, ns)
+  names <- matrix(paste("x", 1:k, sep = ""), k/ns, ns)
+  theta_names <- paste("e", 1:k, sep = "")
+
+  gen <- paste("x", 1:k, sep="")
+  gen <- paste(paste(beta_names, "*", c(names), sep = ""),
+               collapse = " + ")
+  gen <- paste0("g =~ ", gen)
+
+  mod <- NULL
+  for (i in 1:ns) {
+    mod <- paste0(mod, "s", i, " =~ ", paste(paste(lambda_names[, i], "*", names[, i], sep = ""),
+                                             collapse = " + "), "\n")
+  }
+  mod <- paste0(gen, " \n", mod)
+
+  # extra stuff for omega calc
+  mod <- paste0(mod, "g ~~ 1*g\n")
+  for (i in 1:ns) {
+    mod <- paste0(mod, "s", i, " ~~ 1*s", i, "\n")
+  }
+
+  mod <- paste0(mod, paste(paste(c(names), " ~~ ", theta_names, "*",
+                                 c(names), sep = ""), collapse = "\n"), "\n")
+
+  sum_gl <- paste("g_loading :=", paste0(beta_names, collapse = " + "),
+                  "\n")
+
+  load_sum <- NULL
+  for (i in 1:ns) {
+    load_sum <- paste0(load_sum, "ssum", i, " := ", paste0(lambda_names[, i], collapse = " + "), "\n")
+  }
+
+  sum_sl <- paste0("spec_loading := ", paste(paste0("ssum", 1:ns, "^2"), collapse = " + "), "\n")
+  sum_errs <- paste("residual_var :=", paste(theta_names, collapse = " + "), "\n")
+  omega_h <- "omega_h := (g_loading^2) / (g_loading^2 + spec_loading + residual_var) \n"
+  omega_t <- "omega_t := (g_loading^2 + spec_loading) / (g_loading^2 + spec_loading + residual_var) \n"
+  mod <- paste0(mod, load_sum, sum_gl, sum_sl, sum_errs, omega_h, omega_t)
+
+  return(out <- list(names = c(names), model = mod))
+}
+
+
