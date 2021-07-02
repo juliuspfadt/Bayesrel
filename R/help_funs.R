@@ -264,3 +264,24 @@ lavMultiFile_bif <- function(k, n.factors) {
 }
 
 
+model_syntax_extract <- function(mod) {
+  # get the factor and variable names
+  mod_tmp <- unlist(strsplit(mod, "[\n]|[=~]|[+]|[ ]"))
+  # cleanup
+  mod_names<- mod_tmp[nchar(mod_tmp) > 0]
+  # check if colnames of the data are the varibale names in the syntax
+  mod_col_names <- ifelse (all(colnames(data) %in% mod_names), TRUE, FALSE)
+
+  # check the number of specified factors by checking the frequency of "=~"
+  mod_n.factors <- length(unlist(gregexpr("=~", mod)))
+
+  # cleanup the model to further find the paths
+  mod_separated1 <- unlist(strsplit(mod, "[\n]|[+]|[ ]"))
+  mod_separated_tmp <- mod_separated1[nchar(mod_separated1) > 0]
+  mod_separated2 <- mod_separated_tmp[-(which(mod_separated_tmp == "=~")-1)]
+  mod_separated_tmp2 <- unlist(strsplit(paste(mod_separated2, collapse = " "), "[=~]"))
+  mod_separated3 <- mod_separated_tmp2[nchar(mod_separated_tmp2) > 0]
+
+  return(list(mod = mod_separated3, mod_n.factors = mod_n.factors))
+}
+

@@ -30,7 +30,8 @@ bomegas <- function(
 
   data <- scale(data, scale = FALSE)
 
-  sum_res <- bomegas_multi_out(data, n.factors, n.iter, n.burnin, thin, n.chains, interval, pairwise, callback)
+  sum_res <- bomegas_multi_out(data, n.factors, n.iter, n.burnin, thin, n.chains,
+                               interval, model, pairwise, callback)
 
   sum_res$call <- match.call()
   sum_res$k <- ncol(data)

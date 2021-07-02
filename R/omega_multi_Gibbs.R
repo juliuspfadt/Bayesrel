@@ -1,16 +1,32 @@
 
 
 
-omegaMulti_B <- function(data, ns, n.iter, n.burnin, n.chains, thin, pairwise) {
+omegaMulti_B <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairwise, callback) {
 
   n <- nrow(data)
   k <- ncol(data)
 
   # index matrix for lambdas
-  idex <- matrix(seq(1:k), ns, k/ns, byrow=T)
-  imat <- matrix(FALSE, k, ns)
-  for (i in 1:ns) {
-    imat[idex[i, ], i] <- TRUE
+  if (model == "balanced") {
+    tmp <- matrix(seq(1:k), ns, k/ns, byrow=T)
+    imat <- matrix(FALSE, k, ns)
+    idex <- as.list(as.data.frame(t(tmp)))
+    for (i in 1:ns) {
+      imat[tmp[i, ], i] <- TRUE
+    }
+  } else {
+    mod_out <- model_syntax_extract(model)
+    mod <- mod_out$mod
+    if (ns != mod_out$mod_n.factors) {
+      warning("n.factors is unequal to specified factors in model syntax")
+      ns <- mod_out$mod_n.factors
+    }
+    imat <- matrix(FALSE, k, ns)
+    out <- regmatches(mod, gregexpr("[[:digit:]]+", mod))  # Apply gregexpr & regmatches
+    idex <- lapply(out, as.numeric)
+    for (i in 1:length(mod)) {
+      imat[idex[[i]], i] <- TRUE
+    }
   }
 
   inds <- which(is.na(data), arr.ind = TRUE)
@@ -133,16 +149,16 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
   pp <- numeric(k)
 
   for (ii in 1:ns) {
-    ids <- idex[ii, ]
+    ids <- idex[[ii]]
     Ak <- solve(1/H0k[ii] + t(wi[, ii+1]) %*% wi[, ii+1])
     ak <- Ak %*% (c(1/H0k[ii]) %*% t(l0k[ids, ii]) + wi[, ii+1] %*% data[, ids])
     bekk <- b0k + 0.5 * (t(data[, ids]) %*% data[, ids]
                          - t(ak) %*% solve(Ak) %*% ak
                          + (l0k[ids, ii] * 1/H0k[ii]) %*% t(l0k[ids, ii]))
     bek <- diag(bekk)
-    invpsi <- rgamma(k/ns, n/2 + a0k, bek)
+    invpsi <- rgamma(length(ids), n/2 + a0k, bek)
     psi <- 1/invpsi
-    lambda <- rnorm(k/ns, ak, sqrt(psi * as.vector(Ak)))
+    lambda <- rnorm(length(ids), ak, sqrt(psi * as.vector(Ak)))
 
     if (mean(lambda) < 0) {# solve label switching problem
       lambda <- -lambda
