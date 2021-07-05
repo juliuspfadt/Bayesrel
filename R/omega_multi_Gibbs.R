@@ -6,29 +6,11 @@ omegaMulti_B <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pair
   n <- nrow(data)
   k <- ncol(data)
 
-  # index matrix for lambdas
-  if (model == "balanced") {
-    tmp <- matrix(seq(1:k), ns, k/ns, byrow=T)
-    imat <- matrix(FALSE, k, ns)
-    idex <- as.list(as.data.frame(t(tmp)))
-    for (i in 1:ns) {
-      imat[tmp[i, ], i] <- TRUE
-    }
-  } else {
-    mod_out <- model_syntax_extract(model)
-    mod <- mod_out$mod
-    if (ns != mod_out$mod_n.factors) {
-      warning("n.factors is unequal to specified factors in model syntax")
-      ns <- mod_out$mod_n.factors
-    }
-    imat <- matrix(FALSE, k, ns)
-    out <- regmatches(mod, gregexpr("[[:digit:]]+", mod))  # Apply gregexpr & regmatches
-    idex <- lapply(out, as.numeric)
-    for (i in 1:length(mod)) {
-      imat[idex[[i]], i] <- TRUE
-    }
-  }
-
+  # ---- get the index matrix aka which items load on which factors ----
+  mod_opts <- index_matrix(model, k, ns, colnames(data))
+  idex <- mod_opts$idex
+  imat <- mod_opts$imat
+  # ---- check missingsness ----
   inds <- which(is.na(data), arr.ind = TRUE)
   imputed <- array(0, c(n.chains, n.iter, nrow(inds)))
 
@@ -121,7 +103,8 @@ omegaMulti_B <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pair
   omt_out <- omt_burn[, seq(1, dim(omt_burn)[2], thin), drop = F]
   implCs_out <- implCs_burn[, seq(1, dim(omt_burn)[2], thin), , , drop = F]
 
-  return(list(omh = omh_out, omt = omt_out, impl_covs = implCs_out, imputed_values = imputed))
+  return(list(omh = omh_out, omt = omt_out, impl_covs = implCs_out, imputed_values = imputed,
+              modfile = mod_opts))
 
 }
 

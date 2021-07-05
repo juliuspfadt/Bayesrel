@@ -16,13 +16,14 @@ bomegas <- function(
 
   any_missings <- FALSE
   pairwise <- FALSE
+  complete_cases <- nrow(data)
   if (any(is.na(data))) {
     any_missings <- TRUE
     if (missing == "listwise") {
       pos <- which(is.na(data), arr.ind = TRUE)[, 1]
       data <- data[-pos, ]
       ncomp <- nrow(data)
-      sum_res$complete.cases <- ncomp
+      complete_cases <- ncomp
     } else { # missing = pairwise
       pairwise <- TRUE
     }
@@ -33,6 +34,7 @@ bomegas <- function(
   sum_res <- bomegas_multi_out(data, n.factors, n.iter, n.burnin, thin, n.chains,
                                interval, model, pairwise, callback)
 
+  sum_res$complete.cases <- complete.cases
   sum_res$call <- match.call()
   sum_res$k <- ncol(data)
   sum_res$n.factors <- n.factors

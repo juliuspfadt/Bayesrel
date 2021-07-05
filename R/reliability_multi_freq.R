@@ -7,12 +7,13 @@ omegasCFA <- function(
   data,
   n.factors,
   model = "balanced",
-  model.type = "higherorder",
+  model.type = "higher.order",
   interval = .95,
   missing = "pairwise") {
 
   any_missings <- FALSE
   pairwise <- FALSE
+  complete_cases <- nrow(data)
   if (any(is.na(data))) {
     any_missings <- TRUE
     if (missing == "listwise") {
@@ -22,13 +23,12 @@ omegasCFA <- function(
       complete.cases <- ncomp
     } else { # missing = pairwise
       pairwise <- TRUE
-      complete.cases <- nrow(data)
     }
   }
 
   data <- scale(data, scale = FALSE)
 
-  sum_res <- omegasCFA_multi_out(data, n.factors, interval, pairwise, model.type)
+  sum_res <- omegasCFA_multi_out(data, n.factors, interval, pairwise, model, model.type)
 
   sum_res$complete.cases <- complete.cases
   sum_res$call <- match.call()
