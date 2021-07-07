@@ -20,6 +20,7 @@ remotes::install_github("juliuspf/Bayesrel")
 
 ## Example
 
+### Unidimensional data
 This is a basic example which shows you how to compute alpha, lambda2, the glb, and omega for an example real data set:
 
 ``` r
@@ -34,6 +35,7 @@ summary(strel)
 p_strel(res, estimate = "alpha", low.bound = .70)
 ```
 
+### Multidimensional data
 This is a basic example which shows you how to compute omega-t and omega-h for an example real data set:
 
 ``` r
@@ -77,10 +79,10 @@ model <- "
   f5 =~ x17+x18+x19+x20
   "
 ```
-Here the variable names can be chosen freely, just note that the numbers need to correspond to the column numbers 
+Here the manifest variable names can be chosen freely, just note that the numbers need to correspond to the column numbers 
 of the data set. Note that you cannot mix both approaches, the column name and the column number approach.
 
-The reliability is the estimated as follows: 
+The reliability is then estimated as follows: 
 
 ```r
 res <- bomegas(upps, n.factors = 5, model = model, missing = "listwise")
