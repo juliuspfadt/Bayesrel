@@ -1,5 +1,5 @@
 #'
-#' Calculate single test reliability estimates
+#' Estimate single test reliability coefficients for unidimensional scales
 #' @description Reported are Bayesian credible intervals
 #' (highest posterior density) and frequentist confidence intervals
 #' (non parametric or parametric bootstrap).
@@ -20,8 +20,8 @@
 #' 'Bonett' and 'Wright' (2015) <doi:10.1002/job.1960>.
 #'
 #' @param data The dataset to be analyzed, observations are rows, items are columns
-#' @param estimates A character vector containing the estimands, we recommend using lambda4 with only a few items
-#' due to the computation time
+#' @param estimates A character vector containing the estimands, we recommend using lambda4
+#' with only a few items due to the computation time
 #' @param cov.mat A covariance matrix can be supplied instead of a dataset,
 #' but number of observations needs to be specified
 #' @param interval A number specifying the uncertainty interval
@@ -31,7 +31,8 @@
 #' @param n.chains A number for the chains to run for the MCMC sampling
 #' @param n.boot A number for the bootstrap samples
 #' @param omega.freq.method A character string for the method of frequentist omega, either "cfa"
-#' (confirmatory factor analysis), or "pfa" (principal factor analysis), with "pfa" the interval is always bootstrapped
+#' (confirmatory factor analysis), or "pfa" (principal factor analysis),
+#' with "pfa" the interval is always bootstrapped
 #' @param n.obs A number for the sample observations when a covariance matrix is supplied
 #' and the factor model is calculated
 #' @param alpha.int.analytic A logical for calculating the alpha confidence interval analytically
@@ -39,15 +40,19 @@
 #' only works with cfa as the omega.freq.method
 #' @param freq A logical for calculating the frequentist estimates
 #' @param Bayes A logical for calculating the Bayesian estimates
-#' @param para.boot A logical for calculating the parametric bootstrap, the default is the non-parametric
+#' @param para.boot A logical for calculating the parametric bootstrap, the default is
+#' the non-parametric
 #' @param item.dropped A logical for calculating the if-item-dropped statistics
-#' @param missing A string specifying the way to handle missing data, 'listwise' is self-explanatory,
+#' @param missing A string specifying the way to handle missing data,
+#' 'listwise' is self-explanatory,
 #' 'pairwise' in the Bayesian paradigm means sampling the missing values as additional parameters
-#' from the joint conditional distribution, in the frequentist paradigm this means using the 'pairwise' covariance
-#' matrix and the full information ML method for omega
+#' from the joint conditional distribution, in the frequentist paradigm this means using
+#' the 'pairwise' covariance matrix and the full information ML method for omega
 #' @param callback empty function call for external use
 #'
 #' @examples
+#' # note that these are very few iterations just for the example execution,
+#' # you should use the defaults at least
 #' summary(strel(asrm, estimates = "lambda2", n.chains = 2, n.iter = 200, n.boot = 200))
 #' summary(strel(asrm, estimates = "lambda2", item.dropped = TRUE, n.chains = 2,
 #' n.iter = 100, n.boot = 200))
@@ -69,7 +74,8 @@
 #' @importFrom grDevices adjustcolor recordPlot
 #' @importFrom graphics arrows axis legend lines par plot text title
 #' @importFrom methods is
-#' @importFrom stats cov cov2cor density ecdf qnorm quantile rchisq rgamma rnorm runif sd var approxfun integrate
+#' @importFrom stats cov cov2cor density ecdf qnorm quantile rchisq rgamma rnorm runif sd var
+#' approxfun integrate
 #' @importFrom Rdpack reprompt
 #'
 #' @useDynLib Bayesrel, .registration=TRUE

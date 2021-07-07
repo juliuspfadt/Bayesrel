@@ -49,33 +49,7 @@ se <- function(x) {
 }
 
 
-# create lavaan cfa one factor model file from data
 
-lavOneFile <- function(data){
-  p <- ncol(data)
-  v <- 0
-  for (i in 1:p) {
-    v[i] <- paste0("x", i)
-  }
-  v <- paste0(v, collapse = "+")
-  mod <- paste0("g=~", v) # dynamic lavaan model file
-  mod <- paste0(mod, "; g ~~ 1*g") # fix the factor variance to 1
-
-  # column names specify
-  names <- 0
-  for (i in 1:p) {
-    names[i] <- paste0("x", i)
-  }
-  return(list(names = names, model = mod))
-}
-
-
-# calculate omega from loadings and residual (error variances)
-
-omegaBasic <- function(l, e) {
-  o <- sum(l)^2 / (sum(l)^2 + sum(e))
-  return(o)
-}
 
 # calculate the kolomogorov smirnov distances between some samples and the original sample
 KSTestStatistic <- function(x, y) {

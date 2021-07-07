@@ -1,8 +1,8 @@
 Package: Bayesrel
 Type: Package
 Title: Bayesian Reliability Estimation
-Version: 0.7.0.9
-Date: 2021-04-22
+Version: 0.7.1
+Date: 2021-07-06
 Authors@R: c(person("Julius M.", "Pfadt", email = "julius.pfadt@gmail.com",
                   role = c("aut", "cre")),
              person("Don", "van den Bergh",
@@ -10,21 +10,20 @@ Authors@R: c(person("Julius M.", "Pfadt", email = "julius.pfadt@gmail.com",
              person("Joris", "Goosen", 
                     role = c("aut"))
                     )
-Description: Functionality for the most common single test reliability 
-    estimates: Coefficient alpha, 'Guttman's' lambda-2/-4/-6, the Greatest lower
+Description: Functionality for reliability estimates. For unidimensional tests:
+    Coefficient alpha, 'Guttman's' lambda-2/-4/-6, the Greatest lower
     bound and coefficient omega in a Bayesian and a frequentist version. 
-    The possible results include confidence and credible intervals, the 
-    probability of a coefficient being larger than a cutoff, and a check for the
-    unidimensional model, necessary for coefficient omega. The 
-    data supplied should be unidimensional; for multidimensional data the 
-    estimates presented here are sometimes large underestimates of the 
-    reliability (except the glb which should be applied with great care)
-    <doi:10.1080/00273171.2021.1891855>. The method for the Bayesian estimates, 
-    except for omega, is sampling from the posterior inverse 'Wishart' for the 
+    For multidimensional tests: omega-total and omega-hierarchical. 
+    The results include confidence and credible intervals, the 
+    probability of a coefficient being larger than a cutoff, 
+    and a check for the factor models, necessary for the omega coefficients. 
+    The method for the Bayesian unidimenisional estimates, except for omega, 
+    is sampling from the posterior inverse 'Wishart' for the 
     covariance matrix based measures (see 'Murphy', 2007, 
     <https://www.seas.harvard.edu/courses/cs281/papers/murphy-2007.pdf>. 
-    Bayesian omega is obtained by 'Gibbs' Sampling from the joint conditional 
-    distributions of a single factor model ('Lee', 2007, 
+    The Bayesian omegas are obtained by 'Gibbs' Sampling from the conditional 
+    posterior distributions of (1) the single factor model and (2) the
+    higher order factor model('Lee', 2007, 
     <doi:10.1002/9780470024737>). 
 URL: https://github.com/juliuspf/Bayesrel
 BugReports: https://github.com/juliuspf/Bayesrel/issues

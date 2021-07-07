@@ -2,7 +2,7 @@
 % Please edit documentation in R/reliability_uni.R
 \name{strel}
 \alias{strel}
-\title{Calculate single test reliability estimates}
+\title{Estimate single test reliability coefficients for unidimensional scales}
 \usage{
 strel(
   data = NULL,
@@ -94,6 +94,8 @@ The analytic confidence interval of alpha is from
 'Bonett' and 'Wright' (2015) <doi:10.1002/job.1960>.
 }
 \examples{
+# note that these are very few iterations just for the example execution,
+# you should use the defaults at least
 summary(strel(asrm, estimates = "lambda2", n.chains = 2, n.iter = 200, n.boot = 200))
 summary(strel(asrm, estimates = "lambda2", item.dropped = TRUE, n.chains = 2,
 n.iter = 100, n.boot = 200))
