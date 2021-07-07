@@ -1,5 +1,6 @@
 
-#' graphical posterior predictive check for the 1-factor omega model, based on covariance matrix eigenvalues
+#' graphical posterior predictive check for the 1-factor omega model,
+#' based on covariance matrix eigenvalues
 #'
 #' @description
 #' gives posterior predictive check for the 1-factor model:
@@ -59,8 +60,21 @@ omega_fit <- function(x) {
 }
 
 
+#' graphical posterior predictive check for the higher-order factor model,
 #'
-#'@export
+#' @description
+#' gives posterior predictive check for the higher-factor model:
+#' comparison between posterior sample of model implied covariance matrices
+#' and sample covariance matrix. Gray bars should enclose the black dots for good fit.
+#'
+#' @param x A bomegas output object (list)
+#' @param data A matrix or data.frame containing the data set that produced x
+#'
+#' @examples seco_fit(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100,
+#' n.burnin = 50, missing = "listwise"), upps)
+#'
+#' @importFrom stats complete.cases
+#' @export
 seco_fit <- function(x, data) {
 
   if (x$pairwise) {

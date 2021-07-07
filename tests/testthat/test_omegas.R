@@ -49,7 +49,7 @@ test_that("Frequentist omegas are correct with bifactor model, missing listwise"
 
   data(upps, package = "Bayesrel")
   set.seed(1234)
-  ee <- Bayesrel::omegasCFA(upps, n.factors = 5, model.type = "bi.factor", missing = "listwise")
+  ee <- Bayesrel::omegasCFA(upps, n.factors = 5, model.type = "bi-factor", missing = "listwise")
 
   expect_equal(c(ee$omega_t$est, ee$omega_t$conf, ee$omega_h$est, ee$omega_h$conf),
                c(0.8718139, 0.8518070, 0.8918207, 0.6309915, 0.5792708, 0.6827122), tolerance = 1e-3)
@@ -69,7 +69,7 @@ test_that("Frequentist omegas are correct with bifactor model, missing listwise,
   f4 =~ U23_r +U31_r +U36_r +U46_r
   f5 =~ U10_r +U20_r +U35_r + U17_r
   "
-  ee <- Bayesrel::omegasCFA(upps, n.factors = 5, model.type = "bi.factor", missing = "listwise",
+  ee <- Bayesrel::omegasCFA(upps, n.factors = 5, model.type = "bi-factor", missing = "listwise",
                             model = mod)
 
   expect_equal(c(ee$omega_t$est, ee$omega_t$conf, ee$omega_h$est, ee$omega_h$conf),

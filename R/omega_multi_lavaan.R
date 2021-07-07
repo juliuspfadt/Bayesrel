@@ -1,8 +1,8 @@
 
-omegaMulti_F <- function(data, n.factors, interval, pairwise, model, model.type) {
+omegaMulti_F <- function(data, n.factors, interval, pairwise, model, model.type, fit.measures) {
 
   k <- ncol(data)
-  if (model.type == "higher.order") {
+  if (model.type == "higher-order") {
 
     if (model == "balanced") {
       modfile <- lavMultiFile_seco(k, n.factors)
@@ -25,7 +25,7 @@ omegaMulti_F <- function(data, n.factors, interval, pairwise, model, model.type)
     }
 
 
-  } else if (model.type == "bi.factor") { # model.type is bifactor
+  } else if (model.type == "bi-factor") { # model.type is bifactor
     if (model == "balanced") {
 
       modfile <- lavMultiFile_bif(k, n.factors)
@@ -50,6 +50,9 @@ omegaMulti_F <- function(data, n.factors, interval, pairwise, model, model.type)
 
 
   sts <- lavaan::parameterestimates(fit, level = interval)
+  if (fit.measures) {
+    modfile$fit.measures <- lavaan::fitmeasures(fit)
+  }
 
   return(list(omhmean = sts$est[sts$label == "omega_h"], omtmean = sts$est[sts$label == "omega_t"],
          omhlow = sts$ci.lower[sts$label == "omega_h"], omhup = sts$ci.upper[sts$label == "omega_h"],

@@ -34,8 +34,21 @@ p_strel <- function(x, estimate, low.bound) {
   return(out)
 }
 
+
+#' prior and posterior probability of omega-t and omega-h being bigger than thresholds
+#' @description
+#' takes mcmc posterior samples of omega-t and omega-h
+#' and calculates the prior and posterior probability of the estimate being bigger
+#' or smaller than an arbitrary value
 #'
-#'@export
+#' @param x A strel output object (list)
+#' @param cutoff.t A number indicating the threshold for omega-t
+#' @param cutoff.h A number indicating the threshold for omega-h
+#'
+#' @examples
+#' p_omegas(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100, n.burnin = 50,
+#' missing = "listwise"))
+#' @export
 p_omegas <- function(x, cutoff.t = .80, cutoff.h = .60) {
 
   sampt <- as.vector(x$omega_t$chains)
@@ -61,7 +74,8 @@ p_omegas <- function(x, cutoff.t = .80, cutoff.h = .60) {
   # poslow_t <- end_t - sum(priort[["x"]] > cutoff.t)
   # prior_prob_t <- sum(priort[["y"]][poslow_t:end_t]) / sum(priort[["y"]])
 
-  out <- matrix(c(prior_prob_t, prior_prob_h, post_prob_t, post_prob_h, cutoff.t, cutoff.h), 3, 2, byrow = TRUE)
+  out <- matrix(c(prior_prob_t, prior_prob_h, post_prob_t, post_prob_h, cutoff.t, cutoff.h),
+                3, 2, byrow = TRUE)
   colnames(out) <- c("omega_t", "omega_h")
   rownames(out) <- c("prior_prob", "posterior_prob", "cutoff")
   return(out)

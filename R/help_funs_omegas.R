@@ -53,7 +53,7 @@ implCov_multi <- function(s, b, theta, psi) {
   i <- diag(nrow(b))
   ib_inv <- solve(i-b)
   out <- s %*% ib_inv %*% psi %*% t(ib_inv) %*% t(s) + theta
-  out <- Bayesrel:::make_symmetric(out)
+  out <- make_symmetric(out)
   return(out)
 }
 
