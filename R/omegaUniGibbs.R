@@ -18,7 +18,7 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
   # hyperparameters
   # prior multiplier for loadings variance, prior shape and rate for residuals, prior loadings,
   # prior scaling for cov matrix of factor scores, prior df for cov matrix of factor scores
-  pars <- list(H0k = 1, a0k = 2, b0k = 1, l0k = numeric(p), R0 = p, p0 = p+2)
+  pars <- list(H0k = 1, a0k = 2, b0k = 1, l0k = numeric(p), R0 = p, p0 = p + 2)
 
   for (z in 1:n.chains) {
     # draw starting values for sampling from prior distributions:
@@ -74,11 +74,11 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
     }
   }
 
-  omm_burned <- omm[, (n.burnin+1):n.iter, drop = FALSE]
+  omm_burned <- omm[, (n.burnin + 1):n.iter, drop = FALSE]
   omm_out <- omm_burned[, seq(1, dim(omm_burned)[2], thin), drop = FALSE]
 
-  lll_burned <- lll[, (n.burnin+1):n.iter, , drop = FALSE]
-  ppp_burned <- ppp[, (n.burnin+1):n.iter, , drop = FALSE]
+  lll_burned <- lll[, (n.burnin + 1):n.iter, , drop = FALSE]
+  ppp_burned <- ppp[, (n.burnin + 1):n.iter, , drop = FALSE]
   lll_out <- lll_burned[, seq(1, dim(lll_burned)[2], thin), , drop = FALSE]
   ppp_out <- ppp_burned[, seq(1, dim(ppp_burned)[2], thin), , drop = FALSE]
 
@@ -105,32 +105,32 @@ sampleFMParams <- function(wi, data, phi, pars) {
   b0k <- pars$b0k # prior rate parameter for gamma for psi
 
   # hyperparameters for posteriors
-  Ak <- (1/H0k + c(t(wi) %*% wi))^-1
-  ak <- Ak * ((1/H0k) * l0k + t(wi) %*% data)
-  bekk <- b0k + 0.5 * (t(data) %*% data - (t(ak) * (1/Ak)) %*% ak
-                       + (l0k * (1/H0k)) %*% t(l0k))
+  Ak <- (1 / H0k + c(t(wi) %*% wi))^-1
+  ak <- Ak * ((1 / H0k) * l0k + t(wi) %*% data)
+  bekk <- b0k + 0.5 * (t(data) %*% data - (t(ak) * (1 / Ak)) %*% ak
+                       + (l0k * (1 / H0k)) %*% t(l0k))
   bek <- diag(bekk)
 
   #  sample psi and lambda
-  invpsi <- rgamma(p, n/2 + a0k, bek)
+  invpsi <- rgamma(p, n / 2 + a0k, bek)
   invPsi <- diag(invpsi)
-  psi <- 1/invpsi
+  psi <- 1 / invpsi
   lambda <- rnorm(p, ak * sqrt(as.vector(phi)), sqrt(psi * Ak))
 
   if (mean(lambda) < 0) {# solve label switching problem
     lambda <- -lambda
   }
-  invphi <- 1/phi
+  invphi <- 1 / phi
   # sample wi posterior:
   m <- solve(invphi + t(lambda) %*% invPsi %*% lambda) %*% t(lambda) %*% invPsi %*% t(data)
   V <- solve(invphi + t(lambda) %*% invPsi %*% lambda)
   wi <- rnorm(n, m, sqrt(V))
   # set factor variance to 1 to identify the model
-  wi <- wi/sd(wi)
+  wi <- wi / sd(wi)
 
   # sample phi:
   phi <- LaplacesDemon::rinvwishart(nu = n + p0, S = t(wi) %*% (wi) + R0)
-  invphi <- 1/phi
+  invphi <- 1 / phi
 
   cc <- lambda %*% phi %*% t(lambda) + diag(psi) # phi = 1 is bad!
 
@@ -141,14 +141,11 @@ sampleFMParams <- function(wi, data, phi, pars) {
 drawStart <- function(n, p, pars) {
 
   invpsi <- rgamma(p, pars$a0k, pars$b0k)
-  psi <- 1/invpsi
-  invPsi <- diag(invpsi)
+  psi <- 1 / invpsi
 
-  lambda <- rnorm(p, pars$l0k, sqrt(psi*pars$H0k))
+  lambda <- rnorm(p, pars$l0k, sqrt(psi * pars$H0k))
 
-  # phi <- 1
   phi <- LaplacesDemon::rinvwishart(nu = pars$p0, S = pars$R0)
-  invphi <- 1/phi
 
   wi <- rnorm(n, 0, sqrt(phi))
   wi <- wi/sd(wi) # fix variance to 1

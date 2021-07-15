@@ -1,10 +1,10 @@
 # this function uses gibbs sampling to estimate the posterior distribution
 # of a sample's covariance matrix
 # sources: https://en.wikipedia.org/wiki/Normal-inverse-Wishart_distribution,
-# Murphy, K. P. (2007). Conjugate bayesian analysis of the gaussian distribution (Tech. Rep.). University of British Columbia.
+# Murphy, K. P. (2007). Conjugate bayesian analysis of the gaussian distribution (Tech. Rep.).
+# University of British Columbia.
 
 covSamp <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callback = function(){}){
-  n <- nrow(data)
   p <- ncol(data)
 
   c_post <- array(0, c(n.chains, n.iter, p, p))
@@ -71,11 +71,9 @@ preCompCovParams <- function(data) {
   t <- diag(p)
   T0 <- diag(k0, nrow = p, ncol = p) # matrix inversion of diagonal matrix
   mu0 <- rep(0, p) # prior means
-  kn <- k0 + n
   vn <- v0 + n
 
   ym <- .colMeans(data, n, p)
-  mun <- (k0 * mu0 + n * ym) / (k0 + n)
   S <- cov(sweep(data, 2L, ym, `-`)) * (n - 1)
 
   Tn <- T0 + S + (k0 * n / (k0 + n)) * (ym - mu0) %*% t(ym - mu0)
@@ -84,7 +82,7 @@ preCompCovParams <- function(data) {
   dfChisq <- vn:(vn-p+1)
   utz <- upper.tri(matrix(0, p, p))
 
-  return(list(vn = vn, Tn= Tn, p = p, dfChisq = dfChisq, utz = utz))
+  return(list(vn = vn, Tn = Tn, p = p, dfChisq = dfChisq, utz = utz))
 }
 
 sampleCov <- function(par_list) {
@@ -94,20 +92,15 @@ sampleCov <- function(par_list) {
 }
 
 # ------- customized covariance matrix sampling with cholesky decomposition -----------
-rinvwishart2 <- function(nu, S, k = nrow(S), dfChisq = nu:(nu-k+1), utz = upper.tri(matrix(0, k, k))) {
+rinvwishart2 <- function(nu, S, k = nrow(S), dfChisq = nu:(nu - k + 1),
+                         utz = upper.tri(matrix(0, k, k))) {
 
-  # LaplacesDemon::rwishartc
   Z <- matrix(0, k, k)
   x <- rchisq(k, dfChisq)
   x[x == 0] <- 1e-100
   diag(Z) <- sqrt(x)
   if (k > 1) {
-    # kseq <- 1:(k - 1)
-    # Z[rep(k * kseq, kseq) + unlist(lapply(kseq, seq))] <- rnorm(k * {k - 1} / 2)
-    # --end of copied code
     Z[utz] <- rnorm(k * {k - 1} / 2)
   }
-  # LaplacesDemon::rinvwishart
   return(chol2inv(Z %*% S))
 }
-

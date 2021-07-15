@@ -3,11 +3,14 @@
 # this function calls on other functions in order to return the frequentist estimates
 # and parametric bootstrapped confidence intervals, sampling from a multivariate normal distribution
 
-freqFun_para <- function(data, n.boot, estimates, interval, omega.freq.method,
-                         item.dropped, alpha.int.analytic, omega.int.analytic,
-                         pairwise, callback = function(){}) {
+freqFunPara <- function(data, n.boot, estimates, interval, omega.freq.method,
+                        item.dropped, alpha.int.analytic, omega.int.analytic,
+                        pairwise, callback = function(){}) {
   p <- ncol(data)
   n <- nrow(data)
+
+  probs <- c((1 - interval) / 2, interval + (1 - interval) / 2)
+
   if (pairwise) {
     cc <- cov(data, use = "pairwise.complete.obs")
   } else{
@@ -21,7 +24,7 @@ freqFun_para <- function(data, n.boot, estimates, interval, omega.freq.method,
       "glb" %in% estimates | ("omega" %in% estimates & omega.freq.method == "pfa")) {
 
     boot_cov <- array(0, c(n.boot, p, p))
-    for (i in 1:n.boot){
+    for (i in 1:n.boot) {
       boot_data <- MASS::mvrnorm(n, colMeans(data, na.rm = TRUE), cc)
       boot_cov[i, , ] <- cov(boot_data)
       callback()
@@ -48,8 +51,8 @@ freqFun_para <- function(data, n.boot, estimates, interval, omega.freq.method,
         res$conf$low$freq_alpha <- 1
         res$conf$up$freq_alpha <- 1
       } else {
-        res$conf$low$freq_alpha <- quantile(alpha_obj, probs = (1 - interval)/2, na.rm = TRUE)
-        res$conf$up$freq_alpha <- quantile(alpha_obj, probs = interval + (1 - interval)/2, na.rm = TRUE)
+        res$conf$low$freq_alpha <- quantile(alpha_obj, probs = probs[1], na.rm = TRUE)
+        res$conf$up$freq_alpha <- quantile(alpha_obj, probs = probs[2], na.rm = TRUE)
       }
       res$boot$alpha <- alpha_obj
     }
@@ -65,8 +68,8 @@ freqFun_para <- function(data, n.boot, estimates, interval, omega.freq.method,
       res$conf$low$freq_lambda2 <- NA
       res$conf$up$freq_lambda2 <- NA
     } else {
-      res$conf$low$freq_lambda2 <- quantile(lambda2_obj, probs = (1 - interval)/2, na.rm = TRUE)
-      res$conf$up$freq_lambda2 <- quantile(lambda2_obj, probs = interval + (1 - interval)/2, na.rm = TRUE)
+      res$conf$low$freq_lambda2 <- quantile(lambda2_obj, probs = probs[1], na.rm = TRUE)
+      res$conf$up$freq_lambda2 <- quantile(lambda2_obj, probs = probs[2], na.rm = TRUE)
     }
     res$boot$lambda2 <- lambda2_obj
     if (item.dropped) {
@@ -75,18 +78,18 @@ freqFun_para <- function(data, n.boot, estimates, interval, omega.freq.method,
   }
 
   if ("lambda4" %in% estimates) {
-    res$est$freq_lambda4 <- applylambda4_nocpp(cc)
-    lambda4_obj <- apply(boot_cov, 1, applylambda4_nocpp, callback)
+    res$est$freq_lambda4 <- applylambda4NoCpp(cc)
+    lambda4_obj <- apply(boot_cov, 1, applylambda4NoCpp, callback)
     if (length(unique(round(lambda4_obj, 4))) == 1) {
       res$conf$low$freq_lambda4 <- NA
       res$conf$up$freq_lambda4 <- NA
     } else {
-      res$conf$low$freq_lambda4 <- quantile(lambda4_obj, probs = (1 - interval)/2, na.rm = TRUE)
-      res$conf$up$freq_lambda4 <- quantile(lambda4_obj, probs = interval + (1 - interval)/2, na.rm = TRUE)
+      res$conf$low$freq_lambda4 <- quantile(lambda4_obj, probs = probs[1], na.rm = TRUE)
+      res$conf$up$freq_lambda4 <- quantile(lambda4_obj, probs = probs[2], na.rm = TRUE)
     }
     res$boot$lambda4 <- lambda4_obj
     if (item.dropped) {
-      res$ifitem$lambda4 <- apply(Ctmp, 1, applylambda4_nocpp)
+      res$ifitem$lambda4 <- apply(Ctmp, 1, applylambda4NoCpp)
     }
   }
 
@@ -97,8 +100,8 @@ freqFun_para <- function(data, n.boot, estimates, interval, omega.freq.method,
       res$conf$low$freq_lambda6 <- NA
       res$conf$up$freq_lambda6 <- NA
     } else {
-      res$conf$low$freq_lambda6 <- quantile(lambda6_obj, probs = (1 - interval)/2, na.rm = TRUE)
-      res$conf$up$freq_lambda6 <- quantile(lambda6_obj, probs = interval + (1 - interval)/2, na.rm = TRUE)
+      res$conf$low$freq_lambda6 <- quantile(lambda6_obj, probs = probs[1], na.rm = TRUE)
+      res$conf$up$freq_lambda6 <- quantile(lambda6_obj, probs = probs[2], na.rm = TRUE)
     }
     res$boot$lambda6 <- lambda6_obj
     if (item.dropped) {
@@ -107,18 +110,18 @@ freqFun_para <- function(data, n.boot, estimates, interval, omega.freq.method,
   }
 
   if ("glb" %in% estimates) {
-    res$est$freq_glb <- glbOnArray_custom(cc)
-    glb_obj <- glbOnArray_custom(boot_cov, callback)
+    res$est$freq_glb <- glbOnArrayCustom(cc)
+    glb_obj <- glbOnArrayCustom(boot_cov, callback)
     if (length(unique(round(glb_obj, 4))) == 1) {
       res$conf$low$freq_glb <- NA
       res$conf$up$freq_glb <- NA
     } else {
-      res$conf$low$freq_glb <- quantile(glb_obj, probs = (1 - interval)/2, na.rm = TRUE)
-      res$conf$up$freq_glb <- quantile(glb_obj, probs = interval + (1 - interval)/2, na.rm = TRUE)
+      res$conf$low$freq_glb <- quantile(glb_obj, probs = probs[1], na.rm = TRUE)
+      res$conf$up$freq_glb <- quantile(glb_obj, probs = probs[2], na.rm = TRUE)
     }
     res$boot$glb <- glb_obj
     if (item.dropped) {
-      res$ifitem$glb <- glbOnArray_custom(Ctmp)
+      res$ifitem$glb <- glbOnArrayCustom(Ctmp)
     }
   }
 
@@ -136,22 +139,22 @@ freqFun_para <- function(data, n.boot, estimates, interval, omega.freq.method,
             callback()
           }
         }
-        res$est$freq_omega <- applyomega_pfa(cc)
-        omega_obj <- apply(boot_cov, 1, applyomega_pfa)
+        res$est$freq_omega <- applyomegaPFA(cc)
+        omega_obj <- apply(boot_cov, 1, applyomegaPFA)
         if (length(unique(round(omega_obj, 4))) == 1) {
           res$conf$low$freq_omega <- NA
           res$conf$up$freq_omega <- NA
         }
         else {
-          res$conf$low$freq_omega <- quantile(omega_obj, probs = (1 - interval)/2, na.rm = TRUE)
-          res$conf$up$freq_omega <- quantile(omega_obj, probs = interval + (1 - interval)/2, na.rm = TRUE)
+          res$conf$low$freq_omega <- quantile(omega_obj, probs = probs[1], na.rm = TRUE)
+          res$conf$up$freq_omega <- quantile(omega_obj, probs = probs[2], na.rm = TRUE)
         }
         res$boot$omega <- omega_obj
         res$omega.error <- TRUE
         res$omega.pfa <- TRUE
 
         if (item.dropped) {
-          res$ifitem$omega <- apply(Ctmp, 1, applyomega_pfa)
+          res$ifitem$omega <- apply(Ctmp, 1, applyomegaPFA)
         }
       } else {
         res$est$freq_omega <- out$omega
@@ -167,28 +170,28 @@ freqFun_para <- function(data, n.boot, estimates, interval, omega.freq.method,
           res$ifitem$omega <- numeric(p)
           for (i in 1:p) {
             dtmp <- data[, -i]
-            res$ifitem$omega[i] <- applyomega_cfa_data(dtmp, interval = interval, pairwise = pairwise)
+            res$ifitem$omega[i] <- applyomegaCFAData(dtmp, interval = interval, pairwise = pairwise)
           }
           if (any(is.na(res$ifitem$omega))) {
-            res$ifitem$omega <- apply(Ctmp, 1, applyomega_pfa)
+            res$ifitem$omega <- apply(Ctmp, 1, applyomegaPFA)
             res$omega.item.error <- TRUE
           }
         }
       }
     } else if (omega.freq.method == "pfa") {
-      res$est$freq_omega <- applyomega_pfa(cc)
-      omega_obj <- apply(boot_cov, 1, applyomega_pfa, callback)
+      res$est$freq_omega <- applyomegaPFA(cc)
+      omega_obj <- apply(boot_cov, 1, applyomegaPFA, callback)
       res$omega.pfa <- TRUE
       if (length(unique(round(omega_obj, 4))) == 1) {
         res$conf$low$freq_omega <- NA
         res$conf$up$freq_omega <- NA
       } else {
-        res$conf$low$freq_omega <- quantile(omega_obj, probs = (1 - interval)/2, na.rm = TRUE)
-        res$conf$up$freq_omega <- quantile(omega_obj, probs = interval + (1 - interval)/2, na.rm = TRUE)
+        res$conf$low$freq_omega <- quantile(omega_obj, probs = probs[1], na.rm = TRUE)
+        res$conf$up$freq_omega <- quantile(omega_obj, probs = probs[2], na.rm = TRUE)
       }
       res$boot$omega <- omega_obj
       if (item.dropped) {
-        res$ifitem$omega <- apply(Ctmp, 1, applyomega_pfa)
+        res$ifitem$omega <- apply(Ctmp, 1, applyomegaPFA)
       }
     }
   }

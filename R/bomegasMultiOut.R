@@ -1,11 +1,11 @@
 
 
-bomegas_multi_out <- function(data, n.factors, n.iter, n.burnin, thin, n.chains,
-                             interval, model, pairwise, callback) {
+bomegasMultiOut <- function(data, n.factors, n.iter, n.burnin, thin, n.chains,
+                            interval, model, pairwise, callback) {
 
 
   out <- list()
-  om_out <- omegaMulti_B(data, n.factors, n.iter, n.burnin, n.chains, thin, model, pairwise, callback)
+  om_out <- omegaMultiB(data, n.factors, n.iter, n.burnin, n.chains, thin, model, pairwise, callback)
   out$omega_t$chains <- om_out$omt
   out$omega_t$mean <- mean(om_out$omt)
   out$omega_t$cred <- coda::HPDinterval(coda::mcmc(c(om_out$omt)), prob = interval)

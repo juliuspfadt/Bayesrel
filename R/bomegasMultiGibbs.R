@@ -1,13 +1,13 @@
 
 
 
-omegaMulti_B <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairwise, callback) {
+omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairwise, callback) {
 
   n <- nrow(data)
   k <- ncol(data)
 
   # ---- get the index matrix aka which items load on which factors ----
-  mod_opts <- index_matrix(model, k, ns, colnames(data))
+  mod_opts <- indexMatrix(model, k, ns, colnames(data))
   idex <- mod_opts$idex
   imat <- mod_opts$imat
   # ---- check missingsness ----
@@ -18,11 +18,11 @@ omegaMulti_B <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pair
 
   pars <- list(H0k = rep(1, ns), a0k = 2, b0k = 1, l0k = matrix(0, k, ns),
                H0kw = 2.5, a0kw = 2, b0kw = 1, beta0k = numeric(ns),
-               R0w = diag(rep(1/(k), ns+1)), p0w = ns^2)
+               R0w = diag(rep(1 / k, ns + 1)), p0w = ns^2)
 
   omsh <- matrix(0, n.chains, n.iter)
   omst <- matrix(0, n.chains, n.iter)
-  implCs <- array(0, c(n.chains, n.iter, k, k))
+  impl_covs <- array(0, c(n.chains, n.iter, k, k))
 
   for (ai in 1:n.chains) {
     # draw starting values
@@ -41,15 +41,15 @@ omegaMulti_B <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pair
         phiw <- params$phiw
         # compute omega
         Lm <- cbind(0, params$lambda)
-        Bm <- matrix(0, ns+1, ns+1)
-        Bm[2:(ns+1), 1] <- params$beta
-        oms <- omegas_seco(Lm, Bm, diag(params$psi), diag(c(1, params$psiw)))
+        Bm <- matrix(0, ns + 1, ns + 1)
+        Bm[2:(ns + 1), 1] <- params$beta
+        oms <- omegasSeco(Lm, Bm, diag(params$psi), diag(c(1, params$psiw)))
 
         omsh[ai, i] <- oms[1]
         omst[ai, i] <- oms[2]
 
-        cc <- implCov_multi(Lm, Bm, theta = diag(params$psi), psi = diag(c(1, params$psiw)))
-        implCs[ai, i, , ] <- cc
+        cc <- implCovMulti(Lm, Bm, theta = diag(params$psi), psi = diag(c(1, params$psiw)))
+        impl_covs[ai, i, , ] <- cc
 
         # substitute missing values one by one, where each value is drawn conditional on the rest of the data
         # see https://en.wikipedia.org/wiki/Multivariate_normal_distribution#Conditional_distributions
@@ -80,30 +80,30 @@ omegaMulti_B <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pair
 
         # compute omega
         Lm <- cbind(0, params$lambda)
-        Bm <- matrix(0, ns+1, ns+1)
-        Bm[2:(ns+1), 1] <- params$beta
-        oms <- omegas_seco(Lm, Bm, diag(params$psi), diag(c(1, params$psiw)))
+        Bm <- matrix(0, ns + 1, ns + 1)
+        Bm[2:(ns + 1), 1] <- params$beta
+        oms <- omegasSeco(Lm, Bm, diag(params$psi), diag(c(1, params$psiw)))
 
         omsh[ai, i] <- oms[1]
         omst[ai, i] <- oms[2]
 
-        implCs[ai, i, , ] <- implCov_multi(Lm, Bm, theta = diag(params$psi), psi = diag(c(1, params$psiw)))
+        impl_covs[ai, i, , ] <- implCovMulti(Lm, Bm, theta = diag(params$psi), psi = diag(c(1, params$psiw)))
 
       }
     }
   }
 
   # burnin
-  omh_burn <- omsh[, (n.burnin+1):n.iter, drop = F]
-  omt_burn <- omst[, (n.burnin+1):n.iter, drop = F]
-  implCs_burn <- implCs[, (n.burnin+1):n.iter, , , drop = F]
+  omh_burn <- omsh[, (n.burnin + 1):n.iter, drop = F]
+  omt_burn <- omst[, (n.burnin + 1):n.iter, drop = F]
+  impl_covs_burn <- impl_covs[, (n.burnin + 1):n.iter, , , drop = F]
 
   # thinning
   omh_out <- omh_burn[, seq(1, dim(omh_burn)[2], thin), drop = F]
   omt_out <- omt_burn[, seq(1, dim(omt_burn)[2], thin), drop = F]
-  implCs_out <- implCs_burn[, seq(1, dim(omt_burn)[2], thin), , , drop = F]
+  impl_covs_out <- impl_covs_burn[, seq(1, dim(omt_burn)[2], thin), , , drop = F]
 
-  return(list(omh = omh_out, omt = omt_out, impl_covs = implCs_out, imputed_values = imputed,
+  return(list(omh = omh_out, omt = omt_out, impl_covs = impl_covs_out, imputed_values = imputed,
               modfile = mod_opts))
 
 }
@@ -133,14 +133,14 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
 
   for (ii in 1:ns) {
     ids <- idex[[ii]]
-    Ak <- solve(1/H0k[ii] + t(wi[, ii+1]) %*% wi[, ii+1])
-    ak <- Ak %*% (c(1/H0k[ii]) %*% t(l0k[ids, ii]) + wi[, ii+1] %*% data[, ids])
+    Ak <- solve(1 / H0k[ii] + t(wi[, ii + 1]) %*% wi[, ii + 1])
+    ak <- Ak %*% (c(1 / H0k[ii]) %*% t(l0k[ids, ii]) + wi[, ii + 1] %*% data[, ids])
     bekk <- b0k + 0.5 * (t(data[, ids]) %*% data[, ids]
                          - t(ak) %*% solve(Ak) %*% ak
-                         + (l0k[ids, ii] * 1/H0k[ii]) %*% t(l0k[ids, ii]))
+                         + (l0k[ids, ii] * 1 / H0k[ii]) %*% t(l0k[ids, ii]))
     bek <- diag(bekk)
-    invpsi <- rgamma(length(ids), n/2 + a0k, bek)
-    psi <- 1/invpsi
+    invpsi <- rgamma(length(ids), n / 2 + a0k, bek)
+    psi <- 1 / invpsi
     lambda <- rnorm(length(ids), ak, sqrt(psi * as.vector(Ak)))
 
     if (mean(lambda) < 0) {# solve label switching problem
@@ -152,16 +152,15 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
 
 
   # ------- structural equation -----
-  Akw <- 1/(1/H0kw + c(t(wi[, 1]) %*% wi[, 1]))
-  akw <- Akw * (1/H0kw * beta0k + t(wi[, 1]) %*% wi[, 2:(ns+1)])
-  bekkw <- b0kw + 0.5 * (t(wi[, 2:(ns+1)]) %*% wi[, 2:(ns+1)]
-                         - ((t(akw) * (1/Akw)) %*% akw)
-                         + (beta0k * (1/H0kw)) %*% t(beta0k))
+  Akw <- 1 / (1 / H0kw + c(t(wi[, 1]) %*% wi[, 1]))
+  akw <- Akw * (1 / H0kw * beta0k + t(wi[, 1]) %*% wi[, 2:(ns + 1)])
+  bekkw <- b0kw + 0.5 * (t(wi[, 2:(ns + 1)]) %*% wi[, 2:(ns + 1)]
+                         - ((t(akw) * (1 / Akw)) %*% akw)
+                         + (beta0k * (1 / H0kw)) %*% t(beta0k))
   bekw <- diag(bekkw)
 
-  invpsiw <- rgamma(ns, n/2 + a0kw, bekw)
-  invPsiw <- diag(invpsiw)
-  psiw <- 1/invpsiw
+  invpsiw <- rgamma(ns, n / 2 + a0kw, bekw)
+  psiw <- 1 / invpsiw
   beta <- rnorm(ns, akw * sqrt(diag(phiw)[1]), sqrt(psiw * Akw))
 
   if (mean(beta) < 0) {# solve label switching problem
@@ -170,9 +169,9 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
 
   # in Lee it says to replace the usual inv Phi matrix when sampling the factor scores with a function
   # of the g-factor loadings and their residuals
-  betaMat <- matrix(0, ns+1, ns+1)
-  betaMat[2:(ns+1), 1] <- beta
-  ident <- diag(ns+1)
+  betaMat <- matrix(0, ns + 1, ns + 1)
+  betaMat[2:(ns + 1), 1] <- beta
+  ident <- diag(ns + 1)
   identInv <- solve(ident - betaMat)
   psid <- diag(c(1, psiw))
   sigW <- identInv %*% psid %*% t(identInv)
@@ -184,13 +183,12 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
   mw <- solve(invsigW + impM) %*% t(lll) %*% solve(diag(pp)) %*% t(data)
   Vw <- solve(invsigW + impM)
 
-  wi <- genNormData_tweak(n, t(mw), Vw)
+  wi <- genNormDataTweak(n, t(mw), Vw)
   # set factor variance to 1 to identify the model
-  wi <- apply(wi, 2, function(x) x/sd(x))
+  wi <- apply(wi, 2, function(x) x / sd(x))
 
   # sample phi for g-factor:
   phiw <- LaplacesDemon::rinvwishart(nu = n + p0w, S = t(wi) %*% (wi) + solve(R0w))
-  invPhiw <- solve(phiw)
 
   return(list(psi = pp, lambda = ll, psiw = psiw, beta = beta, wi = wi, phiw = phiw))
 }
@@ -198,25 +196,16 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
 drawStartMulti <- function(n, k, ns, pars, imat) {
   # measurement parameters
   invpsi <- rgamma(k, pars$a0k, pars$b0k)
-  psi <- 1/invpsi
-  invPsi <- diag(invpsi)
-  lambda <- rnorm(k, pars$l0k[imat], sqrt(psi * rep(pars$H0k, each = k/ns)))
+  psi <- 1 / invpsi
   # structural parameters
   invpsiw <- rgamma(ns, pars$a0kw, pars$b0kw)
-  psiw <- 1/invpsiw
-  invPsiw <- diag(invpsiw)
-  beta <- rnorm(ns, pars$beta0k, sqrt(psiw*pars$H0kw))
+  psiw <- 1 / invpsiw
 
   # ------- factor scores for all factors ---------
   phiw <- LaplacesDemon::rinvwishart(nu = pars$p0w, S = (pars$R0w))
-  invPhiw <- solve(phiw)
 
-  wi <- MASS::mvrnorm(n, numeric(ns+1), phiw)
-  wi <- apply(wi, 2, function(x) x/sd(x))
+  wi <- MASS::mvrnorm(n, numeric(ns + 1), phiw)
+  wi <- apply(wi, 2, function(x) x / sd(x))
 
-  return(list(wi = wi,
-              # lambda = lambda, beta = beta, psi = psi, psiw = psiw,
-              phiw = phiw))
+  return(list(wi = wi, phiw = phiw))
 }
-
-

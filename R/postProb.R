@@ -59,20 +59,12 @@ p_omegas <- function(x, cutoff.t = .80, cutoff.h = .60) {
   post_prob_h <- 1 - objh(cutoff.h)
 
   # prior prob
-  priors <- omegas_prior(x$k, x$n.factors)
+  priors <- omegasPrior(x$k, x$n.factors)
   priort <- ecdf(priors$omt_prior)
   priorh <- ecdf(priors$omh_prior)
 
   prior_prob_t <- 1 - priort(cutoff.t)
   prior_prob_h <- 1 - priorh(cutoff.h)
-
-  # end_h <- length(priorh[["x"]])
-  # poslow_h <- end_h - sum(priorh[["x"]] > cutoff.h)
-  # prior_prob_h <- sum(priorh[["y"]][poslow_h:end_h]) / sum(priorh[["y"]])
-  #
-  # end_t <- length(priort[["x"]])
-  # poslow_t <- end_t - sum(priort[["x"]] > cutoff.t)
-  # prior_prob_t <- sum(priort[["y"]][poslow_t:end_t]) / sum(priort[["y"]])
 
   out <- matrix(c(prior_prob_t, prior_prob_h, post_prob_t, post_prob_h, cutoff.t, cutoff.h),
                 3, 2, byrow = TRUE)

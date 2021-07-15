@@ -1,10 +1,10 @@
 
 
 
-omegasCFA_multi_out <- function(data, n.factors, interval, pairwise, model, model.type, fit.measures) {
+omegasCFAMultiOut <- function(data, n.factors, interval, pairwise, model, model.type, fit.measures) {
 
   out <- list()
-  om_out <- omegaMulti_F(data, n.factors, interval, pairwise, model, model.type, fit.measures)
+  om_out <- omegaMultiF(data, n.factors, interval, pairwise, model, model.type, fit.measures)
   out$omega_t$est <- om_out$omtmean
   out$omega_t$conf <- c(om_out$omtlow, om_out$omtup)
 

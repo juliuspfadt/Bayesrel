@@ -60,8 +60,8 @@ KSTestStatistic <- function(x, y) {
 # calculate the kublack leibler distance between two samples
 KLDStatistic <- function(x, y) {
   # transform the samples to PDFs:
-  xdf <- get_approx_density(x)
-  ydf <- get_approx_density(y)
+  xdf <- getApproxDensity(x)
+  ydf <- getApproxDensity(y)
 
   xx <- seq(0, 1, length.out = 1e3)
   t <- LaplacesDemon::KLD(xdf(xx), ydf(xx))
@@ -86,27 +86,27 @@ createUnidimCovMat <- function(avg, p) {
     loading <- matrix(lam_true, nrow = p)
     psi_m <- diag(1, nrow = p)
     diag(psi_m) <- psi_true
-    tmpCov <- make_symmetric(loading %*% 1 %*% t(loading) + psi_m)
-    cormat <- cov2cor(tmpCov)
+    tmp_cov <- make_symmetric(loading %*% 1 %*% t(loading) + psi_m)
+    cormat <- cov2cor(tmp_cov)
     mean_cor <- (sum(cormat) - p) / (p*p - p)
     counter <- counter + 1
     if (counter == 1e4)
       return(print("solution has not been found"))
   }
-  return(tmpCov)
+  return(tmp_cov)
 }
 
-try_smc <- function(M) {
+trySmc <- function(M) {
   return(try(1 - 1 / diag(solve(cov2cor(M))), silent = TRUE))
 }
 
-try_psd <- function(M) {
+tryPsd <- function(M) {
   R <- cov2cor(M)
   return(try(eigen(R, only.values = TRUE)$values, silent = TRUE))
 }
 
 
-get_approx_density <- function(x) {
+getApproxDensity <- function(x) {
   d <- density(x, n = 2^12)
   f <- approxfun(d$x, d$y, yleft = 0, yright = 0)
   c <- integrate(f, 0, 1)$value

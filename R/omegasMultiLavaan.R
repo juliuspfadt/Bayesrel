@@ -1,15 +1,15 @@
 
-omegaMulti_F <- function(data, n.factors, interval, pairwise, model, model.type, fit.measures) {
+omegaMultiF <- function(data, n.factors, interval, pairwise, model, model.type, fit.measures) {
 
   k <- ncol(data)
   if (model.type == "higher-order") {
 
     if (model == "balanced") {
-      modfile <- lavMultiFile_seco(k, n.factors)
+      modfile <- lavMultiFileSeco(k, n.factors)
       colnames(data) <- modfile$names
 
     } else { # if model syntax is specified
-      modfile <- lavMultiFile_seco_syntax(k, n.factors, model, colnames(data))
+      modfile <- lavMultiFileSecoSyntax(k, n.factors, model, colnames(data))
 
       if (!modfile$colnames) { # name the variables in the dataset:
         names <- unlist(modfile$names)
@@ -28,11 +28,11 @@ omegaMulti_F <- function(data, n.factors, interval, pairwise, model, model.type,
   } else if (model.type == "bi-factor") { # model.type is bifactor
     if (model == "balanced") {
 
-      modfile <- lavMultiFile_bif(k, n.factors)
+      modfile <- lavMultiFileBif(k, n.factors)
       colnames(data) <- modfile$names
 
     } else { # if model syntax is specified
-      modfile <- lavMultiFile_bif_syntax(k, n.factors, model, colnames(data))
+      modfile <- lavMultiFileBifSyntax(k, n.factors, model, colnames(data))
 
       if (!modfile$colnames) { # name the variables in the dataset:
         names <- unlist(modfile$names)
@@ -55,7 +55,7 @@ omegaMulti_F <- function(data, n.factors, interval, pairwise, model, model.type,
   }
 
   return(list(omhmean = sts$est[sts$label == "omega_h"], omtmean = sts$est[sts$label == "omega_t"],
-         omhlow = sts$ci.lower[sts$label == "omega_h"], omhup = sts$ci.upper[sts$label == "omega_h"],
-         omtlow = sts$ci.lower[sts$label == "omega_t"], omtup = sts$ci.upper[sts$label == "omega_t"],
-         modfile = modfile))
+              omhlow = sts$ci.lower[sts$label == "omega_h"], omhup = sts$ci.upper[sts$label == "omega_h"],
+              omtlow = sts$ci.lower[sts$label == "omega_t"], omtup = sts$ci.upper[sts$label == "omega_t"],
+              modfile = modfile))
 }

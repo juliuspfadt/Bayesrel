@@ -7,16 +7,16 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
   p <- ncol(data)
   res <- list()
   if ("alpha" %in% estimates || "lambda2" %in% estimates || "lambda4" %in% estimates || "lambda6" %in% estimates ||
-      "glb" %in% estimates){
+      "glb" %in% estimates) {
     tmp_out <- covSamp(data, n.iter, n.burnin, thin, n.chains, pairwise, callback)
 
     C <- tmp_out$cov_mat
     res$covsamp <- C
     res$data_mis_samp_cov <- tmp_out$dat_mis_samp_cov
     if (item.dropped) {
-      Ctmp <- array(0, c(n.chains, length(seq(1, n.iter-n.burnin, thin)), p, p - 1, p - 1))
+      Ctmp <- array(0, c(n.chains, length(seq(1, n.iter - n.burnin, thin)), p, p - 1, p - 1))
       for (i in 1:p) {
-        Ctmp[, , i, , ] <- C[ , , -i, -i]
+        Ctmp[, , i, , ] <- C[, , -i, -i]
       }
     }
   }
@@ -40,26 +40,26 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
     int <- coda::HPDinterval(coda::mcmc(as.vector(res$samp$Bayes_lambda2)), prob = interval)
     res$cred$low$Bayes_lambda2 <- int[1]
     res$cred$up$Bayes_lambda2 <- int[2]
-    res$est$Bayes_lambda2<- mean(res$samp$Bayes_lambda2)
+    res$est$Bayes_lambda2 <- mean(res$samp$Bayes_lambda2)
     if (item.dropped) {
       res$ifitem$samp$lambda2 <- apply(Ctmp, c(1, 2, 3), applylambda2, callback)
       res$ifitem$est$lambda2 <- apply(res$ifitem$samp$lambda2, 3, mean)
       res$ifitem$cred$lambda2 <- coda::HPDinterval(coda::mcmc(apply(res$ifitem$samp$lambda2, 3, as.vector)),
-                                                 prob = interval)
+                                                   prob = interval)
     }
   }
 
   if ("lambda4" %in% estimates) {
-    res$samp$Bayes_lambda4 <- coda::mcmc(apply(C, MARGIN = c(1, 2), applylambda4_nocpp, callback))
+    res$samp$Bayes_lambda4 <- coda::mcmc(apply(C, MARGIN = c(1, 2), applylambda4NoCpp, callback))
     int <- coda::HPDinterval(coda::mcmc(as.vector(res$samp$Bayes_lambda4)), prob = interval)
     res$cred$low$Bayes_lambda4 <- int[1]
     res$cred$up$Bayes_lambda4 <- int[2]
-    res$est$Bayes_lambda4<- mean(res$samp$Bayes_lambda4)
-    if (item.dropped){
-      res$ifitem$samp$lambda4 <- (apply(Ctmp, c(1, 2, 3), applylambda4_nocpp, callback))
+    res$est$Bayes_lambda4 <- mean(res$samp$Bayes_lambda4)
+    if (item.dropped) {
+      res$ifitem$samp$lambda4 <- (apply(Ctmp, c(1, 2, 3), applylambda4NoCpp, callback))
       res$ifitem$est$lambda4 <- apply(res$ifitem$samp$lambda4, 3, mean)
       res$ifitem$cred$lambda4 <- coda::HPDinterval(coda::mcmc(apply(res$ifitem$samp$lambda4, 3, as.vector)),
-                                                 prob = interval)
+                                                   prob = interval)
     }
   }
 
@@ -68,17 +68,17 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
     int <- coda::HPDinterval(coda::mcmc(as.vector(res$samp$Bayes_lambda6)), prob = interval)
     res$cred$low$Bayes_lambda6 <- int[1]
     res$cred$up$Bayes_lambda6 <- int[2]
-    res$est$Bayes_lambda6<- mean(res$samp$Bayes_lambda6)
-    if (item.dropped){
+    res$est$Bayes_lambda6 <- mean(res$samp$Bayes_lambda6)
+    if (item.dropped) {
       res$ifitem$samp$lambda6 <- (apply(Ctmp, c(1, 2, 3), applylambda6, callback))
       res$ifitem$est$lambda6 <- apply(res$ifitem$samp$lambda6, 3, mean)
       res$ifitem$cred$lambda6 <- coda::HPDinterval(coda::mcmc(apply(res$ifitem$samp$lambda6, 3, as.vector)),
-                                                 prob = interval)
+                                                   prob = interval)
     }
   }
 
   if ("glb" %in% estimates) {
-    res$samp$Bayes_glb <- coda::mcmc(t(apply(C, c(1), glbOnArray_custom, callback)))
+    res$samp$Bayes_glb <- coda::mcmc(t(apply(C, c(1), glbOnArrayCustom, callback)))
     if (sum(is.na(res$samp$Bayes_glb) > 0)) {
       int <- c(NA, NA)
     } else {
@@ -88,10 +88,10 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
     res$cred$up$Bayes_glb <- int[2]
     res$est$Bayes_glb <- mean(res$samp$Bayes_glb)
     if (item.dropped){
-      res$ifitem$samp$glb <- aperm(apply(Ctmp, c(1, 3), glbOnArray_custom, callback), c(2, 1, 3))
+      res$ifitem$samp$glb <- aperm(apply(Ctmp, c(1, 3), glbOnArrayCustom, callback), c(2, 1, 3))
       res$ifitem$est$glb <- apply(res$ifitem$samp$glb, 3, mean)
       res$ifitem$cred$glb <- coda::HPDinterval(coda::mcmc(apply(res$ifitem$samp$glb, 3, as.vector)),
-                                                 prob = interval)
+                                               prob = interval)
     }
   }
 
@@ -105,11 +105,11 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
 
     int <- coda::HPDinterval(coda::mcmc(as.vector(res$samp$Bayes_omega)), prob = interval)
     res$cred$low$Bayes_omega <- int[1]
-    res$cred$up$Bayes_omega<- int[2]
+    res$cred$up$Bayes_omega <- int[2]
     res$est$Bayes_omega <- mean(res$samp$Bayes_omega)
 
     if (item.dropped) {
-      om_samp_ifitem <- array(0, c(n.chains, length(seq(1, n.iter-n.burnin, thin)), p))
+      om_samp_ifitem <- array(0, c(n.chains, length(seq(1, n.iter - n.burnin, thin)), p))
       for (i in 1:p) {
         tmp <- data[, -i]
         om_samp_ifitem[, , i] <- omegaSampler(tmp, n.iter, n.burnin, thin, n.chains, pairwise, callback)$omega

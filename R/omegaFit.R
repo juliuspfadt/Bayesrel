@@ -14,8 +14,12 @@
 #' @export
 #'
 omega_fit <- function(x) {
-  if (!("omega" %in% x$estimates)) {return(warning("please run the analysis with omega as an estimate"))}
-  if (!is.null(x$freq$omega.pfa)) {warning("cannot compute fit.measures for the pfa method")}
+  if (!("omega" %in% x$estimates)) {
+    return(warning("please run the analysis with omega as an estimate"))
+  }
+  if (!is.null(x$freq$omega.pfa)) {
+    warning("cannot compute fit.measures for the pfa method")
+  }
 
   if (!is.null(x$Bayes)) {
     if (!is.null(x$miss_pairwise)) {
@@ -42,15 +46,14 @@ omega_fit <- function(x) {
     plot(eigen(sigma)$values, axes = F, ylim = c(0, ymax), ylab = "Eigenvalue", xlab = "Eigenvalue No.",
          pch = 8, cex = 0)
 
-    arrows(x0 = seq(1:ncol(sigma)), x1 = seq(1:ncol(sigma)), y0 = qq_ee_low, y1 = qq_ee_up,
-           col = "gray55", angle=90, code = 3, length = .06, lwd = 2.5)
+    arrows(x0 = seq_len(ncol(sigma)), x1 = seq_len(ncol(sigma)), y0 = qq_ee_low, y1 = qq_ee_up,
+           col = "gray55", angle = 90, code = 3, length = .06, lwd = 2.5)
 
     lines(eigen(sigma)$values, type = "p", pch = 8, cex =.7)
-    axis(side = 1, at = seq(1:ncol(sigma)))
+    axis(side = 1, at = seq_len(ncol(sigma)))
     axis(side = 2, las = 1)
-    # title(main = "Posterior Predictive Check for Omega 1-Factor-Model")
 
-    legend(ncol(sigma)/3*1.1, ymax*(2/3),
+    legend(ncol(sigma) / 3 * 1.1, ymax * (2 / 3),
            legend = c("Dataset Covariance Matrix", "Model Implied Covariance Matrices"),
            col=c("black", "gray50"), box.lwd = .7, lty = c(0, 1), lwd = c(1, 2.5), pch = c(8, 30), cex = .8)
   }
@@ -100,15 +103,15 @@ seco_fit <- function(x, data) {
   par(mar=c(5.1, 4.5, 0.7, 2.1))
   plot(eigen(sigma)$values, axes = F, ylim = c(0, ymax), pch = 8, cex = 0, xlab = "", ylab = "")
 
-  arrows(x0 = seq(1:ncol(sigma)), x1 = seq(1:ncol(sigma)), y0 = qq_ee_low, y1 = qq_ee_up,
-         col = "gray55", angle=90, code = 3, length = .06, lwd = 2.5)
+  arrows(x0 = seq_len(ncol(sigma)), x1 = seq_len(ncol(sigma)), y0 = qq_ee_low, y1 = qq_ee_up,
+         col = "gray55", angle = 90, code = 3, length = .06, lwd = 2.5)
 
   lines(eigen(sigma)$values, type = "p", pch = 8, cex =.7)
-  axis(side = 1, at = seq(1:ncol(sigma)), cex.axis = 1.4)
+  axis(side = 1, at = seq_len(ncol(sigma)), cex.axis = 1.4)
   axis(side = 2, las = 1, cex.axis = 1.4)
   title(xlab = "Eigenvalue No.", ylab = "Eigenvalue", cex.lab = 1.4)
 
-  legend(ncol(sigma)/3*1.1, ymax*(2/3),
+  legend(ncol(sigma) / 3 * 1.1, ymax  *(2 / 3),
          legend = c("Dataset Covariance Matrix", "Model Implied Covariance Matrices"),
          col=c("black", "gray50"), box.lwd = .7, lty = c(0, 1), lwd = c(1, 2.5), pch = c(8, 0), cex = 1.2,
          pt.cex = c(1, 0))

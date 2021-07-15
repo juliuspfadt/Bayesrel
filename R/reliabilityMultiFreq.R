@@ -25,6 +25,7 @@
 #' and the model fit
 #' @param interval A number specifying the confidence interval, which is Wald-type
 #' @param missing A string denoting the missing data handling, can be "pairwise" or "listwise.
+#' pairwise uses FIML in lavaan.
 #' @param fit.measures A logical denoting if fit.measures from the CFA should be computed
 #'
 #' @examples
@@ -50,31 +51,33 @@ omegasCFA <- function(
   missing = "pairwise",
   fit.measures = FALSE) {
 
-  any_missings <- FALSE
+  listwise <- FALSE
   pairwise <- FALSE
   complete_cases <- nrow(data)
   if (any(is.na(data))) {
-    any_missings <- TRUE
     if (missing == "listwise") {
       pos <- which(is.na(data), arr.ind = TRUE)[, 1]
       data <- data[-pos, ]
       ncomp <- nrow(data)
       complete_cases <- ncomp
-    } else { # missing = pairwise
+      listwise <- TRUE
+    } else { # missing is pairwise
       pairwise <- TRUE
     }
   }
 
   data <- scale(data, scale = FALSE)
 
-  sum_res <- omegasCFA_multi_out(data, n.factors, interval, pairwise, model, model.type, fit.measures)
+  sum_res <- omegasCFAMultiOut(data, n.factors, interval, pairwise, model, model.type, fit.measures)
 
   sum_res$complete_cases <- complete_cases
   sum_res$call <- match.call()
   sum_res$k <- ncol(data)
   sum_res$n.factors <- n.factors
   sum_res$pairwise <- pairwise
-  class(sum_res) <- 'omegasCFA'
+  sum_res$listwise <- listwise
+  sum_res$interval <- interval
+  class(sum_res) <- "omegasCFA"
 
   return(sum_res)
 }

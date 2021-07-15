@@ -64,32 +64,34 @@ bomegas <- function(
   callback = function(){}
 ) {
 
-  any_missings <- FALSE
+  listwise <- FALSE
   pairwise <- FALSE
   complete_cases <- nrow(data)
   if (any(is.na(data))) {
-    any_missings <- TRUE
     if (missing == "listwise") {
       pos <- which(is.na(data), arr.ind = TRUE)[, 1]
       data <- data[-pos, ]
       ncomp <- nrow(data)
       complete_cases <- ncomp
-    } else { # missing = pairwise
+      listwise <- TRUE
+    } else { # missing is pairwise
       pairwise <- TRUE
     }
   }
 
   data <- scale(data, scale = FALSE)
 
-  sum_res <- bomegas_multi_out(data, n.factors, n.iter, n.burnin, thin, n.chains,
-                               interval, model, pairwise, callback)
+  sum_res <- bomegasMultiOut(data, n.factors, n.iter, n.burnin, thin, n.chains,
+                             interval, model, pairwise, callback)
 
   sum_res$complete_cases <- complete_cases
   sum_res$call <- match.call()
   sum_res$k <- ncol(data)
   sum_res$n.factors <- n.factors
   sum_res$pairwise <- pairwise
-  class(sum_res) <- 'bomegas'
+  sum_res$listwise <- listwise
+  sum_res$interval <- interval
+  class(sum_res) <- "bomegas"
 
   return(sum_res)
 }

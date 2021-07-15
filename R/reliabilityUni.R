@@ -99,32 +99,30 @@ strel <- function(data = NULL,
                   callback = function(){}) {
 
   default <- c("alpha", "lambda2", "lambda4", "lambda6", "glb", "omega")
-  # estimates <- match.arg(arg = estimates, several.ok = T)
   mat <- match(default, estimates)
   estimates <- estimates[mat]
   estimates <- estimates[!is.na(estimates)]
-  p <- NULL
   sum_res <- list()
   sum_res$call <- match.call()
 
   pairwise <- FALSE
-  use.cases <- "everything"
+  use_cases <- "everything"
   if (any(is.na(data))) {
     if (missing == "listwise") {
       pos <- which(is.na(data), arr.ind = TRUE)[, 1]
       data <- data[-pos, ]
       ncomp <- nrow(data)
       sum_res$complete <- ncomp
-      use.cases <- "complete.obs"
+      use_cases <- "complete.obs"
     } else if (missing == "pairwise") {
       pairwise <- TRUE
       sum_res$miss_pairwise <- TRUE
-      use.cases <- "pairwise.complete.obs"
+      use_cases <- "pairwise.complete.obs"
     } else return(warning("missing values in data detected, please remove and run again"))
   }
 
 
-  if (!is.null(cov.mat)){
+  if (!is.null(cov.mat)) {
     if (is.null(n.obs))
       return(warning("number of observations (n.obs) needs to be specified when entering a covariance matrix"))
     if (sum(cov.mat[lower.tri(cov.mat)] != t(cov.mat)[lower.tri(cov.mat)]) > 0)
@@ -135,8 +133,8 @@ strel <- function(data = NULL,
     colnames(data) <- colnames(cov.mat)
   }
 
-  if (!("matrix" %in% class(try(solve(cov(data, use = use.cases)), silent = TRUE))))
-      return(warning("Data covariance matrix is not invertible"))
+  if (!("matrix" %in% class(try(solve(cov(data, use = use_cases)), silent = TRUE))))
+    return(warning("Data covariance matrix is not invertible"))
 
   data <- scale(data, scale = FALSE) # needed for Bayes omega
 
@@ -152,12 +150,12 @@ strel <- function(data = NULL,
 
   if(freq){
 
-    if (para.boot){
-      sum_res$freq <- freqFun_para(data, n.boot, estimates, interval, omega.freq.method, item.dropped,
-                                   alpha.int.analytic, omega.int.analytic, pairwise, callback)
+    if (para.boot) {
+      sum_res$freq <- freqFunPara(data, n.boot, estimates, interval, omega.freq.method, item.dropped,
+                                  alpha.int.analytic, omega.int.analytic, pairwise, callback)
     } else {
-      sum_res$freq <- freqFun_nonpara(data, n.boot, estimates, interval, omega.freq.method, item.dropped,
-                                    alpha.int.analytic, omega.int.analytic, pairwise, callback)
+      sum_res$freq <- freqFunNonPara(data, n.boot, estimates, interval, omega.freq.method, item.dropped,
+                                     alpha.int.analytic, omega.int.analytic, pairwise, callback)
     }
 
     if (alpha.int.analytic)
@@ -175,6 +173,6 @@ strel <- function(data = NULL,
   sum_res$data <- data
 
 
-  class(sum_res) = 'strel'
+  class(sum_res) <- "strel"
   return(sum_res)
 }

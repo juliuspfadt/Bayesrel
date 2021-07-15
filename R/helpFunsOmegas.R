@@ -1,6 +1,6 @@
 # create lavaan cfa one factor model file from data
 
-lavOneFile <- function(data){
+lavOneFile <- function(data) {
   p <- ncol(data)
   v <- 0
   for (i in 1:p) {
@@ -27,7 +27,7 @@ omegaBasic <- function(l, e) {
 }
 
 # omegas
-omegas_seco <- function(lambda, beta, theta, psi) {
+omegasSeco <- function(lambda, beta, theta, psi) {
   gl <- lambda %*% beta
   sl <- lambda %*% sqrt(psi)
   omh <- sum(gl %*% t(gl)) / (sum(gl %*% t(gl)) + sum(sl %*% t(sl)) + sum(theta))
@@ -39,7 +39,7 @@ omegas_seco <- function(lambda, beta, theta, psi) {
 }
 
 # multivariate normal data with matrix of means and V
-genNormData_tweak <- function(n, m, Sigma){
+genNormDataTweak <- function(n, m, Sigma){
   p <- ncol(Sigma)
   randomData <- matrix(rnorm(n*p), n, p)
   cc <- chol(Sigma)
@@ -49,7 +49,7 @@ genNormData_tweak <- function(n, m, Sigma){
 }
 
 # get model implied covariance matrix
-implCov_multi <- function(s, b, theta, psi) {
+implCovMulti <- function(s, b, theta, psi) {
   i <- diag(nrow(b))
   ib_inv <- solve(i-b)
   out <- s %*% ib_inv %*% psi %*% t(ib_inv) %*% t(s) + theta
@@ -58,13 +58,12 @@ implCov_multi <- function(s, b, theta, psi) {
 }
 
 # generate balanced and simple model file for lavaan
-lavMultiFile_seco <- function(k, ns) {
+lavMultiFileSeco <- function(k, ns) {
 
   beta_names <- paste("gl", 1:ns, sep = "")
   lambda_names <- matrix(paste("sl", 1:k, sep = ""), k/ns, ns)
   names <- matrix(paste("x", 1:k, sep = ""), k/ns, ns)
   theta_names <- paste("e", 1:k, sep = "")
-  # psi_names <- paste("ps", 1:ns, sep = "")
 
   gen <- paste(paste(beta_names, "*", "s", 1:ns, sep = ""), collapse = " + " )
   gen <- paste0("g =~ ", gen)
@@ -98,15 +97,15 @@ lavMultiFile_seco <- function(k, ns) {
   omega_t <- "omega_t := (g_loading^2 + spec_loading) / (g_loading^2 + spec_loading + residual_var) \n"
   mod <- paste0(mod, sl, sum_gl, sum_sl, sum_errs, omega_h, omega_t)
 
-  return(out <- list(names = names, model = mod))
+  return(list(names = names, model = mod))
 }
 
 # generate balanced and simple model file for lavaan with specified syntax
-lavMultiFile_seco_syntax <- function(k, ns, model, colnams) {
+lavMultiFileSecoSyntax <- function(k, ns, model, colnams) {
 
   beta_names <- paste("gl", 1:ns, sep = "")
 
-  mod_out <- model_syntax_extract(model, colnams)
+  mod_out <- modelSyntaxExtract(model, colnams)
   mod <- mod_out$mod
   if (ns != mod_out$mod_n.factors) {
     warning("n.factors is unequal to specified factors in model syntax")
@@ -118,11 +117,11 @@ lavMultiFile_seco_syntax <- function(k, ns, model, colnams) {
     idex <- list()
     lambda_names <- list()
     names <- list()
-    for (i in 1:length(mod)) {
+    for (i in seq_len(length(mod))) {
       tmp_mod <- unlist(strsplit(mod[[i]], " "))
       idex[[i]] <- which(colnams %in% tmp_mod)
       imat[idex[[i]], i] <- TRUE
-      lambda_names[[i]] <- paste0("l", i, 1:length(idex[[i]]))
+      lambda_names[[i]] <- paste0("l", i, seq_len(length(idex[[i]])))
       names[[i]] <- tmp_mod[nchar(tmp_mod) > 0]
     }
 
@@ -132,16 +131,15 @@ lavMultiFile_seco_syntax <- function(k, ns, model, colnams) {
     idex <- lapply(out, as.numeric)
     lambda_names <- list()
     names <- list()
-    for (i in 1:length(mod)) {
+    for (i in seq_len(length(mod))) {
       imat[idex[[i]], i] <- TRUE
-      lambda_names[[i]] <- paste0("l", i, 1:length(idex[[i]]))
+      lambda_names[[i]] <- paste0("l", i, seq_len(length(idex[[i]])))
       tmp <- unlist(strsplit(mod[[i]], " "))
       names[[i]] <- tmp[nchar(tmp) > 0]
     }
   }
 
   theta_names <- paste("e", 1:k, sep = "")
-  psi_names <- paste("ps", 1:ns, sep = "")
 
   gen <- paste(paste(beta_names, "*", "s", 1:ns, sep = ""), collapse = " + " )
   gen <- paste0("g =~ ", gen)
@@ -149,7 +147,7 @@ lavMultiFile_seco_syntax <- function(k, ns, model, colnams) {
   modfile <- NULL
   for (i in 1:ns) {
     modfile <- paste0(modfile, "s", i, " =~ ", paste(paste(lambda_names[[i]], "*", names[[i]], sep = ""),
-                                             collapse = " + "), "\n")
+                                                     collapse = " + "), "\n")
   }
   modfile <- paste0(gen, " \n", modfile)
 
@@ -162,7 +160,7 @@ lavMultiFile_seco_syntax <- function(k, ns, model, colnams) {
   gl <- NULL
   sl <- NULL
   for (i in 1:ns) {
-    gl <- c(gl, paste0(beta_names[i] , "*", lambda_names[[i]]))
+    gl <- c(gl, paste0(beta_names[i], "*", lambda_names[[i]]))
     sl <- paste0(sl, "ssum", i, " := ", paste0(lambda_names[[i]], collapse = " + "), "\n")
   }
   gl <- paste0(gl, collapse = "+")
@@ -179,7 +177,7 @@ lavMultiFile_seco_syntax <- function(k, ns, model, colnams) {
 }
 
 
-lavMultiFile_bif <- function(k, ns) {
+lavMultiFileBif <- function(k, ns) {
 
   beta_names <- paste("gl", 1:k, sep = "")
   lambda_names <- matrix(paste("sl", 1:k, sep = ""), k/ns, ns)
@@ -221,15 +219,15 @@ lavMultiFile_bif <- function(k, ns) {
   omega_t <- "omega_t := (g_loading^2 + spec_loading) / (g_loading^2 + spec_loading + residual_var) \n"
   mod <- paste0(mod, load_sum, sum_gl, sum_sl, sum_errs, omega_h, omega_t)
 
-  return(out <- list(names = c(names), model = mod))
+  return(list(names = c(names), model = mod))
 }
 
 
-lavMultiFile_bif_syntax <- function(k, ns, model, colnams) {
+lavMultiFileBifSyntax <- function(k, ns, model, colnams) {
 
   beta_names <- paste("gl", 1:k, sep = "")
 
-  mod_out <- model_syntax_extract(model, colnams)
+  mod_out <- modelSyntaxExtract(model, colnams)
   mod <- mod_out$mod
   if (ns != mod_out$mod_n.factors) {
     warning("n.factors is unequal to specified factors in model syntax")
@@ -241,11 +239,11 @@ lavMultiFile_bif_syntax <- function(k, ns, model, colnams) {
     idex <- list()
     lambda_names <- list()
     names <- list()
-    for (i in 1:length(mod)) {
+    for (i in seq_len(length(mod))) {
       tmp_mod <- unlist(strsplit(mod[[i]], " "))
       idex[[i]] <- which(colnams %in% tmp_mod)
       imat[idex[[i]], i] <- TRUE
-      lambda_names[[i]] <- paste0("l", i, 1:length(idex[[i]]))
+      lambda_names[[i]] <- paste0("l", i, seq_len(length(idex[[i]])))
       names[[i]] <- tmp_mod[nchar(tmp_mod) > 0]
     }
 
@@ -255,9 +253,9 @@ lavMultiFile_bif_syntax <- function(k, ns, model, colnams) {
     idex <- lapply(out, as.numeric)
     lambda_names <- list()
     names <- list()
-    for (i in 1:length(mod)) {
+    for (i in seq_len(length(mod))) {
       imat[idex[[i]], i] <- TRUE
-      lambda_names[[i]] <- paste0("l", i, 1:length(idex[[i]]))
+      lambda_names[[i]] <- paste0("l", i, seq_len(length(idex[[i]])))
       tmp <- unlist(strsplit(mod[[i]], " "))
       names[[i]] <- tmp[nchar(tmp) > 0]
     }
@@ -273,7 +271,7 @@ lavMultiFile_bif_syntax <- function(k, ns, model, colnams) {
   modfile <- NULL
   for (i in 1:ns) {
     modfile <- paste0(modfile, "s", i, " =~ ", paste(paste(lambda_names[[i]], "*", names[[i]], sep = ""),
-                                             collapse = " + "), "\n")
+                                                     collapse = " + "), "\n")
   }
   modfile <- paste0(gen, " \n", modfile)
 
@@ -284,7 +282,7 @@ lavMultiFile_bif_syntax <- function(k, ns, model, colnams) {
   }
 
   modfile <- paste0(modfile, paste(paste(unlist(names), " ~~ ", theta_names, "*",
-                                 unlist(names), sep = ""), collapse = "\n"), "\n")
+                                         unlist(names), sep = ""), collapse = "\n"), "\n")
 
   sum_gl <- paste("g_loading :=", paste0(beta_names, collapse = " + "),
                   "\n")
@@ -304,7 +302,7 @@ lavMultiFile_bif_syntax <- function(k, ns, model, colnams) {
 }
 
 
-index_matrix <- function(model, k, ns, colnams) {
+indexMatrix <- function(model, k, ns, colnams) {
   if (model == "balanced") {
     tmp <- matrix(seq(1:k), ns, k/ns, byrow=T)
     imat <- matrix(FALSE, k, ns)
@@ -313,7 +311,7 @@ index_matrix <- function(model, k, ns, colnams) {
       imat[tmp[i, ], i] <- TRUE
     }
   } else { # extract variables from model syntax
-    mod_out <- model_syntax_extract(model, colnams)
+    mod_out <- modelSyntaxExtract(model, colnams)
     mod <- mod_out$mod
     if (ns != mod_out$mod_n.factors) {
       warning("n.factors is unequal to specified factors in model syntax")
@@ -322,7 +320,7 @@ index_matrix <- function(model, k, ns, colnams) {
     imat <- matrix(FALSE, k, ns)
     if (mod_out$mod_col_names) { # if the data variable names are specified in the modelsyntax
       idex <- list()
-      for (i in 1:length(mod)) {
+      for (i in seq_len(length(mod))) {
         tmp_mod <- unlist(strsplit(mod[i], " "))
         idex[[i]] <- which(colnams %in% tmp_mod)
         imat[idex[[i]], i] <- TRUE
@@ -332,7 +330,7 @@ index_matrix <- function(model, k, ns, colnams) {
       # get the digits out:
       out <- regmatches(mod, gregexpr("[[:digit:]]+", mod))
       idex <- lapply(out, as.numeric)
-      for (i in 1:length(mod)) {
+      for (i in seq_len(length(mod))) {
         imat[idex[[i]], i] <- TRUE
       }
     }
@@ -342,7 +340,7 @@ index_matrix <- function(model, k, ns, colnams) {
 }
 
 
-model_syntax_extract <- function(model, colnams) {
+modelSyntaxExtract <- function(model, colnams) {
   # get the factor and variable names
   mod_tmp <- unlist(strsplit(model, "[\n]|[=~]|[+]|[ ]"))
   # cleanup
