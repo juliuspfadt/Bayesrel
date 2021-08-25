@@ -19,7 +19,7 @@ The data contain 13 missing values.}
 \source{
 article}
 \references{
-Lozano, ́O. M., D ́ıaz-Batanero, C., Rojas,  A.  J., Pilatti, A., & Fern ́andez-Calder ́on,F. (2018).
+Lozano, Ó. M., Díaz-Batanero, C., Rojas,  A.  J., Pilatti, A., & Fernández-Calderón, F. (2018).
 Concordance between the original and short version of the Impulsive Behaviour Scale UPPS-P using an IRT model.
 PLOS ONE,13(3), 1–15. https://doi.org/10.1371/journal.pone.0194390
 }
