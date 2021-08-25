@@ -2,7 +2,7 @@ Package: Bayesrel
 Type: Package
 Title: Bayesian Reliability Estimation
 Version: 0.7.1
-Date: 2021-07-06
+Date: 2021-09-13
 Authors@R: c(person("Julius M.", "Pfadt", email = "julius.pfadt@gmail.com",
                   role = c("aut", "cre")),
              person("Don", "van den Bergh",
@@ -17,14 +17,14 @@ Description: Functionality for reliability estimates. For unidimensional tests:
     The results include confidence and credible intervals, the 
     probability of a coefficient being larger than a cutoff, 
     and a check for the factor models, necessary for the omega coefficients. 
-    The method for the Bayesian unidimenisional estimates, except for omega, 
+    The method for the Bayesian unidimensional estimates, except for omega, 
     is sampling from the posterior inverse 'Wishart' for the 
     covariance matrix based measures (see 'Murphy', 2007, 
-    <https://www.seas.harvard.edu/courses/cs281/papers/murphy-2007.pdf>. 
-    The Bayesian omegas are obtained by 'Gibbs' Sampling from the conditional 
-    posterior distributions of (1) the single factor model and (2) the
-    higher order factor model('Lee', 2007, 
-    <doi:10.1002/9780470024737>). 
+    <https://groups.seas.harvard.edu/courses/cs281/papers/murphy-2007.pdf>. 
+    The Bayesian omegas (unidimensional, hierarchical, and total) are obtained by 
+    'Gibbs' Sampling from the conditional posterior distributions of 
+    (1) the single factor model and (2) the higher order factor model
+    ('Lee', 2007, <doi:10.1002/9780470024737>). 
 URL: https://github.com/juliuspf/Bayesrel
 BugReports: https://github.com/juliuspf/Bayesrel/issues
 License: GPL-3
