@@ -2,19 +2,19 @@
 % Please edit documentation in R/postProb.R
 \name{p_omegas}
 \alias{p_omegas}
-\title{prior and posterior probability of omega-t and omega-h being bigger than thresholds}
+\title{prior and posterior probability of omega_t and omega_h being bigger than thresholds}
 \usage{
 p_omegas(x, cutoff.t = 0.8, cutoff.h = 0.6)
 }
 \arguments{
 \item{x}{A strel output object (list)}
 
-\item{cutoff.t}{A number indicating the threshold for omega-t}
+\item{cutoff.t}{A number indicating the threshold for omega_t}
 
-\item{cutoff.h}{A number indicating the threshold for omega-h}
+\item{cutoff.h}{A number indicating the threshold for omega_h}
 }
 \description{
-takes mcmc posterior samples of omega-t and omega-h
+takes mcmc posterior samples of omega_t and omega_h
 and calculates the prior and posterior probability of the estimate being bigger
 or smaller than an arbitrary value
 }

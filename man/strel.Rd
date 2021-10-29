@@ -63,7 +63,7 @@ the non-parametric}
 'listwise' is self-explanatory,
 'pairwise' in the Bayesian paradigm means sampling the missing values as additional parameters
 from the joint conditional distribution, in the frequentist paradigm this means using
-the 'pairwise' covariance matrix and the full information ML method for omega}
+the 'pairwise' covariance matrix, except the full information ML method for omega}
 
 \item{omega.freq.method}{A character string for the method of frequentist omega, either "cfa"
 (confirmatory factor analysis), or "pfa" (principal factor analysis),
@@ -76,12 +76,20 @@ only works with cfa as the omega.freq.method}
 
 \item{callback}{empty function call for external use}
 }
+\value{
+The basic output displays the interval bounds of the coefficients,
+highest posterior density intervals for the Bayesian coefficients,
+and confidence intervals for the frequentist coefficients.
+The summary output shows the point estimates of the coefficients together
+with the interval bounds. The point estimates for the Bayesian coefficients are
+posterior means.
+}
 \description{
 Reported are Bayesian credible intervals
 (highest posterior density) and frequentist confidence intervals
 (non parametric or parametric bootstrap).
 The estimates supported are Cronbach alpha, Guttman's lambda2/4/6, the glb,
-and Mcdonald's omega. Beware of lambda4 with many indicators,
+and Mcdonald's omega_u (unidimensional). Beware of lambda4 with many indicators,
 the computational effort is considerable.
 The glb method uses adjusted code from the 'Rcsdp' package by
 'Hector Corrada Bravo', <https://CRAN.R-project.org/package=Rcsdp>.
@@ -90,11 +98,17 @@ library by 'Brian Borchers' <https://github.com/coin-or/Csdp/wiki>,
 <doi:10.1080/10556789908805765>, but is wrapped in 'RcppArmadillo'.
 Guttman's Lambda-4 method is from 'Benton' (2015)
 <doi:10.1007/978-3-319-07503-7_19>. The principal factor analysis (pfa) for a
-version of frequentist omega can be found in 'Rencher' (2007) and is described
+version of frequentist omega_u can be found in 'Rencher' (2007) and is described
 in 'Schlegel' (2017)
 <https://www.r-bloggers.com/2017/03/iterated-principal-factor-method-of-factor-analysis-with-r/>.
 The analytic confidence interval of alpha is from
 'Bonett' and 'Wright' (2015) <doi:10.1002/job.1960>.
+The prior distributions of alpha, lambda2/4/6, and the glb are computed from the
+prior distribution of the data covariance matrix, which is an inverse Wishart distribution.
+The prior distribution of omega_u is computed from the prior distributions of the
+single-factor model parameters. Specifically, a normal distribution for the factor loadings
+and the factor scores; an inverse gamma distribution for the residuals; and an inverse
+Wishart distribution for the covariance matrix of the latent variables.
 }
 \examples{
 # note that these are very few iterations just for the example execution,

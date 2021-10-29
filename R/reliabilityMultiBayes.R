@@ -1,12 +1,20 @@
 
 #' Estimate reliability estimates for multidimensional scales in the Bayesian framework
-#' @description When supplying a data set that is multidimensional
-#' the function estimates the reliability of the set by means of omega-total
-#' and the general factor saturation of the set by means of omega-hierarchical
-#' In the process a higher-order factor model is estimated in the Bayesian framework,
-#' and posterior distributions of omega-t and omega-h are obtained from the
-#' posterior distributions of the factor model parameters
-#' The output contains the posterior distributions of omega-t and omega-h,
+#' @description When supplying a multidimensional data set
+#' the function estimates the reliability of the set by means of omega_total
+#' and the general factor saturation of the set by means of omega_hierarchical.
+#'
+#' The prior distributions of omega_t and omega_h are computed from
+#' the prior distributions of the second-order factor model.
+#' Specifically, a multivariate normal distribution for the group factor loadings and
+#' the factor scores; a normal distribution for the general factor loadings;
+#' an inverse gamma distribution for the manifest and latent residuals;
+#' an inverse Wishart distribution for the covariance matrix of the latent variables.
+#' A Gibbs sampler iteratively draws samples from the conditional posterior distributions
+#' of the second-order factor model parameters. The posterior distributions of omega_t
+#' and omega_h are computed from the posterior samples of the factor model parameters.
+#'
+#' The output contains the posterior distributions of omega_t and omega_h,
 #' their mean and credible intervals.
 #' @param data A matrix or data.frame containing multivariate observations,
 #' rows = observations, columns = variables/items
@@ -29,6 +37,9 @@
 #' as further unknown parameters
 #' @param callback An empty function for implementing a progressbar call
 #' from a higher program (e.g., JASP)
+#'
+#' @return The posterior means and the highest posterior density intervals for
+#' omega_t and omega_h
 #'
 #' @examples
 #' # note that the iterations are set very low for smoother running examples, you should use
@@ -67,7 +78,7 @@ bomegas <- function(
   listwise <- FALSE
   pairwise <- FALSE
   complete_cases <- nrow(data)
-  if (any(is.na(data))) {
+  if (anyNA(data)) {
     if (missing == "listwise") {
       pos <- which(is.na(data), arr.ind = TRUE)[, 1]
       data <- data[-pos, ]

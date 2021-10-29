@@ -35,15 +35,15 @@ p_strel <- function(x, estimate, low.bound) {
 }
 
 
-#' prior and posterior probability of omega-t and omega-h being bigger than thresholds
+#' prior and posterior probability of omega_t and omega_h being bigger than thresholds
 #' @description
-#' takes mcmc posterior samples of omega-t and omega-h
+#' takes mcmc posterior samples of omega_t and omega_h
 #' and calculates the prior and posterior probability of the estimate being bigger
 #' or smaller than an arbitrary value
 #'
 #' @param x A strel output object (list)
-#' @param cutoff.t A number indicating the threshold for omega-t
-#' @param cutoff.h A number indicating the threshold for omega-h
+#' @param cutoff.t A number indicating the threshold for omega_t
+#' @param cutoff.h A number indicating the threshold for omega_h
 #'
 #' @examples
 #' p_omegas(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100, n.burnin = 50,
