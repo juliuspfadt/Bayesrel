@@ -67,10 +67,10 @@ test_that("Bayes prior and posterior probability for Alpha >.8 is correct", {
 
   data(asrm, package = "Bayesrel")
   set.seed(1234)
-  tt <- Bayesrel::strel(asrm, estimates = "alpha", n.iter = 100, freq = F, n.chains = 2)
-  ee <- Bayesrel::p_strel(tt, "alpha", .8)
+  ee <- Bayesrel::strel(asrm, estimates = "alpha", n.iter = 100, freq = F, n.chains = 2)
+  tt <- Bayesrel::p_strel(ee, "alpha", .8)
 
-  expect_equal(as.numeric(ee), c(0.1552618, 0.3300000), tolerance = 1e-3)
+  expect_equal(as.numeric(tt), c(0.1556125, 0.3300000), tolerance = 1e-3)
 
 })
 
@@ -142,5 +142,36 @@ test_that("Frequentist glb is correct", {
 
 
 })
+
+
+test_that("Bayesian estimates lambda2 and omega are correct with adjusted priors", {
+
+  data(asrm, package = "Bayesrel")
+  set.seed(1234)
+  ee <- Bayesrel::strel(asrm_mis, estimates = c("lambda2", "omega"), n.iter = 100, freq = FALSE, n.chains = 2,
+                        k0 = 1, df0 = 10, a0 = 6, b0 = 10, missing = "listwise", item.dropped = TRUE)
+
+  expect_equal(ee$Bayes$est$Bayes_lambda2, 0.7892705, tolerance = 1e-3)
+  expect_equal(ee$Bayes$est$Bayes_omega, 0.6652165, tolerance = 1e-3)
+  expect_equal(ee$Bayes$cred$low$Bayes_omega, 0.5203316, tolerance = 1e-3)
+  expect_equal(ee$Bayes$cred$up$Bayes_lambda2, 0.8596607, tolerance = 1e-3)
+
+  expect_equal(ee$Bayes$ifitem$est$lambda2, c(0.7134186, 0.7379066, 0.7846232, 0.7670343, 0.7335534), tolerance = 1e-3)
+  expect_equal(ee$Bayes$ifitem$est$omega, c(0.5001276, 0.5843097, 0.6264368, 0.5689464, 0.5262518), tolerance = 1e-3)
+  expect_equal(c(ee$Bayes$ifitem$cred$lambda2), c(0.6296647, 0.6475465, 0.7102916, 0.6876639, 0.6249340, 0.8008962,
+                                                  0.8211305, 0.8507353, 0.8494441, 0.8130506), tolerance = 1e-3)
+  expect_equal(c(ee$Bayes$ifitem$cred$omega), c(0.2876485, 0.3968873, 0.5077825, 0.3475259, 0.3123269, 0.7257536,
+                                                0.7229133, 0.7598537, 0.7525282, 0.7070422), tolerance = 1e-3)
+
+  set.seed(1234)
+  tt <- Bayesrel::p_strel(ee, "lambda2", .7)
+  expect_equal(as.numeric(tt), c(0.1052664, 0.99000000), tolerance = 1e-3)
+
+  tt2 <- Bayesrel::p_strel(ee, "omega", .7)
+  expect_equal(as.numeric(tt2), c(0.151469, 0.3500000), tolerance = 1e-3)
+
+})
+
+
 
 

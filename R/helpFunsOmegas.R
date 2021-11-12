@@ -38,6 +38,15 @@ omegasSeco <- function(lambda, beta, theta, psi) {
   ))
 }
 
+omegasBif <- function(sl, gl, e, psi) {
+  sl <- sl %*% sqrt(psi)
+  omh <- sum(gl %*% t(gl)) / (sum(gl %*% t(gl)) + sum(sl %*% t(sl)) + sum(e))
+  omt <- (sum(gl %*% t(gl)) + sum(sl %*% t(sl))) / (sum(gl %*% t(gl)) + sum(sl %*% t(sl)) + sum(e))
+  return(c(
+    omh, omt
+  ))
+}
+
 # multivariate normal data with matrix of means and V
 genNormDataTweak <- function(n, m, Sigma){
   p <- ncol(Sigma)

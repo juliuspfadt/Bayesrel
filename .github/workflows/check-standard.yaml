@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - master
-      - omegaH
-  # pull_request:
-  #   branches:
-  #     - master
+      - newFeatures
+  pull_request:
+    branches:
+      - master
 
 name: R-CMD-check
 
