@@ -3,7 +3,7 @@
 # to be passed on for forther analysis
 
 gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval, item.dropped, pairwise,
-                     callback = function(){}, k0, df0, a0, b0) {
+                     callback = function(){}, k0, df0, a0, b0, m0) {
   p <- ncol(data)
   res <- list()
   if ("alpha" %in% estimates || "lambda2" %in% estimates || "lambda4" %in% estimates || "lambda6" %in% estimates ||
@@ -97,7 +97,7 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
 
   # special case omega -----------------------------------------------------------------
   if ("omega" %in% estimates) {
-    om_samp <- omegaSampler(data, n.iter, n.burnin, thin, n.chains, pairwise, callback, a0, b0)
+    om_samp <- omegaSampler(data, n.iter, n.burnin, thin, n.chains, pairwise, callback, a0, b0, m0)
     res$samp$Bayes_omega <- om_samp$omega
     res$data_mis_samp_fm <- om_samp$dat_mis_samp_fm
     res$loadings <- apply(om_samp$lambda, 3, as.vector)
@@ -113,7 +113,7 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
       for (i in 1:p) {
         tmp <- data[, -i]
         om_samp_ifitem[, , i] <- omegaSampler(tmp, n.iter, n.burnin, thin, n.chains,
-                                              pairwise, callback, a0, b0)$omega
+                                              pairwise, callback, a0, b0, m0)$omega
       }
       res$ifitem$samp$omega <- om_samp_ifitem
       res$ifitem$est$omega <- apply(om_samp_ifitem, 3, mean)

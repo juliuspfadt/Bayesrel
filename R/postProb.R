@@ -24,7 +24,8 @@ p_strel <- function(x, estimate, low.bound) {
     x$priors$df0 <- n.item
   }
 
-  prior <- priorSampUni(n.item, estimate, k0 = x$priors$k0, df0 = x$priors$df0, a0 = x$priors$a0, b0 = x$priors$b0)
+  prior <- priorSampUni(n.item, estimate, k0 = x$priors$k0, df0 = x$priors$df0, a0 = x$priors$a0, b0 = x$priors$b0,
+                        m0 = x$priors$m0)
 
   end <- length(prior[["x"]])
   poslow <- end - sum(prior[["x"]] > low.bound)

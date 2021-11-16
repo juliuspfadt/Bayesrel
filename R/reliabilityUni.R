@@ -43,6 +43,7 @@
 #' variances in the single factor model for omega
 #' @param b0 The scale parameter of the inverse gamma prior distribution for the residual
 #' variances in the single factor model for omega
+#' @param m0 The prior mean of the normal distribution on the factor loadings for omega
 #'
 #' @details Reported are point estimates (posterior mean), Bayesian credible intervals
 #' (highest posterior density) and frequentist confidence intervals
@@ -67,10 +68,11 @@
 #'
 #' The prior distribution on Cronbach’s alpha (as well as lambda2 and the glb)
 #' is induced by the prior distribution on the covariance matrix,
-#' which is an inverse Wishart distribution with the identity matrix as a scaling matrix
-#' and the number of items k as the degrees of freedom. The prior distribution on McDonald’s omega
-#' is induced by the prior distributions on the single-factor model parameters, which are: a normal
-#' distribution centered on zero for the factor loadings and scores; an inverse gamma distribution
+#' which is an inverse Wishart distribution with the identity matrix (multiplied by a scalar)
+#' as a scaling matrix and the number of items k as the degrees of freedom.
+#' The prior distribution on McDonald’s omega is induced by the prior distributions
+#' on the single-factor model parameters, which are: a normal distribution centered on zero
+#' for the factor loadings and scores; an inverse gamma distribution
 #' with shape=2 and scale=1 for the residuals; and for the variance of the latent variables an
 #' inverse Wishart distribution with the number of items k as a scaling matrix (scalar, since it
 #' is of dimension one) and the sum k+2 as the degrees of freedom.
@@ -132,7 +134,8 @@ strel <- function(data = NULL,
                   k0 = 1e-10,
                   df0 = NULL,
                   a0 = 2,
-                  b0 = 1) {
+                  b0 = 1,
+                  m0 = 0) {
 
   default <- c("alpha", "lambda2", "lambda4", "lambda6", "glb", "omega")
   mat <- match(default, estimates)
@@ -176,11 +179,17 @@ strel <- function(data = NULL,
 
   if (Bayes) {
     sum_res$Bayes <- gibbsFun(data, estimates, n.iter, n.burnin, thin, n.chains, interval, item.dropped, pairwise,
-                              callback, k0, df0, a0, b0)
+                              callback, k0, df0, a0, b0, m0)
     sum_res$n.iter <- n.iter
     sum_res$n.burnin <- n.burnin
     sum_res$thin <- thin
     sum_res$n.chains <- n.chains
+    sum_res$priors$k0 <- k0
+    sum_res$priors$df0 <- df0
+    sum_res$priors$a0 <- a0
+    sum_res$priors$b0 <- b0
+    sum_res$priors$m0 <- m0
+
   }
 
 
@@ -207,11 +216,6 @@ strel <- function(data = NULL,
   sum_res$estimates <- estimates
   sum_res$interval <- interval
   sum_res$data <- data
-  sum_res$priors$k0 <- k0
-  sum_res$priors$df0 <- df0
-  sum_res$priors$a0 <- a0
-  sum_res$priors$b0 <- b0
-
 
   class(sum_res) <- "strel"
   return(sum_res)

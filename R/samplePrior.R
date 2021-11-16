@@ -1,6 +1,6 @@
 # this function samples priors for the estimates and the number of indicators
 
-priorSampUni <- function(p, estimates, n.samp = 2e3, k0, df0, a0, b0){
+priorSampUni <- function(p, estimates, n.samp = 2e3, k0, df0, a0, b0, m0){
   if ("alpha" %in% estimates || "lambda2" %in% estimates || "lambda4" %in% estimates || "lambda6" %in% estimates ||
       "glb" %in% estimates){
     v0 <- df0
@@ -35,7 +35,7 @@ priorSampUni <- function(p, estimates, n.samp = 2e3, k0, df0, a0, b0){
   }
   if ("omega" %in% estimates) {
     H0 <- 1 # prior multiplier matrix for lambdas variance
-    l0k <- rep(0, p) # prior lambdas
+    l0k <- rep(m0, p) # prior lambdas
     a0k <- a0 # prior gamma function for psis
     b0k <- b0 # prior gamma for psi
     prioromega <- numeric(n.samp)

@@ -4,7 +4,7 @@
 # source: Lee, S.-Y. (2007). Structural equation modeling: A bayesian approach(Vol. 711). JohnWiley & Sons.
 # p. 81 ff.
 omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callback = function(){},
-                         a0, b0){
+                         a0, b0, m0){
 
   n <- nrow(data)
   p <- ncol(data)
@@ -19,7 +19,7 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
   # hyperparameters
   # prior multiplier for loadings variance, prior shape and rate for residuals, prior loadings,
   # prior scaling for cov matrix of factor scores, prior df for cov matrix of factor scores
-  pars <- list(H0k = 1, a0k = a0, b0k = b0, l0k = numeric(p), R0 = p, p0 = p + 2)
+  pars <- list(H0k = 1, a0k = a0, b0k = b0, l0k = rep(m0, p), R0 = p, p0 = p + 2)
 
   for (z in 1:n.chains) {
     # draw starting values for sampling from prior distributions:
