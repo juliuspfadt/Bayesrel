@@ -88,6 +88,7 @@ seco_fit <- function(x, data) {
     n.data <- nrow(data[complete.cases(data),])
   }
 
+  # PPC plot
   nsamp <- dim(x$implCovs)[1]
   ee_impl <- matrix(0, nsamp, ncol(sigma))
   for (i in 1:nsamp) {
@@ -115,5 +116,21 @@ seco_fit <- function(x, data) {
          legend = c("Dataset Covariance Matrix", "Model Implied Covariance Matrices"),
          col=c("black", "gray50"), box.lwd = .7, lty = c(0, 1), lwd = c(1, 2.5), pch = c(8, 0), cex = 1.2,
          pt.cex = c(1, 0))
+
+
+  #### fit indices ###
+  n <- n.data
+  k <- ncol(data)
+  dataset <- scale(data, scale = FALSE)
+  pstar <- k * (k + 1) / 2 # unique elements in the covariance matrix, variances + covariances
+  implieds <- x[["implCovs"]]
+
+  ### Chisqs ###
+  LL1 <- sum(.dmultinorm(dataset, sigma)) # loglikelihood saturated model
+  LR_obs <- apply(implieds, 1, .LRblav, data = dataset, basell = LL1) # loglikelihoods tested model
+
+  ### need the loadings and errors here
+
+
 
 }

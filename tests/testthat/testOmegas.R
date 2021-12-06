@@ -7,7 +7,7 @@ test_that("Bayesian omegas are correct, missing pairwise", {
   ee <- Bayesrel::bomegas(upps, n.factors = 5, n.iter = 200, n.burnin = 50, n.chains = 2)
 
   expect_equal(c(ee$omega_t$mean, ee$omega_t$cred, ee$omega_h$mean, ee$omega_h$cred),
-               c(0.8624918, 0.8459065, 0.8793787, 0.6401878, 0.5973778, 0.6870752), tolerance = 1e-3)
+               c(0.8617024, 0.8455568, 0.8779500, 0.6346016, 0.5918249, 0.6760383), tolerance = 1e-3)
 
 
 })
@@ -27,7 +27,7 @@ test_that("Bayesian omegas are correct, missing listwise, model sytnax specified
                           missing = "listwise", model = mod)
 
   expect_equal(c(ee$omega_t$mean, ee$omega_t$cred, ee$omega_h$mean, ee$omega_h$cred),
-               c(0.8629340, 0.8432947, 0.8822594, 0.6428649, 0.5897601, 0.6868880), tolerance = 1e-3)
+               c(0.8625355, 0.8433403, 0.8790132, 0.6391853, 0.5800218, 0.6821711), tolerance = 1e-3)
 
 
 })

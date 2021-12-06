@@ -13,7 +13,7 @@ bomegas(
   n.chains = 3,
   thin = 1,
   interval = 0.95,
-  missing = "pairwise",
+  missing = "impute",
   callback = function() { }
 )
 }
@@ -42,8 +42,8 @@ or x1, ..., xn, where 1,...,n correspond to the column numbers}
 \item{interval}{A number specifying the credible interval,
 the interval is the highest posterior desntiy interval (HPD)}
 
-\item{missing}{A string denoting the missing data handling, can be "pairwise" or "listwise.
-With pairwise the missing data will be "imputed" during the MCMC sampling
+\item{missing}{A string denoting the missing data handling, can be "impute" or "listwise.
+With impute the missing data will be estimated during the MCMC sampling
 as further unknown parameters}
 
 \item{callback}{An empty function for implementing a progressbar call

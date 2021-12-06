@@ -28,7 +28,7 @@ omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairw
     # draw starting values
     starts <- drawStartMulti(n, k, ns, pars, imat)
     wi <- starts$wi
-    phiw <- starts$phiw
+    phiw <- starts$phiw[1, 1]
 
     if (pairwise) { # missing data
       dat_filled <- data
@@ -143,9 +143,10 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
     psi <- 1 / invpsi
     lambda <- rnorm(length(ids), ak, sqrt(psi * as.vector(Ak)))
 
-    if (mean(lambda) < 0) {# solve label switching problem
-      lambda <- -lambda
-    }
+    # if (mean(lambda) < 0) {# solve label switching problem
+    #   lambda <- -lambda
+    # }
+
     ll[ids, ii] <- lambda
     pp[ids] <- psi
   }
@@ -161,11 +162,11 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
 
   invpsiw <- rgamma(ns, n / 2 + a0kw, bekw)
   psiw <- 1 / invpsiw
-  beta <- rnorm(ns, akw * sqrt(diag(phiw)[1]), sqrt(psiw * Akw))
+  beta <- rnorm(ns, akw * sqrt(phiw), sqrt(psiw * Akw))
 
-  if (mean(beta) < 0) {# solve label switching problem
-    beta <- -beta
-  }
+  # if (mean(beta) < 0) {# solve label switching problem
+  #   beta <- -beta
+  # }
 
   # in Lee it says to replace the usual inv Phi matrix when sampling the factor scores with a function
   # of the g-factor loadings and their residuals
@@ -185,10 +186,11 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
 
   wi <- genNormDataTweak(n, t(mw), Vw)
   # set factor variance to 1 to identify the model
-  wi <- apply(wi, 2, function(x) x / sd(x))
+  # wi <- apply(wi, 2, function(x) x / sd(x))
 
   # sample phi for g-factor:
-  phiw <- LaplacesDemon::rinvwishart(nu = n + p0w, S = t(wi) %*% (wi) + solve(R0w))
+  # phiw <- LaplacesDemon::rinvwishart(nu = n + p0w, S = t(wi) %*% (wi) + solve(R0w))[1, 1]
+  phiw <- 1 / rgamma(1, shape = (n + p0w) / 2, scale = 2 / (t(wi[, 1]) %*% (wi[, 1]) + 1/(R0w[1, 1])))
 
   return(list(psi = pp, lambda = ll, psiw = psiw, beta = beta, wi = wi, phiw = phiw))
 }
@@ -202,10 +204,11 @@ drawStartMulti <- function(n, k, ns, pars, imat) {
   psiw <- 1 / invpsiw
 
   # ------- factor scores for all factors ---------
-  phiw <- LaplacesDemon::rinvwishart(nu = pars$p0w, S = (pars$R0w))
+  # phiw <- LaplacesDemon::rinvwishart(nu = pars$p0w, S = solve(pars$R0w))
+  phiw <- diag(1 / rgamma(ns + 1, shape = pars$p0w / 2, scale = 2 / (1 / (pars$R0w[1, 1]))))
 
   wi <- MASS::mvrnorm(n, numeric(ns + 1), phiw)
-  wi <- apply(wi, 2, function(x) x / sd(x))
+  # wi <- apply(wi, 2, function(x) x / sd(x))
 
   return(list(wi = wi, phiw = phiw))
 }
