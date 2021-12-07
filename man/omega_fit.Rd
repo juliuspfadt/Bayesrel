@@ -5,10 +5,21 @@
 \title{graphical posterior predictive check for the 1-factor omega model,
 based on covariance matrix eigenvalues}
 \usage{
-omega_fit(x)
+omega_fit(x, data, ppc = TRUE, cutoff = 0.08, ci = 0.95)
 }
 \arguments{
 \item{x}{A strel output object (list)}
+
+\item{data}{A matrix or data.frame containing the data set that produced x}
+
+\item{ppc}{A boolean indicating if the PPC should be printed or not,
+the default is TRUE}
+
+\item{cutoff}{A value to compare the posterior sample of RMSEAs against.
+The result will contain the probability that the RMSEA is smaller than the
+cutoff value}
+
+\item{ci}{A value between 0 and 1 indicating the credible interval for the RMSEA}
 }
 \description{
 gives posterior predictive check for the 1-factor model:
@@ -16,6 +27,11 @@ comparison between model implied covariance matrix and sample covariance matrix
 also displays frequentist fit indices
 }
 \examples{
-omega_fit(strel(asrm, "omega", n.chains = 2, n.iter = 100))
+omega_fit(strel(asrm, "omega", n.chains = 2, n.iter = 100), data = asrm)
 
+}
+\references{
+{
+\insertRef{Garnier-Villarreal2020AdaptingFitIndices}{Bayesrel}
+}
 }

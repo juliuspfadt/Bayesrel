@@ -237,3 +237,5 @@ print.omegasCFA <- function(x, ...) {
   }
 
 }
+
+

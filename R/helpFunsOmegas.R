@@ -380,3 +380,48 @@ modelSyntaxExtract <- function(model, colnams) {
 }
 
 
+
+
+SRMR <- function(cdat, impl) {
+  nvar <- ncol(cdat)
+  e <- (nvar * (nvar + 1)) / 2
+  sqrt.d <- 1 / sqrt(diag(cdat))
+  D <- diag(sqrt.d, ncol = length(sqrt.d))
+  R <- D %*% (cdat - impl) %*% D
+  srmr <- sqrt(sum(R[lower.tri(R, diag = TRUE)]^2) / e)
+  return(srmr)
+}
+
+
+LRblav <- function(data, cmat, basell) {
+  tmpll <- dmultinorm(data, cmat)
+  out <- 2 * (basell - sum(tmpll))
+  return(out)
+}
+
+
+BRMSEA <- function(chisq, p, pD, n) {
+  dChisq <- (chisq - p)
+  dChisq[dChisq < 0] <- 0
+  rmsea <- sqrt(dChisq / ((p - pD) * n))
+  return(rmsea)
+}
+
+# borrowed that from mnormt package
+dmultinorm <- function(x, varcov, mm = 0) {
+  d <- ncol(varcov)
+  X <- t(x - mm)
+  varcov <- (varcov + t(varcov))/2
+  u <- chol(varcov, pivot = FALSE)
+  inv <- chol2inv(u)
+  logdet <- 2 * sum(log(diag(u)))
+  Q <- colSums((inv %*% X) * X)
+  Q <- Q[!is.na(Q)]
+  logPDF <- as.vector(Q + d * logb(2 * pi) + logdet)/(-2)
+  return(logPDF)
+}
+
+implCovUni <- function(ll) {
+  out <- ll[1, ] %*% t(ll[1, ]) + diag(ll[2, ])
+  return(make_symmetric(out))
+}
