@@ -11,7 +11,7 @@ seco_fit(x, data, ppc = TRUE, cutoff = 0.08, ci = 0.95)
 
 \item{data}{A matrix or data.frame containing the data set that produced x}
 
-\item{ppc}{A boolean indicating if the PPC should be printed or not,
+\item{ppc}{A logical indicating if the PPC should be printed or not,
 the default is TRUE}
 
 \item{cutoff}{A value to compare the posterior sample of RMSEAs against.

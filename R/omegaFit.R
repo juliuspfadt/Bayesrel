@@ -90,7 +90,11 @@ omega_fit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .95) {
     LL1 <- sum(dmultinorm(data, sigma)) # loglikelihood saturated model
     LR_obs <- apply(implieds, 1, LRblav, data = data, basell = LL1) # loglikelihoods tested model
 
-    implM <- apply(implieds, c(2, 3), mean) # mean model implied matrix
+    lsm <- colMeans(lambda)
+    tsm <- colMeans(psi)
+    pm <- mean(phi)
+    implM <- lsm %*% t(1) %*% t(lsm) + diag(tsm) # mean model implied matrix, factor variance set to 1
+    # implM <- apply(implieds, c(2, 3), mean)
     Dtm <- LRblav(data, implM, LL1) # deviance of the mean model implied cov matrix
 
     Dm <- mean(LR_obs) # mean deviance of the model implied cov matrices
