@@ -12,6 +12,7 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
   omm <- matrix(0, n.chains, n.iter)
   lll <- array(0, c(n.chains, n.iter, p))
   ppp <- array(0, c(n.chains, n.iter, p))
+  phis <- matrix(0, n.chains, n.iter)
 
   inds <- which(is.na(data), arr.ind = TRUE)
   dat_imp <- array(0, c(n.chains, n.iter, nrow(inds)))
@@ -57,6 +58,8 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
         dat_imp[z, i, ] <- dat_complete[inds]
         lll[z, i, ] <- out$lambda
         ppp[z, i, ] <- out$psi
+        phis[z, i] <- out$phi
+
         callback()
       }
 
@@ -67,6 +70,7 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
         omm[z, i] <- omegaBasic(oo$lambda, oo$psi)
         lll[z, i, ] <- oo$lambda
         ppp[z, i, ] <- oo$psi
+        phis[z, i] <- oo$phi
 
         wi <- oo$wi
         phi <- oo$phi
@@ -80,14 +84,17 @@ omegaSampler <- function(data, n.iter, n.burnin, thin, n.chains, pairwise, callb
 
   lll_burned <- lll[, (n.burnin + 1):n.iter, , drop = FALSE]
   ppp_burned <- ppp[, (n.burnin + 1):n.iter, , drop = FALSE]
+  phi_burned <- phis[, (n.burnin + 1):n.iter, drop = FALSE]
   lll_out <- lll_burned[, seq(1, dim(lll_burned)[2], thin), , drop = FALSE]
   ppp_out <- ppp_burned[, seq(1, dim(ppp_burned)[2], thin), , drop = FALSE]
+  phi_out <- phi_burned[, seq(1, dim(phi_burned)[2], thin), drop = FALSE]
 
   dat_imp_burned <- dat_imp[, (n.burnin + 1):n.iter, , drop = FALSE]
   dat_out <- dat_imp_burned[, seq(1, dim(dat_imp_burned)[2], thin), , drop = FALSE]
 
 
-  return(list(omega = coda::mcmc(omm_out), lambda = lll_out, psi = ppp_out,
+  return(list(omega = coda::mcmc(omm_out),
+              lambda = lll_out, psi = ppp_out, phi = phi_out,
               dat_mis_samp_fm = dat_out))
 }
 

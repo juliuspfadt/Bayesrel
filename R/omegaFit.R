@@ -9,7 +9,7 @@
 #'
 #' @param x A strel output object (list)
 #' @param data A matrix or data.frame containing the data set that produced x
-#' @param ppc A boolean indicating if the PPC should be printed or not,
+#' @param ppc A logical indicating if the PPC should be printed or not,
 #' the default is TRUE
 #' @param cutoff A value to compare the posterior sample of RMSEAs against.
 #' The result will contain the probability that the RMSEA is smaller than the
@@ -47,11 +47,12 @@ omega_fit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .95) {
 
     lambda <- x$Bayes$loadings
     psi <- x$Bayes$resid_var
+    phi <- x$Bayes$f_var
     nsamp <- nrow(lambda)
     implieds <- array(NA, c(nsamp, ncol(lambda), ncol(lambda)))
 
     for (i in 1:nsamp) {
-      implieds[i, , ] <- lambda[i, ] %*% t(lambda[i, ]) + diag(psi[i, ])
+      implieds[i, , ] <- lambda[i, ] %*% t(phi[i]) %*% t(lambda[i, ]) + diag(psi[i, ])
     }
 
     if (ppc) {
@@ -126,7 +127,7 @@ omega_fit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .95) {
 #'
 #' @param x A bomegas output object (list)
 #' @param data A matrix or data.frame containing the data set that produced x
-#' @param ppc A boolean indicating if the PPC should be printed or not,
+#' @param ppc A logical indicating if the PPC should be printed or not,
 #' the default is TRUE
 #' @param cutoff A value to compare the posterior sample of RMSEAs against.
 #' The result will contain the probability that the RMSEA is smaller than the

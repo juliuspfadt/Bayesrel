@@ -102,6 +102,7 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
     res$data_mis_samp_fm <- om_samp$dat_mis_samp_fm
     res$loadings <- apply(om_samp$lambda, 3, as.vector)
     res$resid_var <- apply(om_samp$psi, 3, as.vector)
+    res$f_var <- c(om_samp$phi)
 
     int <- coda::HPDinterval(coda::mcmc(as.vector(res$samp$Bayes_omega)), prob = interval)
     res$cred$low$Bayes_omega <- int[1]
