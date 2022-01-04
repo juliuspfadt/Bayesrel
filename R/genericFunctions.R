@@ -98,7 +98,7 @@ print.summary.strel <- function(x, ...) {
   mat[, 3] <- x$int$low
   mat[, 4] <- x$int$up
   row.names(mat) <- row.names(x$est)
-  colnames(mat) <- c("point est", paste0(x$interval * 100, "% CI lower"),
+  colnames(mat) <- c("point est", "", paste0(x$interval * 100, "% CI lower"),
                      paste0(x$interval * 100, "% CI upper"))
 
   cat("Call: \n")
@@ -108,7 +108,7 @@ print.summary.strel <- function(x, ...) {
   print(mat, right = FALSE)
   cat("\n")
   if (!is.null(x$n.iter)) {
-    cat("Bayesian point est equals the posterior mean \n")
+    cat("Bayesian point est is the posterior mean \n")
   }
   if (length(grep("freq", x$est)) > 0) {
 
@@ -237,3 +237,5 @@ print.omegasCFA <- function(x, ...) {
   }
 
 }
+
+

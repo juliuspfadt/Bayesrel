@@ -2,22 +2,38 @@
 % Please edit documentation in R/omegaFit.R
 \name{seco_fit}
 \alias{seco_fit}
-\title{graphical posterior predictive check for the higher-order factor model,}
+\title{model fit for the second-order factor model,}
 \usage{
-seco_fit(x, data)
+seco_fit(x, data, ppc = TRUE, cutoff = 0.08, ci = 0.9)
 }
 \arguments{
 \item{x}{A bomegas output object (list)}
 
 \item{data}{A matrix or data.frame containing the data set that produced x}
+
+\item{ppc}{A logical indicating if the PPC should be printed or not,
+the default is TRUE}
+
+\item{cutoff}{A value to compare the posterior sample of RMSEAs against.
+The result will contain the probability that the RMSEA is smaller than the
+cutoff value}
+
+\item{ci}{A value between 0 and 1 indicating the credible interval for the RMSEA}
 }
 \description{
-gives posterior predictive check for the higher-factor model:
+Fit indices and posterior predictive check for the higher-factor model:
 comparison between posterior sample of model implied covariance matrices
 and sample covariance matrix. Gray bars should enclose the black dots for good fit.
+Also prints fit indices, LR (likelihood-ratio), RMSEA, SRMR.
+The RMSEA is from Garnier-Villareal & Jorgensen (2020)
 }
 \examples{
 seco_fit(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100,
 n.burnin = 50, missing = "listwise"), upps)
 
+}
+\references{
+{
+\insertRef{Garnier-Villarreal2020AdaptingFitIndices}{Bayesrel}
+}
 }

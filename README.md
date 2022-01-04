@@ -33,6 +33,9 @@ res <- strel(asrm)
 summary(strel)
 ## return the probability that coefficient alpha is larger than .70
 p_strel(res, estimate = "alpha", low.bound = .70)
+
+## get the posterior median of, e.g., alpha instead of the mean:
+median(res$Bayes$samp$Bayes_alpha)
 ```
 
 ### Multidimensional data
