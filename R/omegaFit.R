@@ -25,7 +25,7 @@
 #'
 #' @export
 #'
-omega_fit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .95) {
+omega_fit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .90) {
 
   if (!("omega" %in% x$estimates)) {
     return(warning("please run the analysis with omega as an estimate"))
@@ -148,7 +148,7 @@ omega_fit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .95) {
 #' @importFrom stats complete.cases
 #'
 #' @export
-seco_fit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .95) {
+seco_fit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .90) {
 
   data <- scale(data, scale = FALSE)
 

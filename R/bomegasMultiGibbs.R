@@ -143,9 +143,9 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
     psi <- 1 / invpsi
     lambda <- rnorm(length(ids), ak, sqrt(psi * as.vector(Ak)))
 
-    # if (mean(lambda) < 0) {# solve label switching problem
-    #   lambda <- -lambda
-    # }
+    if (mean(lambda) < 0) {# solve label switching problem
+      lambda <- -lambda
+    }
 
     ll[ids, ii] <- lambda
     pp[ids] <- psi
@@ -164,9 +164,9 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
   psiw <- 1 / invpsiw
   beta <- rnorm(ns, akw * sqrt(phiw), sqrt(psiw * Akw))
 
-  # if (mean(beta) < 0) {# solve label switching problem
-  #   beta <- -beta
-  # }
+  if (mean(beta) < 0) {# solve label switching problem
+    beta <- -beta
+  }
 
   # in Lee it says to replace the usual inv Phi matrix when sampling the factor scores with a function
   # of the g-factor loadings and their residuals
@@ -186,7 +186,7 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
 
   wi <- genNormDataTweak(n, t(mw), Vw)
   # set factor variance to 1 to identify the model
-  # wi <- apply(wi, 2, function(x) x / sd(x))
+  wi <- apply(wi, 2, function(x) x / sd(x))
 
   # sample phi for g-factor:
   # phiw <- LaplacesDemon::rinvwishart(nu = n + p0w, S = t(wi) %*% (wi) + solve(R0w))[1, 1]

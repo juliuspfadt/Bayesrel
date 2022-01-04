@@ -4,7 +4,7 @@
 \alias{seco_fit}
 \title{model fit for the second-order factor model,}
 \usage{
-seco_fit(x, data, ppc = TRUE, cutoff = 0.08, ci = 0.95)
+seco_fit(x, data, ppc = TRUE, cutoff = 0.08, ci = 0.9)
 }
 \arguments{
 \item{x}{A bomegas output object (list)}

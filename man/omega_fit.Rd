@@ -5,7 +5,7 @@
 \title{graphical posterior predictive check for the 1-factor omega model,
 based on covariance matrix eigenvalues}
 \usage{
-omega_fit(x, data, ppc = TRUE, cutoff = 0.08, ci = 0.95)
+omega_fit(x, data, ppc = TRUE, cutoff = 0.08, ci = 0.9)
 }
 \arguments{
 \item{x}{A strel output object (list)}

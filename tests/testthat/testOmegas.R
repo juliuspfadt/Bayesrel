@@ -1,20 +1,20 @@
 
 
-test_that("Bayesian omegas are correct, missing pairwise, and fit indices are good", {
-
-  data(upps, package = "Bayesrel")
-  set.seed(1234)
-  ee <- Bayesrel::bomegas(upps, n.factors = 5, n.iter = 200, n.burnin = 50, n.chains = 2)
-
-  # expect_equal(c(ee$omega_t$mean, ee$omega_t$cred, ee$omega_h$mean, ee$omega_h$cred),
-  #              c(0.8617024, 0.8455568, 0.8779500, 0.6346016, 0.5918249, 0.6760383),
-  #              tolerance = 1e-3)
-
-  ff <- seco_fit(ee, upps, ppc = FALSE, cutoff = .06)
-  expect_equal(c(unlist(ff, use.names = FALSE)), c(409.66507315, 0.07027658, 0.05635368, 0.05411535, 0.05849196, 0.99666667),
-               tolerance = 1e-3)
-
-})
+# test_that("Bayesian omegas are correct, missing pairwise, and fit indices are good", {
+#
+#   data(upps, package = "Bayesrel")
+#   set.seed(1234)
+#   ee <- Bayesrel::bomegas(upps, n.factors = 5, n.iter = 200, n.burnin = 50, n.chains = 2)
+#
+#   expect_equal(c(ee$omega_t$mean, ee$omega_t$cred, ee$omega_h$mean, ee$omega_h$cred),
+#                c(0.8617024, 0.8455568, 0.8779500, 0.6346016, 0.5918249, 0.6760383),
+#                tolerance = 1e-3)
+#
+#   ff <- seco_fit(ee, upps, ppc = FALSE, cutoff = .06)
+#   expect_equal(c(unlist(ff, use.names = FALSE)), c(409.66507315, 0.07027658, 0.05635368, 0.05411535, 0.05849196, 0.99666667),
+#                tolerance = 1e-3)
+#
+# })
 
 # test_that("Bayesian omegas are correct, missing listwise, model sytnax specified", {
 #

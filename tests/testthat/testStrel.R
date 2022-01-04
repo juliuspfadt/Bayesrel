@@ -179,7 +179,7 @@ test_that("Omega fit is correct", {
   set.seed(1234)
   ee <- Bayesrel::strel(asrm, estimates = "omega", n.iter = 200, n.chains = 2)
   ff <- Bayesrel::omega_fit(ee, asrm, ppc = FALSE, cutoff = .05)
-  expect_equal(unlist(ff, use.names = FALSE), c(13.06419359, 0.06170546, 0.13031834, 0.02319096, 0.22162078, 0.05666667,
+  expect_equal(unlist(ff, use.names = FALSE), c(13.06419359, 0.06170546, 0.13031834, 0.06918759, 0.22394139, 0.05666667,
                                                 12.02439250, 5.00000000, 0.03445507, 0.13420605, 0.03365073, 0.23333645,
                                                 0.05875407),
                tolerance = 1e-3)
