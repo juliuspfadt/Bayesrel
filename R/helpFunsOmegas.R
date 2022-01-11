@@ -57,6 +57,15 @@ genNormDataTweak <- function(n, m, Sigma){
   return(out)
 }
 
+genNormDataLegit <- function(n, m, Sigma){
+  p <- ncol(Sigma)
+  randomData <- matrix(rnorm(n*p), n, p)
+  cc <- chol(Sigma)
+  out <- randomData %*% cc
+  out <- out + matrix(m, nrow = n, ncol = ncol(Sigma), byrow = T)
+  return(out)
+}
+
 # get model implied covariance matrix
 implCovMulti <- function(s, b, theta, psi) {
   i <- diag(nrow(b))

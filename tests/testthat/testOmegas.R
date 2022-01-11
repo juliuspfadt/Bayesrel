@@ -1,40 +1,39 @@
 
 
-# test_that("Bayesian omegas are correct, missing pairwise, and fit indices are good", {
-#
-#   data(upps, package = "Bayesrel")
-#   set.seed(1234)
-#   ee <- Bayesrel::bomegas(upps, n.factors = 5, n.iter = 200, n.burnin = 50, n.chains = 2)
-#
-#   expect_equal(c(ee$omega_t$mean, ee$omega_t$cred, ee$omega_h$mean, ee$omega_h$cred),
-#                c(0.8617024, 0.8455568, 0.8779500, 0.6346016, 0.5918249, 0.6760383),
-#                tolerance = 1e-3)
-#
-#   ff <- seco_fit(ee, upps, ppc = FALSE, cutoff = .06)
-#   expect_equal(c(unlist(ff, use.names = FALSE)), c(409.66507315, 0.07027658, 0.05635368, 0.05411535, 0.05849196, 0.99666667),
-#                tolerance = 1e-3)
-#
-# })
+test_that("Bayesian omegas are correct, missing pairwise, and fit indices are good", {
 
-# test_that("Bayesian omegas are correct, missing listwise, model sytnax specified", {
-#
-#   data(upps, package = "Bayesrel")
-#   set.seed(1234)
-#   mod <- "
-#   f1 =~ U17_r+U22_r+U29_r+U34_r
-#   f2 =~ U4+U14+U19+U27
-#   f3 =~ U6 +U16+U28+U48
-#   f4 =~ U23_r +U31_r +U36_r +U46_r
-#   f5 =~ U10_r +U20_r +U35_r +U52_r
-#   "
-#   ee <- Bayesrel::bomegas(upps, n.factors = 5, n.iter = 200, n.burnin = 50, n.chains = 2,
-#                           missing = "listwise", model = mod)
-#
-#   expect_equal(c(ee$omega_t$mean, ee$omega_t$cred, ee$omega_h$mean, ee$omega_h$cred),
-#                c(0.8625355, 0.8433403, 0.8790132, 0.6391853, 0.5800218, 0.6821711), tolerance = 1e-3)
-#
-#
-# })
+  data(upps, package = "Bayesrel")
+  set.seed(1234)
+  ee <- Bayesrel::bomegas(upps, n.factors = 5, n.iter = 200, n.burnin = 50, n.chains = 2)
+
+  expect_equal(c(ee$omega_t$mean, ee$omega_t$cred, ee$omega_h$mean, ee$omega_h$cred),
+               c(0.8633604, 0.8448201, 0.8790073, 0.6399786, 0.5956023, 0.6922816),
+               tolerance = 1e-3)
+
+  ff <- seco_fit(ee, upps, ppc = FALSE, cutoff = .06)
+  expect_equal(c(unlist(ff, use.names = FALSE)), c(409.03892661, 0.07028219, 0.05616901, 0.05424941, 0.05760252,
+                                                   1.00000000), tolerance = 1e-3)
+
+})
+
+test_that("Bayesian omegas are correct, missing listwise, model sytnax specified", {
+
+  data(upps, package = "Bayesrel")
+  set.seed(1234)
+  mod <- "
+  f1 =~ U17_r+U22_r+U29_r+U34_r
+  f2 =~ U4+U14+U19+U27
+  f3 =~ U6 +U16+U28+U48
+  f4 =~ U23_r +U31_r +U36_r +U46_r
+  f5 =~ U10_r +U20_r +U35_r +U52_r
+  "
+  ee <- Bayesrel::bomegas(upps, n.factors = 5, n.iter = 200, n.burnin = 50, n.chains = 2,
+                          missing = "listwise", model = mod)
+
+  expect_equal(c(ee$omega_t$mean, ee$omega_t$cred, ee$omega_h$mean, ee$omega_h$cred),
+               c(0.8624262, 0.8451732, 0.8801895, 0.6402192, 0.5909983, 0.6860989), tolerance = 1e-3)
+
+})
 
 
 test_that("Frequentist omegas are correct with higher order model, missing pairwise", {
@@ -78,5 +77,19 @@ test_that("Frequentist omegas are correct with bifactor model, missing listwise,
 
   expect_equal(c(ee$omega_t$est, ee$omega_t$conf, ee$omega_h$est, ee$omega_h$conf),
                c(0.8702046, 0.8499908, 0.8904183, 0.6275952, 0.5760795, 0.6791109), tolerance = 1e-3)
+
+})
+
+
+test_that("Bayesian omegas are correct with altered prior hyperparameters", {
+
+  data(upps, package = "Bayesrel")
+  set.seed(1234)
+  ee <- Bayesrel::bomegas(upps, n.factors = 5, n.iter = 200, n.burnin = 50, n.chains = 2,
+                          a0 = 6, b0 = 10, l0 = 1, c0 = 10, d0 = 6, beta0 = 2, p0 = 12, R0 = 5)
+
+  expect_equal(c(ee$omega_t$mean, ee$omega_t$cred, ee$omega_h$mean, ee$omega_h$cred),
+               c(0.8474912, 0.8267820, 0.8637195, 0.6279256, 0.5794708, 0.6715003),
+               tolerance = 1e-3)
 
 })

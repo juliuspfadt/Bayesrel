@@ -24,7 +24,7 @@
 #' bi-factor model. This comes down to the researcher's theory about the measurement
 #' and the model fit
 #' @param interval A number specifying the confidence interval, which is Wald-type
-#' @param missing A string denoting the missing data handling, can be "pairwise" or "listwise.
+#' @param missing A string denoting the missing data handling, can be "fiml" (full information ML) or "listwise".
 #' pairwise uses FIML in lavaan.
 #' @param fit.measures A logical denoting if fit.measures from the CFA should be computed
 #'
