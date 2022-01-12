@@ -8,7 +8,7 @@
 #' @param estimate A character string indicating what estimate to plot from the strel output object
 #' @param low.bound A number for the threshold to be tested against
 #' @examples
-#' p_strel(strel(asrm, "lambda2", n.chains = 2, n.iter = 100, freq = FALSE), "lambda2", .80)
+#' pStrel(strel(asrm, "lambda2", n.chains = 2, n.iter = 100, freq = FALSE), "lambda2", .80)
 #' @export
 pStrel <- function(x, estimate, low.bound) {
 
@@ -47,7 +47,7 @@ pStrel <- function(x, estimate, low.bound) {
 #' @param cutoff.h A number indicating the threshold for omega_h
 #'
 #' @examples
-#' p_omegas(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100, n.burnin = 50,
+#' pOmegas(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100, n.burnin = 50,
 #' missing = "listwise"))
 #' @export
 pOmegas <- function(x, cutoff.t = .80, cutoff.h = .60) {

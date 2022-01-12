@@ -2,7 +2,7 @@
 
 
 omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairwise,
-                        a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0, callback) {
+                        a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0, param.out, callback, pbtick) {
 
   n <- nrow(data)
   k <- ncol(data)
@@ -16,10 +16,17 @@ omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairw
   imputed <- array(0, c(n.chains, n.iter, nrow(inds)))
 
   # ---- sampling start --------
-  l0mat <- matrix(0, k, ns)
-  l0mat[imat] <- l0
+
+  if (is.matrix(l0) || is.data.frame(l0)) {
+    l0mat <- l0
+  } else {
+    l0mat <- matrix(0, k, ns)
+    l0mat[imat] <- l0
+  }
+
   beta0vec <- numeric(ns)
   beta0vec[1:ns] <- beta0
+
   pars <- list(H0k = rep(A0, ns), a0k = a0, b0k = b0, l0k = l0mat,
                H0kw = B0, a0kw = c0, b0kw = d0, beta0k = beta0vec,
                R0winv = diag(rep(R0, ns + 1)), p0w = p0)
@@ -27,6 +34,13 @@ omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairw
   omsh <- matrix(0, n.chains, n.iter)
   omst <- matrix(0, n.chains, n.iter)
   impl_covs <- array(0, c(n.chains, n.iter, k, k))
+
+  if (param.out) {
+    lambdas <- array(0, c(n.chains, n.iter, k, ns))
+    betas <- array(0, c(n.chains, n.iter, ns))
+    thetas <- array(0, c(n.chains, n.iter, k))
+    psis <- array(0, c(n.chains, n.iter, ns))
+  }
 
   for (ai in 1:n.chains) {
 
@@ -46,13 +60,20 @@ omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairw
         Lm <- cbind(0, params$lambda)
         Bm <- matrix(0, ns + 1, ns + 1)
         Bm[2:(ns + 1), 1] <- params$beta
-        oms <- omegasSeco(Lm, Bm, diag(params$psi), diag(c(1, params$psiw)))
+        oms <- omegasSeco(Lm, Bm, diag(params$theta), diag(c(1, params$psiw)))
 
         omsh[ai, i] <- oms[1]
         omst[ai, i] <- oms[2]
 
-        cc <- implCovMulti(Lm, Bm, theta = diag(params$psi), psi = diag(c(1, params$psiw)))
+        cc <- implCovMulti(Lm, Bm, theta = diag(params$theta), psi = diag(c(1, params$psiw)))
         impl_covs[ai, i, , ] <- cc
+
+        if (param.out) {
+          lambdas[ai, i, , ] <- params$lambda
+          betas[ai, i, ] <- params$beta
+          thetas[ai, i, ] <- params$theta
+          psis[ai, i, ] <- params$psiw
+        }
 
         # substitute missing values one by one, where each value is drawn conditional on the rest of the data
         # see https://en.wikipedia.org/wiki/Multivariate_normal_distribution#Conditional_distributions
@@ -73,6 +94,7 @@ omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairw
         }
         imputed[ai, i, ] <- dat_filled[inds]
 
+        pbtick()
       }
 
     } else {
@@ -86,13 +108,21 @@ omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairw
         Lm <- cbind(0, params$lambda)
         Bm <- matrix(0, ns + 1, ns + 1)
         Bm[2:(ns + 1), 1] <- params$beta
-        oms <- omegasSeco(Lm, Bm, diag(params$psi), diag(c(1, params$psiw)))
+        oms <- omegasSeco(Lm, Bm, diag(params$theta), diag(c(1, params$psiw)))
 
         omsh[ai, i] <- oms[1]
         omst[ai, i] <- oms[2]
 
-        impl_covs[ai, i, , ] <- implCovMulti(Lm, Bm, theta = diag(params$psi), psi = diag(c(1, params$psiw)))
+        impl_covs[ai, i, , ] <- implCovMulti(Lm, Bm, theta = diag(params$theta), psi = diag(c(1, params$psiw)))
 
+        if (param.out) {
+          lambdas[ai, i, , ] <- params$lambda
+          betas[ai, i, ] <- params$beta
+          thetas[ai, i, ] <- params$theta
+          psis[ai, i, ] <- params$psiw
+        }
+
+        pbtick()
       }
     }
   }
@@ -106,6 +136,21 @@ omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairw
   omh_out <- omh_burn[, seq(1, dim(omh_burn)[2], thin), drop = F]
   omt_out <- omt_burn[, seq(1, dim(omt_burn)[2], thin), drop = F]
   impl_covs_out <- impl_covs_burn[, seq(1, dim(omt_burn)[2], thin), , , drop = F]
+
+  if (param.out) {
+    lambda_burn <- lambdas[, (n.burnin + 1):n.iter, , , drop = F]
+    beta_burn <- betas[, (n.burnin + 1):n.iter, , drop = F]
+    theta_burn <- thetas[, (n.burnin + 1):n.iter, , drop = F]
+    psi_burn <- psis[, (n.burnin + 1):n.iter, , drop = F]
+
+    lambda_out <- lambda_burn[, seq(1, dim(omt_burn)[2], thin), , , drop = F]
+    beta_out <- beta_burn[, seq(1, dim(omt_burn)[2], thin), , drop = F]
+    theta_out <- theta_burn[, seq(1, dim(omt_burn)[2], thin), , drop = F]
+    psi_out <- psi_burn[, seq(1, dim(omt_burn)[2], thin), , drop = F]
+
+    return(list(omh = omh_out, omt = omt_out, impl_covs = impl_covs_out, imputed_values = imputed,
+                modfile = mod_opts, lambda = lambda_out, beta = beta_out, theta = theta_out, psi = psi_out))
+  }
 
   return(list(omh = omh_out, omt = omt_out, impl_covs = impl_covs_out, imputed_values = imputed,
               modfile = mod_opts))
@@ -188,6 +233,6 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
   # sample phi for g-factor:
   phiw <-  diag(1 / rgamma(ns + 1, shape = (n + pars$p0w) / 2, scale = 2 / diag(t(wi) %*% (wi) + pars$R0winv)))
 
-  return(list(psi = pp, lambda = ll, psiw = psiw, beta = beta, wi = wi, phiw = phiw))
+  return(list(theta = pp, lambda = ll, psiw = psiw, beta = beta, wi = wi, phiw = phiw))
 }
 

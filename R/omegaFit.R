@@ -15,7 +15,7 @@
 #' cutoff value
 #' @param ci A value between 0 and 1 indicating the credible interval for the RMSEA
 #'
-#' @examples omega_fit(strel(asrm, "omega", n.chains = 2, n.iter = 100), data = asrm)
+#' @examples omegaFit(strel(asrm, "omega", n.chains = 2, n.iter = 100), data = asrm)
 #'
 #' @references{
 #' \insertRef{Garnier-Villarreal2020AdaptingFitIndices}{Bayesrel}
@@ -137,7 +137,7 @@ omegaFit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .90) {
 #' cutoff value
 #' @param ci A value between 0 and 1 indicating the credible interval for the RMSEA
 #'
-#' @examples seco_fit(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100,
+#' @examples secoFit(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100,
 #' n.burnin = 50, missing = "listwise"), upps)
 #'
 #' @references{

@@ -54,7 +54,7 @@ priorSampUni <- function(p, estimates, n.samp = 2e3, k0, df0, a0, b0, m0){
 
 
 omegasPrior <- function(k, ns, nsamp = 2e3,
-                        a0, b0, l0, A0, c0, d0, beta0, B0) {
+                        a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0) {
 
   # index matrix for lambdas
   idex <- matrix(seq(1:k), ns, k / ns, byrow = TRUE)
@@ -70,11 +70,14 @@ omegasPrior <- function(k, ns, nsamp = 2e3,
   beta0vec[1:ns] <- beta0
 
   pars <- list(H0k = rep(A0, ns), a0k = a0, b0k = b0, l0k = l0mat,
-               H0kw = B0, a0kw = c0, b0kw = d0, beta0k = beta0vec)
+               H0kw = B0, a0kw = c0, b0kw = d0, beta0k = beta0vec,
+               p0w = p0, R0winv = R0)
   omh_prior <- numeric(nsamp)
   omt_prior <- numeric(nsamp)
 
   for (i in 1:nsamp) {
+
+    phiw <- 1 / rgamma(1, shape = pars$p0w / 2, scale = 2 / pars$R0winv)
 
     invpsi <- rgamma(k, pars$a0k, pars$b0k)
     psi <- 1 / invpsi
@@ -82,7 +85,7 @@ omegasPrior <- function(k, ns, nsamp = 2e3,
     # structural parameters
     invpsiw <- rgamma(ns, pars$a0kw, pars$b0kw)
     psiw <- 1 / invpsiw
-    beta <- rnorm(ns, pars$beta0k, sqrt(psiw*pars$H0kw))
+    beta <- rnorm(ns, pars$beta0k * sqrt(phiw), sqrt(psiw * pars$H0kw))
 
     lmat <- pars$l0k
     lmat[imat] <- lambda
