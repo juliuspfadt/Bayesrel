@@ -10,7 +10,7 @@ test_that("Bayesian omegas are correct, missing pairwise, and fit indices are go
                c(0.8633604, 0.8448201, 0.8790073, 0.6399786, 0.5956023, 0.6922816),
                tolerance = 1e-3)
 
-  ff <- seco_fit(ee, upps, ppc = FALSE, cutoff = .06)
+  ff <- secoFit(ee, upps, ppc = FALSE, cutoff = .06)
   expect_equal(c(unlist(ff, use.names = FALSE)), c(409.03892661, 0.07028219, 0.05616901, 0.05424941, 0.05760252,
                                                    1.00000000), tolerance = 1e-3)
 
@@ -89,7 +89,7 @@ test_that("Bayesian omegas are correct with altered prior hyperparameters", {
                           a0 = 6, b0 = 10, l0 = 1, c0 = 10, d0 = 6, beta0 = 2, p0 = 12, R0 = 5)
 
   expect_equal(c(ee$omega_t$mean, ee$omega_t$cred, ee$omega_h$mean, ee$omega_h$cred),
-               c(0.8474912, 0.8267820, 0.8637195, 0.6279256, 0.5794708, 0.6715003),
+               c(0.8476525, 0.8275225, 0.8644323, 0.6255007, 0.5799303, 0.6704586),
                tolerance = 1e-3)
 
 })

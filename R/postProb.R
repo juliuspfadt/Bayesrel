@@ -10,7 +10,7 @@
 #' @examples
 #' p_strel(strel(asrm, "lambda2", n.chains = 2, n.iter = 100, freq = FALSE), "lambda2", .80)
 #' @export
-p_strel <- function(x, estimate, low.bound) {
+pStrel <- function(x, estimate, low.bound) {
 
   posi1 <- grep(estimate, x$estimates, ignore.case = TRUE)
   samp <- as.vector(x$Bayes$samp[[posi1]])
@@ -50,7 +50,7 @@ p_strel <- function(x, estimate, low.bound) {
 #' p_omegas(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100, n.burnin = 50,
 #' missing = "listwise"))
 #' @export
-p_omegas <- function(x, cutoff.t = .80, cutoff.h = .60) {
+pOmegas <- function(x, cutoff.t = .80, cutoff.h = .60) {
 
   sampt <- as.vector(x$omega_t$chains)
   samph <- as.vector(x$omega_h$chains)
@@ -60,7 +60,11 @@ p_omegas <- function(x, cutoff.t = .80, cutoff.h = .60) {
   post_prob_h <- 1 - objh(cutoff.h)
 
   # prior prob
-  priors <- omegasPrior(x$k, x$n.factors)
+  priors <- omegasPrior(x$k, x$n.factors, nsamp = 2e3, x$prior_params$a0, x$prior_params$b0,
+                        x$prior_params$l0, x$prior_params$A0,
+                        x$prior_params$c0, x$prior_params$d0,
+                        x$prior_params$beta0, x$prior_params$B0)
+
   priort <- ecdf(priors$omt_prior)
   priorh <- ecdf(priors$omh_prior)
 

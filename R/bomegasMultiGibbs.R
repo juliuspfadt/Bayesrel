@@ -16,8 +16,12 @@ omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairw
   imputed <- array(0, c(n.chains, n.iter, nrow(inds)))
 
   # ---- sampling start --------
-  pars <- list(H0k = rep(A0, ns), a0k = a0, b0k = b0, l0k = matrix(l0, k, ns),
-               H0kw = B0, a0kw = c0, b0kw = d0, beta0k = numeric(ns),
+  l0mat <- matrix(0, k, ns)
+  l0mat[imat] <- l0
+  beta0vec <- numeric(ns)
+  beta0vec[1:ns] <- beta0
+  pars <- list(H0k = rep(A0, ns), a0k = a0, b0k = b0, l0k = l0mat,
+               H0kw = B0, a0kw = c0, b0kw = d0, beta0k = beta0vec,
                R0winv = diag(rep(R0, ns + 1)), p0w = p0)
 
   omsh <- matrix(0, n.chains, n.iter)

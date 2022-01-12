@@ -52,7 +52,7 @@ or x1, ..., xn, where 1,...,n correspond to the column numbers}
 \item{interval}{A number specifying the credible interval,
 the interval is the highest posterior desntiy interval (HPD)}
 
-\item{missing}{A string denoting the missing data handling, can be "impute" or "listwise.
+\item{missing}{A string denoting the missing data handling, can be "impute" or "listwise".
 With impute the missing data will be estimated during the MCMC sampling
 as further unknown parameters}
 

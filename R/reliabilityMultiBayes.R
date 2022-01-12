@@ -131,6 +131,8 @@ bomegas <- function(
   sum_res$pairwise <- pairwise
   sum_res$listwise <- listwise
   sum_res$interval <- interval
+  sum_res$prior_params <- list(a0 = a0, b0 = b0, l0 = l0, A0 = A0, c0 = c0, d0 = d0,
+                               beta0 = beta0, B0 = B0, p0 = p0, R0 = R0)
   class(sum_res) <- "bomegas"
 
   return(sum_res)
