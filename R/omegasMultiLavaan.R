@@ -2,9 +2,9 @@
 omegaMultiF <- function(data, n.factors, interval, pairwise, model, model.type, fit.measures) {
 
   k <- ncol(data)
-  if (model.type == "higher-order") {
+  mod_opts <- indexMatrix(model, k, n.factors, colnames(data))
 
-    mod_opts <- indexMatrix(model, k, n.factors, colnames(data))
+  if (model.type == "higher-order") {
 
     if (model == "balanced") {
       modfile <- lavMultiFileSeco(k, n.factors)

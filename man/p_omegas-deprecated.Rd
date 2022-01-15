@@ -18,11 +18,6 @@ takes mcmc posterior samples of omega_t and omega_h
 and calculates the prior and posterior probability of the estimate being bigger
 or smaller than an arbitrary value
 }
-\examples{
-p_omegas(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100, n.burnin = 50,
-missing = "listwise"))
-
-}
 \seealso{
 \code{\link{Bayesrel-deprecated}}
 }

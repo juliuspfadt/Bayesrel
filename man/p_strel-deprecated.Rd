@@ -18,10 +18,6 @@ takes a mcmc posterior sample of any of the single test reliability estimates
 and calculates the prior and posterior probability of the estimate being bigger
 or smaller than an arbitrary value (priors are stored in the package)
 }
-\examples{
-p_strel(strel(asrm, "lambda2", n.chains = 2, n.iter = 100, freq = FALSE), "lambda2", .80)
-
-}
 \seealso{
 \code{\link{Bayesrel-deprecated}}
 }

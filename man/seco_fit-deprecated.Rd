@@ -27,11 +27,6 @@ and sample covariance matrix. Gray bars should enclose the black dots for good f
 Also prints fit indices, LR (likelihood-ratio), RMSEA, SRMR.
 The RMSEA is from Garnier-Villareal & Jorgensen (2020)
 }
-\examples{
-seco_fit(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100,
-n.burnin = 50, missing = "listwise"), upps)
-
-}
 \references{
 {
 \insertRef{Garnier-Villarreal2020AdaptingFitIndices}{Bayesrel}

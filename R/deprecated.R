@@ -32,8 +32,6 @@ NULL
 #' cutoff value
 #' @param ci A value between 0 and 1 indicating the credible interval for the RMSEA
 #'
-#' @examples omega_fit(strel(asrm, "omega", n.chains = 2, n.iter = 100), data = asrm)
-#'
 #' @references{
 #' \insertRef{Garnier-Villarreal2020AdaptingFitIndices}{Bayesrel}
 #' }
@@ -166,8 +164,6 @@ omega_fit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .90) {
 #' cutoff value
 #' @param ci A value between 0 and 1 indicating the credible interval for the RMSEA
 #'
-#' @examples seco_fit(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100,
-#' n.burnin = 50, missing = "listwise"), upps)
 #'
 #' @references{
 #' \insertRef{Garnier-Villarreal2020AdaptingFitIndices}{Bayesrel}
@@ -270,8 +266,6 @@ seco_fit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .90) {
 #' @param x A strel output object (list)
 #' @param estimate A character string indicating what estimate to plot from the strel output object
 #' @param low.bound A number for the threshold to be tested against
-#' @examples
-#' p_strel(strel(asrm, "lambda2", n.chains = 2, n.iter = 100, freq = FALSE), "lambda2", .80)
 #'
 #' @name p_strel-deprecated
 #' @usage p_strel(x, estimate, low.bound)
@@ -321,10 +315,6 @@ p_strel <- function(x, estimate, low.bound) {
 #' @param x A strel output object (list)
 #' @param cutoff.t A number indicating the threshold for omega_t
 #' @param cutoff.h A number indicating the threshold for omega_h
-#'
-#' @examples
-#' p_omegas(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100, n.burnin = 50,
-#' missing = "listwise"))
 #'
 #' @name p_omegas-deprecated
 #' @usage p_omegas(x, cutoff.t = .80, cutoff.h = .60)

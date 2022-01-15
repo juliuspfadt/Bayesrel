@@ -30,7 +30,17 @@ BugReports: https://github.com/juliuspf/Bayesrel/issues
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Imports: LaplacesDemon, MASS, lavaan, coda, methods, stats, graphics, Rdpack, Rcpp (>= 1.0.4.6)
+Imports: 
+    LaplacesDemon, 
+    MASS, 
+    lavaan, 
+    coda, 
+    methods, 
+    stats, 
+    graphics, 
+    progress, 
+    Rdpack, 
+    Rcpp (>= 1.0.4.6)
 LinkingTo: Rcpp, RcppArmadillo
 RdMacros: Rdpack
 RoxygenNote: 7.1.1
