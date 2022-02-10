@@ -32,9 +32,31 @@
 #' @param thin A number for the thinning of the MCMC samples
 #' @param interval A number specifying the credible interval,
 #' the interval is the highest posterior desntiy interval (HPD)
-#' @param missing A string denoting the missing data handling, can be "impute" or "listwise.
+#' @param missing A string denoting the missing data handling, can be "impute" or "listwise".
 #' With impute the missing data will be estimated during the MCMC sampling
 #' as further unknown parameters
+#' @param a0 A number for the shape of the prior inverse gamma distribution for the manifest residual variances,
+#' by default 2
+#' @param b0 A number for the scale of the prior inverse gamma distribution for the manifest residual variances,
+#' by default 1
+#' @param l0 A number for the mean of the prior normal distribution for the manifest loadings,
+#' by default 0, can be a single value or a loading matrix
+#' @param A0 A number for scaling the variance of the prior normal distribution for the manifest loadings,
+#' by default 1
+#' @param c0 A number for the shape of the prior inverse gamma distribution for the latent residual variances,
+#' by default 2
+#' @param d0 A number for the scale of the prior inverse gamma distribution for the latent residual variances,
+#' by default 1
+#' @param beta0 A number for the mean of the prior normal distribution for the latent loadings,
+#' by default 0, can be a single value or a vector
+#' @param B0 A number for scaling the variance of the prior normal distribution for the latent loadings,
+#' by default 1
+#' @param p0 A number for the shape of the prior inverse gamma distribution for the variance of the g-factor,
+#' by default set to q^2-q when q are the number of group factors
+#' @param R0 A number for the scale of the prior inverse gamma distribution for the variance of the g-factor,
+#' by default set to the number of items
+#' @param param.out A logical indicating if loadings and residual variances should be attached to the result,
+#' by default FALSE because it saves memory
 #' @param callback An empty function for implementing a progressbar call
 #' from a higher program (e.g., JASP)
 #'
@@ -72,6 +94,12 @@ bomegas <- function(
   thin = 1,
   interval = .95,
   missing = "impute",
+  a0 = 2, b0 = 1,
+  l0 = 0, A0 = 1,
+  c0 = 2, d0 = 1,
+  beta0 = 0, B0 = 2.5,
+  p0 = NULL, R0 = NULL,
+  param.out = FALSE,
   callback = function(){}
 ) {
 
@@ -92,8 +120,13 @@ bomegas <- function(
 
   data <- scale(data, scale = FALSE)
 
+  if (is.null(p0)) p0 <- n.factors^2 - n.factors
+  if (is.null(R0)) R0 <- ncol(data)
+
+  pb <- progress::progress_bar$new(total = n.iter * n.chains)
   sum_res <- bomegasMultiOut(data, n.factors, n.iter, n.burnin, thin, n.chains,
-                             interval, model, pairwise, callback)
+                             interval, model, pairwise, a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0,
+                             param.out, callback, pbtick = pb$tick)
 
   sum_res$complete_cases <- complete_cases
   sum_res$call <- match.call()
@@ -102,6 +135,8 @@ bomegas <- function(
   sum_res$pairwise <- pairwise
   sum_res$listwise <- listwise
   sum_res$interval <- interval
+  sum_res$prior_params <- list(a0 = a0, b0 = b0, l0 = l0, A0 = A0, c0 = c0, d0 = d0,
+                               beta0 = beta0, B0 = B0, p0 = p0, R0 = R0)
   class(sum_res) <- "bomegas"
 
   return(sum_res)

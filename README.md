@@ -32,7 +32,7 @@ res <- strel(asrm)
 ## get a full result output
 summary(strel)
 ## return the probability that coefficient alpha is larger than .70
-p_strel(res, estimate = "alpha", low.bound = .70)
+pStrel(res, estimate = "alpha", low.bound = .70)
 
 ## get the posterior median of, e.g., alpha instead of the mean:
 median(res$Bayes$samp$Bayes_alpha)
@@ -49,9 +49,9 @@ res <- bomegas(upps, n.factors = 5, missing = "listwise")
 ## get a full result output
 summary(res)
 ## return the probability that coefficient omega_t is larger than .70
-p_omegas(res, cutoff.t = .70)
+pOmegas(res, cutoff.t = .70)
 ## plot posterior predictive check for the higher-order (second-order) factor model
-seco_fit(res, upps)
+secoFit(res, upps)
 ```
 
 In the example above we implicitly assumed that the items of the data set were ordered

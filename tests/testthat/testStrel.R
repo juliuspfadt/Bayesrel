@@ -68,7 +68,7 @@ test_that("Bayes prior and posterior probability for Alpha >.8 is correct", {
   data(asrm, package = "Bayesrel")
   set.seed(1234)
   ee <- Bayesrel::strel(asrm, estimates = "alpha", n.iter = 100, freq = F, n.chains = 2)
-  tt <- Bayesrel::p_strel(ee, "alpha", .8)
+  tt <- Bayesrel::pStrel(ee, "alpha", .8)
 
   expect_equal(as.numeric(tt), c(0.1556125, 0.3300000), tolerance = 1e-3)
 
@@ -164,10 +164,10 @@ test_that("Bayesian estimates lambda2 and omega are correct with adjusted priors
                                                 0.7367284, 0.7716797, 0.7647747, 0.7282343), tolerance = 1e-3)
 
   set.seed(1234)
-  tt <- Bayesrel::p_strel(ee, "lambda2", .7)
+  tt <- Bayesrel::pStrel(ee, "lambda2", .7)
   expect_equal(as.numeric(tt), c(0.1052664, 0.99000000), tolerance = 1e-3)
 
-  tt2 <- Bayesrel::p_strel(ee, "omega", .7)
+  tt2 <- Bayesrel::pStrel(ee, "omega", .7)
   expect_equal(as.numeric(tt2), c(0.5186924, 0.4600000), tolerance = 1e-3)
 
 })
@@ -178,7 +178,7 @@ test_that("Omega fit is correct", {
   data(asrm, package = "Bayesrel")
   set.seed(1234)
   ee <- Bayesrel::strel(asrm, estimates = "omega", n.iter = 200, n.chains = 2)
-  ff <- Bayesrel::omega_fit(ee, asrm, ppc = FALSE, cutoff = .05)
+  ff <- Bayesrel::omegaFit(ee, asrm, ppc = FALSE, cutoff = .05)
   expect_equal(unlist(ff, use.names = FALSE), c(13.06419359, 0.06170546, 0.13031834, 0.06918759, 0.22394139, 0.05666667,
                                                 12.02439250, 5.00000000, 0.03445507, 0.13420605, 0.03365073, 0.23333645,
                                                 0.05875407),

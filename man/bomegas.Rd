@@ -14,6 +14,17 @@ bomegas(
   thin = 1,
   interval = 0.95,
   missing = "impute",
+  a0 = 2,
+  b0 = 1,
+  l0 = 0,
+  A0 = 1,
+  c0 = 2,
+  d0 = 1,
+  beta0 = 0,
+  B0 = 2.5,
+  p0 = NULL,
+  R0 = NULL,
+  param.out = FALSE,
   callback = function() { }
 )
 }
@@ -42,9 +53,42 @@ or x1, ..., xn, where 1,...,n correspond to the column numbers}
 \item{interval}{A number specifying the credible interval,
 the interval is the highest posterior desntiy interval (HPD)}
 
-\item{missing}{A string denoting the missing data handling, can be "impute" or "listwise.
+\item{missing}{A string denoting the missing data handling, can be "impute" or "listwise".
 With impute the missing data will be estimated during the MCMC sampling
 as further unknown parameters}
+
+\item{a0}{A number for the shape of the prior inverse gamma distribution for the manifest residual variances,
+by default 2}
+
+\item{b0}{A number for the scale of the prior inverse gamma distribution for the manifest residual variances,
+by default 1}
+
+\item{l0}{A number for the mean of the prior normal distribution for the manifest loadings,
+by default 0, can be a single value or a loading matrix}
+
+\item{A0}{A number for scaling the variance of the prior normal distribution for the manifest loadings,
+by default 1}
+
+\item{c0}{A number for the shape of the prior inverse gamma distribution for the latent residual variances,
+by default 2}
+
+\item{d0}{A number for the scale of the prior inverse gamma distribution for the latent residual variances,
+by default 1}
+
+\item{beta0}{A number for the mean of the prior normal distribution for the latent loadings,
+by default 0, can be a single value or a vector}
+
+\item{B0}{A number for scaling the variance of the prior normal distribution for the latent loadings,
+by default 1}
+
+\item{p0}{A number for the shape of the prior inverse gamma distribution for the variance of the g-factor,
+by default set to q^2-q when q are the number of group factors}
+
+\item{R0}{A number for the scale of the prior inverse gamma distribution for the variance of the g-factor,
+by default set to the number of items}
+
+\item{param.out}{A logical indicating if loadings and residual variances should be attached to the result,
+by default FALSE because it saves memory}
 
 \item{callback}{An empty function for implementing a progressbar call
 from a higher program (e.g., JASP)}

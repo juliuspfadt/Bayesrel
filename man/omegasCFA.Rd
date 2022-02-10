@@ -34,7 +34,7 @@ and the model fit}
 
 \item{interval}{A number specifying the confidence interval, which is Wald-type}
 
-\item{missing}{A string denoting the missing data handling, can be "pairwise" or "listwise.
+\item{missing}{A string denoting the missing data handling, can be "fiml" (full information ML) or "listwise".
 pairwise uses FIML in lavaan.}
 
 \item{fit.measures}{A logical denoting if fit.measures from the CFA should be computed}
