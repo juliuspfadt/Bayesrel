@@ -1,8 +1,8 @@
 Package: Bayesrel
 Type: Package
 Title: Bayesian Reliability Estimation
-Version: 0.7.4.1
-Date: 2022-04-06
+Version: 0.7.4.2
+Date: 2022-06-27
 Authors@R: c(person("Julius M.", "Pfadt", email = "julius.pfadt@gmail.com",
                   role = c("aut", "cre")),
              person("Don", "van den Bergh",
@@ -43,7 +43,7 @@ Imports:
     Rcpp (>= 1.0.4.6)
 LinkingTo: Rcpp, RcppArmadillo
 RdMacros: Rdpack
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.0
 Depends: R (>= 2.10)
 Suggests: 
     testthat (>= 2.1.0),
