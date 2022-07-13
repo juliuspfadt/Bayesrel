@@ -229,11 +229,16 @@ print.omegasCFA <- function(x, ...) {
   }
 
   if (!is.null(x$model$fit.measures)) {
-    measures <- unname(x$model$fit.measures[c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr", "aic", "bic")])
+    fit_names <- c("chisq", "df", "pvalue", "cfi", "tli",
+                   "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue",
+                   "aic", "bic", "usrmr", "usrmr.ci.lower", "usrmr.ci.upper", "usrmr.closefit.pvalue")
+    measures <- unname(x$model$fit.measures[fit_names[1:11]])
+    measures <- c(measures, x$model$srmr.summary[fit_names[12:15], ])
     measures <- as.numeric(sprintf("%.5f", measures))
-    names(measures) <- c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr", "aic", "bic")
+    names(measures) <- fit_names
+    measures <- as.data.frame(measures)
     cat("\nFit measures:\n")
-    print.default(c(measures))
+    print(measures)
   }
 
 }
