@@ -291,7 +291,7 @@ lavMultiFileBifSyntax <- function(k, ns, model, colnams) {
 }
 
 
-indexMatrix <- function(model, k, ns, colnams) {
+indexMatrix <- function(model = NULL, k, ns, colnams = NULL) {
   if (is.null(model)) {
     tmp <- matrix(seq(1:k), ns, k/ns, byrow=T)
     imat <- matrix(FALSE, k, ns)
@@ -332,11 +332,11 @@ modelSyntaxExtract <- function(model, colnams) {
   mod_tmp <- unlist(strsplit(model, "[\n]|[=~]|[+]|[ ]"))
   # cleanup
   all_names<- mod_tmp[nchar(mod_tmp) > 0]
-  var_names <- all_names[!is.na(match(all_names, colnams))]
+  var_names <- unique(all_names[!is.na(match(all_names, colnams))])
 
   # check the number of specified factors by checking the frequency of "=~"
   mod_n.factors <- length(unlist(gregexpr("=~", model)))
-  var_count <- length(all_names) - mod_n.factors
+  var_count <- length(unique(all_names)) - mod_n.factors
   if (var_count > length(var_names)) {
     warning("It seems some of the item names in the model syntax do not equal the variable names in the data. Check the spelling. This may lead to issues.")
   }

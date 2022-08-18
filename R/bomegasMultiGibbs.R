@@ -44,6 +44,7 @@ omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairw
     psis <- array(0, c(n.chains, n.iter, ns))
   }
 
+  ticks <- 1 # for progressbar
   for (ai in 1:n.chains) {
 
     phiw <- diag(1 / rgamma(ns + 1, shape = pars$p0w / 2, scale = 2 / diag(pars$R0winv)))
@@ -104,7 +105,8 @@ omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairw
         }
         imputed[ai, i, ] <- dat_filled[inds]
 
-        pbtick()
+        ticks <- ticks + 1
+        setTxtProgressBar(pbtick, ticks)
       }
 
     } else {
@@ -132,7 +134,8 @@ omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairw
           psis[ai, i, ] <- params$psiw
         }
 
-        pbtick()
+        ticks <- ticks + 1
+        setTxtProgressBar(pbtick, ticks)
       }
     }
   }

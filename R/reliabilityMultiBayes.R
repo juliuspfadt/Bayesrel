@@ -132,10 +132,11 @@ bomegas <- function(
   if (is.null(p0)) p0 <- n.factors^2 - n.factors
   if (is.null(R0)) R0 <- ncol(data)
 
-  pb <- progress::progress_bar$new(total = n.iter * n.chains)
+  pb <- txtProgressBar(max = n.chains * n.iter, style = 3)
   sum_res <- bomegasMultiOut(data, n.factors, n.iter, n.burnin, thin, n.chains,
                              interval, model, pairwise, a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0,
-                             param.out, callback, pbtick = pb$tick)
+                             param.out, callback, pbtick = pb)
+  close(pb)
 
   sum_res$complete_cases <- complete_cases
   sum_res$call <- match.call()

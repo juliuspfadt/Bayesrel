@@ -38,7 +38,6 @@ Imports:
     methods, 
     stats, 
     graphics, 
-    progress, 
     Rdpack, 
     Rcpp (>= 1.0.4.6)
 LinkingTo: Rcpp, RcppArmadillo
