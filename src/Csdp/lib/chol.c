@@ -9,6 +9,9 @@
 #include <math.h>
 #include "declarations.h"
 
+int chol_blk(int n, int lda, double *A);
+int chol_diag(int n, double *A);
+
 int chol_blk(n,lda,A)
      int n;
      int lda;

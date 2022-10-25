@@ -256,15 +256,18 @@ int bisect_(int *n, double *eps1, double *d, double *e, double *e2,
 			void dtrsm();
 			void dtrmv();
 			#else
-			double dnrm2_();
-			double dasum_();
-			double ddot_();
-			int idamax_();
-			void dgemm_();
-			void dgemv_();
-			void dger_();
-			void dtrsm_();
-			void dtrmv_();
+			double dnrm2_(int *n, double *x, int *incx);
+			double dasum_(int *n, double *x, int *incx);
+			double ddot_(int *k, double *a, int *incx, double *y, int *incx2);
+			int idamax_(int *n, double *x, int *incx);
+			void dgemm_(char *N1, char *N2, int *n, int *n2, int *n3,
+				double *scale1, double *ap, int *n4, double *bp,
+				int *n5, double *scale2, double *cp, int *n6);
+			void dgemv_(char *N, int *n1, int *n2, double *scale1, double *ap, 
+				int *n3, double *x, int *inc1, double *scale2, double *y, int *inc2);
+			void dger_(void);
+			void dtrsm_(void);
+			void dtrmv_(void);
 		#endif
 	#endif
 
@@ -291,10 +294,11 @@ int bisect_(int *n, double *eps1, double *d, double *e, double *e2,
 			void dpotri();
 			void dtrtri();
 		#else
-			void dpotrf_();
-			void dpotrs_();
-			void dpotri_();
-			void dtrtri_();
+			void dpotrf_(char *U, int *n, double *A, int *lda, int *info);
+			void dpotrs_(char *U, int *m, int *incx, double *A, int *ldam1, double *rhs, 
+				int *ldam2, int *info);
+			void dpotri_(void);
+			void dtrtri_(char *U, char *N, int *n1, double *ap, int *n2, int *info);
 		#endif
 	#endif
 #endif

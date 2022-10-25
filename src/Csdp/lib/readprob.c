@@ -9,11 +9,13 @@
 #include <limits.h>
 #include "declarations.h"
 
-void skip_to_end_of_line();
-int get_line();
-int max_line_length();
-void countentry();
-void addentry();
+void skip_to_end_of_line(FILE *fid);
+int get_line(FILE *fid, char *buffer, int bufsiz);
+int max_line_length(FILE *fid);
+void countentry(struct constraintmatrix *constraints, int matno, int blkno,
+  int blocksize);
+void addentry(struct constraintmatrix *constraints, int matno, int blkno,
+  int indexi, int indexj, double ent);
 
 int read_prob(fname,pn,pk,pC,pa,pconstraints,printlevel)
      char *fname;

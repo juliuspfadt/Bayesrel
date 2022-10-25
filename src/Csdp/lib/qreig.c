@@ -7,6 +7,8 @@
 #include <math.h>
 #define EPS 1.0e-6
 
+void qreig(int n, double *d, double *e2);
+
 void qreig(n,d,e2)
      int n;
      double *d;

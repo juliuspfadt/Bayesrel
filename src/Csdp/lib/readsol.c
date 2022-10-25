@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "declarations.h"
 
-void skip_to_end_of_line();
+void skip_to_end_of_line(FILE *fid);
 
 int read_sol(fname,n,k,C,pX,py,pZ)
      char *fname;
