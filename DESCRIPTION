@@ -2,11 +2,11 @@ Package: Bayesrel
 Type: Package
 Title: Bayesian Reliability Estimation
 Version: 0.7.4.4
-Date: 2022-07-13
+Date: 2022-10-26
 Authors@R: c(person("Julius M.", "Pfadt", email = "julius.pfadt@gmail.com",
-                  role = c("aut", "cre")),
+                  role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0758-5502")),
              person("Don", "van den Bergh",
-                  role = c("aut")), 
+                  role = c("aut"), comment = c(ORCID = "0000-0002-9838-7308")), 
              person("Joris", "Goosen", 
                     role = c("aut"))
                     )

@@ -12,4 +12,4 @@ Makevars
 *.o
 *.so
 *.a
-
+.vscode/

@@ -85,6 +85,8 @@
 #' \insertRef{Lee2007}{Bayesrel}
 #'
 #'}
+#'
+#' @importFrom utils setTxtProgressBar txtProgressBar
 #' @export
 bomegas <- function(
   data,
