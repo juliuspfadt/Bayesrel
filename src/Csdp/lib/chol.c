@@ -12,10 +12,7 @@
 int chol_blk(int n, int lda, double *A);
 int chol_diag(int n, double *A);
 
-int chol_blk(n,lda,A)
-     int n;
-     int lda;
-     double *A;
+int chol_blk(int n, int lda, double *A)
 {
   int info;
   int i;
@@ -59,9 +56,7 @@ int chol_blk(n,lda,A)
 
 }
 
-int chol_diag(n,A)
-     int n;
-     double *A;
+int chol_diag(int n, double *A)
 {
   double ent;
   int i;
@@ -90,8 +85,7 @@ int chol_diag(n,A)
  * Find the Cholesky factor of a block structured matrix.
  */
 
-int chol(A)
-     struct blockmatrix A;
+int chol(struct blockmatrix A)
 {
   int blk;
   int ret;
@@ -118,8 +112,7 @@ int chol(A)
 }
 
 
-void trans(A)
-     struct blockmatrix A;
+void trans(struct blockmatrix A)
 {
   int i,j;
   int blk;
@@ -155,8 +148,7 @@ void trans(A)
    in work.  Note that the original Cholesky factor in A is not destroyed.  
  */
 
-void chol_inv(A,work)
-     struct blockmatrix A,work;
+void chol_inv(struct blockmatrix A, struct blockmatrix work)
 {
   int i;
   int info;
