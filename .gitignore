@@ -13,3 +13,4 @@ Makevars
 *.so
 *.a
 .vscode/
+CRAN-SUBMISSION

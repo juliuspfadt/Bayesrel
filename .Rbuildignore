@@ -3,4 +3,6 @@
 \.o$
 \.a$
 ^\.github$
-
+cran-comments.md
+^cran-comments\.md$
+^CRAN-SUBMISSION$
