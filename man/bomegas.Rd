@@ -119,19 +119,20 @@ The output contains the posterior distributions of omega_t and omega_h,
 their mean and credible intervals.
 }
 \examples{
-# note that the iterations are set very low for smoother running examples, you should use
-# at least the defaults
-res <- bomegas(upps, n.factors = 5, model = NULL, n.iter = 200, n.burnin = 50,
-n.chains = 2, missing = "listwise")
-
-# or with specified model syntax relating the group factors to the items:
+# specify the model syntax relating the group factors to the items:
 model <- "f1 =~ U17_r + U22_r + U29_r + U34_r
 f2 =~ U4 + U14 + U19 + U27
 f3 =~ U6 + U16 + U28 + U48
 f4 =~ U23_r + U31_r + U36_r + U46_r
 f5 =~ U10_r + U20_r + U35_r + U52_r"
-res <- bomegas(upps, n.factors = 5, model = model, n.iter = 200, n.burnin = 50,
+# specifying the model can be omitted if the model structure is simple and balanced,
+# meaning the an equal number of items load on each factor, and the items relate to the factors
+# in the same order as they appear in the data.
+# Note that the iterations are set very low for smoother running examples, you should use
+# at least the defaults:
+res <- bomegas(upps, n.factors = 5, model = NULL, n.iter = 200, n.burnin = 50,
 n.chains = 2, missing = "listwise")
+
 
 }
 \references{
