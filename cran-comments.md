@@ -12,4 +12,6 @@ Practically, this is a resubmission. In this version I have:
 
 * simplified an example for a function
 
+* added -DARMA_DONT_USE_FORTRAN_HIDDEN_ARGS to Makevars.in to avoid the mismatch warnings of runs with LTO
+
 
