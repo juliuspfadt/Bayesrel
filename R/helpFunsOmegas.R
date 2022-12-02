@@ -292,6 +292,7 @@ lavMultiFileBifSyntax <- function(k, ns, model, colnams) {
 
 
 indexMatrix <- function(model = NULL, k, ns, colnams = NULL) {
+
   if (is.null(model)) {
     tmp <- matrix(seq(1:k), ns, k/ns, byrow=T)
     imat <- matrix(FALSE, k, ns)
@@ -303,9 +304,7 @@ indexMatrix <- function(model = NULL, k, ns, colnams = NULL) {
   } else { # extract variables from model syntax
     mod_out <- modelSyntaxExtract(model, colnams)
     mod <- mod_out$mod
-    if (ns != mod_out$mod_n.factors) {
-      warning("n.factors is unequal to specified factors in model syntax")
-    }
+    ns <- mod_out$mod_n.factors
 
     imat <- matrix(FALSE, k, ns)
     idex <- list()
@@ -314,16 +313,9 @@ indexMatrix <- function(model = NULL, k, ns, colnams = NULL) {
       idex[[i]] <- which(colnams %in% tmp_mod)
       imat[idex[[i]], i] <- TRUE
     }
-
-    # # get the digits out:
-    # out <- regmatches(mod, gregexpr("[[:digit:]]+", mod))
-    # idex <- lapply(out, as.numeric)
-    # for (i in seq_len(length(mod))) {
-    #   imat[idex[[i]], i] <- TRUE
-    # }
   }
 
-  return(list(idex = idex, imat = imat, mod_out = mod_out))
+  return(list(idex = idex, imat = imat, mod_out = mod_out, n.factors = ns))
 }
 
 
@@ -333,12 +325,18 @@ modelSyntaxExtract <- function(model, colnams) {
   # cleanup
   all_names<- mod_tmp[nchar(mod_tmp) > 0]
   var_names <- unique(all_names[!is.na(match(all_names, colnams))])
+  fac_names <- unique(all_names[is.na(match(all_names, colnams))])
+
+  # confirm that only the group factors are specified
+  if (sum(all_names %in% fac_names) > length (fac_names)) {
+    stop("Please only specify the group factors and their relations to the manifest variables in the syntax.")
+  }
 
   # check the number of specified factors by checking the frequency of "=~"
   mod_n.factors <- length(unlist(gregexpr("=~", model)))
   var_count <- length(unique(all_names)) - mod_n.factors
   if (var_count > length(var_names)) {
-    warning("It seems some of the item names in the model syntax do not equal the variable names in the data. Check the spelling. This may lead to issues.")
+    stop("It seems some of the item names in the model syntax do not equal the variable names in the data. Check the spelling.")
   }
 
   # cleanup the model to further find the paths
@@ -347,8 +345,6 @@ modelSyntaxExtract <- function(model, colnams) {
   mod_separated2 <- mod_separated_tmp[-(grep("=~", mod_separated_tmp)-1)]
   mod_separated_tmp2 <- unlist(strsplit(paste(mod_separated2, collapse = " "), "[=~]"))
   mod_separated3 <- mod_separated_tmp2[nchar(mod_separated_tmp2) > 0]
-
-
 
   return(list(mod = mod_separated3, mod_n.factors = mod_n.factors, var_names = var_names))
 }

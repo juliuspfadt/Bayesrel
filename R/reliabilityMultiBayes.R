@@ -28,6 +28,8 @@
 #' A model file can be specified in lavaan syntax style (f1=~.+.+.) to relate the items
 #' to the group factors. The items' names need to equal the column names in the data set,
 #' aka the variable names
+#' @param model.type A string indicating the factor model estimated, by default this is the "second-order" model.
+#' Another option is the "bi-factor" model
 #' @param n.iter A number for the iterations of the Gibbs Sampler
 #' @param n.burnin A number for the burnin in the Gibbs Sampler
 #' @param n.chains A number for the chains to run for the MCMC sampling
@@ -92,8 +94,9 @@
 #' @export
 bomegas <- function(
   data,
-  n.factors,
+  n.factors = NULL,
   model = NULL,
+  model.type = "second-order",
   n.iter = 2e3,
   n.burnin = 200,
   n.chains = 3,
@@ -109,11 +112,19 @@ bomegas <- function(
   callback = function(){}
 ) {
 
+  # check mcmc settings
+  checkMCMCSettings(n.iter, n.burnin, n.chains, thin)
+
   # make sure only the data referenced in the model file is used, if a model file is specified
   if (!is.null(model)) {
     mod_opts <- modelSyntaxExtract(model, colnames(data))
     data <- data[, mod_opts$var_names]
+  } else {
+    if (is.null(n.factors)) {
+      stop("The number of factors needs to be specified when no model file is provided.")
+    }
   }
+
 
   # deal with missings
   listwise <- FALSE
@@ -139,7 +150,7 @@ bomegas <- function(
   pb <- txtProgressBar(max = n.chains * n.iter, style = 3)
   sum_res <- bomegasMultiOut(data, n.factors, n.iter, n.burnin, thin, n.chains,
                              interval, model, pairwise, a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0,
-                             param.out, callback, pbtick = pb)
+                             param.out, callback, pbtick = pb, model.type = model.type)
   close(pb)
 
   sum_res$complete_cases <- complete_cases

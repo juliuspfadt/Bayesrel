@@ -1,8 +1,9 @@
 
 
 
-omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairwise,
-                        a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0, param.out, callback, pbtick) {
+omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairwise,
+                        a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0, param.out, callback, pbtick,
+                        model.type) {
 
   n <- nrow(data)
   k <- ncol(data)
@@ -11,6 +12,7 @@ omegaMultiB <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairw
   # ---- get the index matrix aka which items load on which factors ----
   idex <- model_opts$idex
   imat <- model_opts$imat
+  if (!is.null(model_opts$ns)) ns <- model_opts$ns
   # ---- check missingsness ----
   inds <- which(is.na(data), arr.ind = TRUE)
   imputed <- array(0, c(n.chains, n.iter, nrow(inds)))
@@ -193,23 +195,44 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
   ll <- matrix(0, k, ns)
   pp <- numeric(k)
 
-  for (ii in 1:ns) {
+  paths <- c(sapply(idex, unique))
+  crossloadings <- length(unique(paths)) < length(paths)
+  if (crossloadings) {
 
-    ids <- idex[[ii]]
-    Ak_inv <- 1 / H0k[ii] + sum(wi[, ii + 1]^2)
-    ak <- (c(1 / H0k[ii]) %*% t(l0k[ids, ii]) + wi[, ii + 1] %*% data[, ids]) / c(Ak_inv)
-    # computes the diagonal of bekk directly - maybe precompute diag_Xt_X(data[, ids] for all ids?
-    bekk <- b0k + 0.5 * (diag_Xt_X(data[, ids]) - diag_Xt_X(ak) * Ak_inv + diag_X_Xt(l0k[ids, ii, drop = FALSE]) / H0k[ii])
-    bek <- bekk
+    for (ii in 1:k) {
+      ids <- which(imat[ii, ])
+      Ak <- solve(1 / H0k[ids] + t(wi[, ids + 1]) %*% wi[, ids + 1])
+      ak <- Ak %*% (1 / H0k[ids] * (l0k[ii, ids]) + t(wi[, ids + 1]) %*% data[, ii])
+      bekk <- b0k + 0.5 * (t(data[, ii]) %*% data[, ii]
+                           - t(ak) %*% solve(Ak) %*% ak
+                           + (t(l0k[ii, ids]) * (1 / H0k[ids])) %*% (l0k[ii, ids]))
+      bek <- diag(bekk)
+      invpsi <- rgamma(1, n / 2 + a0k, bek)
+      psi <- 1 / invpsi
+      lambda <- rnorm(length(ids), ak, sqrt(psi * diag(Ak)))
+      ll[ii, ids] <- lambda
+      pp[ii] <- psi
+    }
 
+  } else {
 
-    invpsi <- rgamma(length(ids), n / 2 + a0k, bek)
-    psi <- 1 / invpsi
-    lambda <- rnorm(length(ids), ak, sqrt(psi * as.vector(1 / Ak_inv)))
+    for (ii in 1:ns) {
 
-    ll[ids, ii] <- lambda
-    pp[ids] <- psi
+      ids <- idex[[ii]]
+      Ak_inv <- 1 / H0k[ii] + sum(wi[, ii + 1]^2)
+      ak <- (c(1 / H0k[ii]) %*% t(l0k[ids, ii]) + wi[, ii + 1] %*% data[, ids]) / c(Ak_inv)
+      # computes the diagonal of bekk directly - maybe precompute diag_Xt_X(data[, ids] for all ids?
+      bekk <- b0k + 0.5 * (diag_Xt_X(data[, ids]) - diag_Xt_X(ak) * Ak_inv + diag_X_Xt(l0k[ids, ii, drop = FALSE]) / H0k[ii])
+      bek <- bekk
 
+      invpsi <- rgamma(length(ids), n / 2 + a0k, bek)
+      psi <- 1 / invpsi
+      lambda <- rnorm(length(ids), ak, sqrt(psi * as.vector(1 / Ak_inv)))
+
+      ll[ids, ii] <- lambda
+      pp[ids] <- psi
+
+    }
   }
 
   # ------- structural equation -----

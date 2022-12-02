@@ -178,6 +178,9 @@ strel <- function(data = NULL,
   data <- scale(data, scale = FALSE) # needed for Bayes omega
 
   if (Bayes) {
+
+    checkMCMCSettings(n.iter, n.burnin, n.chains, thin)
+
     sum_res$Bayes <- gibbsFun(data, estimates, n.iter, n.burnin, thin, n.chains, interval, item.dropped, pairwise,
                               callback, k0, df0, a0, b0, m0)
     sum_res$n.iter <- n.iter
