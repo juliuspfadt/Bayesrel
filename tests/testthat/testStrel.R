@@ -1,5 +1,5 @@
 
-tol <- ifelse(testthat:::on_cran(), 1e-2, 1e-3)
+tol <- 1e-2
 
 test_that("Estimates lambda2 and omega are correct", {
 
