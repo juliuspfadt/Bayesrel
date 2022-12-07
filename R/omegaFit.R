@@ -15,7 +15,7 @@
 #' cutoff value
 #' @param ci A value between 0 and 1 indicating the credible interval for the RMSEA
 #'
-#' @examples omegaFit(strel(asrm, "omega", n.chains = 2, n.iter = 100), data = asrm)
+#' @examples omegaFit(strel(asrm, "omega", n.chains = 2, n.iter = 200), data = asrm)
 #'
 #' @references{
 #' \insertRef{Garnier-Villarreal2020AdaptingFitIndices}{Bayesrel}

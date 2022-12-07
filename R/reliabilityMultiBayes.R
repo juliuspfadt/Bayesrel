@@ -63,6 +63,8 @@
 #' by default FALSE because it saves memory
 #' @param callback An empty function for implementing a progressbar call
 #' from a higher program (e.g., JASP)
+#' @param disableMCMCCheck A logical disabling the MCMC settings check for running tests and the likes
+#'
 #'
 #' @return The posterior means and the highest posterior density intervals for
 #' omega_t and omega_h
@@ -109,11 +111,14 @@ bomegas <- function(
   beta0 = 0, B0 = 2.5,
   p0 = NULL, R0 = NULL,
   param.out = FALSE,
-  callback = function(){}
+  callback = function(){},
+  disableMCMCCheck = FALSE
 ) {
 
   # check mcmc settings
-  checkMCMCSettings(n.iter, n.burnin, n.chains, thin)
+  if (!disableMCMCCheck) {
+    checkMCMCSettings(n.iter, n.burnin, n.chains, thin)
+  }
 
   # make sure only the data referenced in the model file is used, if a model file is specified
   if (!is.null(model)) {
