@@ -42,7 +42,7 @@ Imports:
     Rcpp (>= 1.0.4.6)
 LinkingTo: Rcpp, RcppArmadillo
 RdMacros: Rdpack
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.2
 Depends: R (>= 2.10)
 Suggests: 
     testthat (>= 2.1.0),
