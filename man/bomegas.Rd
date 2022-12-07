@@ -6,8 +6,9 @@
 \usage{
 bomegas(
   data,
-  n.factors,
+  n.factors = NULL,
   model = NULL,
+  model.type = "second-order",
   n.iter = 2000,
   n.burnin = 200,
   n.chains = 3,
@@ -26,7 +27,8 @@ bomegas(
   R0 = NULL,
   param.out = FALSE,
   callback = function() {
- }
+ },
+  disableMCMCCheck = FALSE
 )
 }
 \arguments{
@@ -42,6 +44,9 @@ meaning, e.g., items 1-5 load on one factor, 6-10 on another, and so on.
 A model file can be specified in lavaan syntax style (f1=~.+.+.) to relate the items
 to the group factors. The items' names need to equal the column names in the data set,
 aka the variable names}
+
+\item{model.type}{A string indicating the factor model estimated, by default this is the "second-order" model.
+Another option is the "bi-factor" model}
 
 \item{n.iter}{A number for the iterations of the Gibbs Sampler}
 
@@ -93,6 +98,8 @@ by default FALSE because it saves memory}
 
 \item{callback}{An empty function for implementing a progressbar call
 from a higher program (e.g., JASP)}
+
+\item{disableMCMCCheck}{A logical disabling the MCMC settings check for running tests and the likes}
 }
 \value{
 The posterior means and the highest posterior density intervals for

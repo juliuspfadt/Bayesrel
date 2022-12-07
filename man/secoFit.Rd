@@ -28,7 +28,7 @@ Also prints fit indices, LR (likelihood-ratio), RMSEA, SRMR.
 The RMSEA is from Garnier-Villareal & Jorgensen (2020)
 }
 \examples{
-secoFit(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100,
+secoFit(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 150,
 n.burnin = 50, missing = "listwise"), upps)
 
 }

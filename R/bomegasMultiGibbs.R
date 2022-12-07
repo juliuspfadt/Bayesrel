@@ -200,7 +200,7 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex) {
   if (crossloadings) {
 
     for (ii in 1:k) {
-      ids <- which(imat[ii, ])
+      ids <- idex[[ii]]
       Ak <- solve(1 / H0k[ids] + t(wi[, ids + 1]) %*% wi[, ids + 1])
       ak <- Ak %*% (1 / H0k[ids] * (l0k[ii, ids]) + t(wi[, ids + 1]) %*% data[, ii])
       bekk <- b0k + 0.5 * (t(data[, ii]) %*% data[, ii]

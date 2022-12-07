@@ -137,7 +137,7 @@ omegaFit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .90) {
 #' cutoff value
 #' @param ci A value between 0 and 1 indicating the credible interval for the RMSEA
 #'
-#' @examples secoFit(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 100,
+#' @examples secoFit(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 150,
 #' n.burnin = 50, missing = "listwise"), upps)
 #'
 #' @references{

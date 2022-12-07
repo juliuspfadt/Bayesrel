@@ -46,7 +46,6 @@
 #' @param m0 The prior mean of the normal distribution on the factor loadings for omega
 #' @param disableMCMCCheck A logical disabling the MCMC settings check for running tests and the likes
 #'
-#'
 #' @details Reported are point estimates (posterior mean), Bayesian credible intervals
 #' (highest posterior density) and frequentist confidence intervals
 #' (non parametric or parametric bootstrap).
