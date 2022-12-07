@@ -14,7 +14,7 @@
 ## require at least autoconf 2.61
 AC_PREREQ(2.61)
 
-AC_INIT([Bayesrel], 0.7.0)
+AC_INIT([Bayesrel], 0.7.5)
 
 FOUND_ALL=""
 
