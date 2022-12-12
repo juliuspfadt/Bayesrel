@@ -49,7 +49,7 @@ omegasCFA <- function(
   data,
   n.factors,
   model = NULL,
-  model.type = "higher-order",
+  model.type = "second-order",
   interval = .95,
   missing = "fiml",
   fit.measures = FALSE
@@ -59,6 +59,15 @@ omegasCFA <- function(
   if (!is.null(model)) {
     mod_opts <- modelSyntaxExtract(model, colnames(data))
     data <- data[, mod_opts$var_names]
+  } else {
+    if (is.null(n.factors)) {
+      stop("The number of factors needs to be specified when no model file is provided.")
+    }
+  }
+
+  # check model.type string
+  if (!(model.type %in% c("bi-factor", "second-order"))) {
+    stop("model.type invalid; needs to be 'bi-factor' or 'second-order'")
   }
 
   listwise <- FALSE

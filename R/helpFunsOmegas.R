@@ -291,7 +291,7 @@ lavMultiFileBifSyntax <- function(k, ns, model, colnams) {
 }
 
 
-indexMatrix <- function(model = NULL, k, ns, colnams = NULL) {
+indexMatrix <- function(model = NULL, k, ns = NULL, colnams = NULL) {
 
   if (is.null(model)) {
     tmp <- matrix(seq(1:k), ns, k/ns, byrow=T)
@@ -435,4 +435,25 @@ diag_X_Xt <- function(X) diag_X_Yt(X, X)
 
 sum_X_Xt <- function(X) {
   crossprod(.colSums(X, nrow(X), ncol(X)))
+}
+
+
+# convert a index matrix to a lavaan syntax -> helps with simulations
+# model file for seco model with crossloadings
+lavMultiFileCross <- function(imat) {
+  k <- nrow(imat)
+  ns <- ncol(imat)
+  names <- 0
+  for(i in 1:k){
+    names[i] <- paste0("x", i)
+  }
+
+  str <- list()
+  mod <- NULL
+  for (i in 1:ns) {
+    str[[i]] <- paste0(names[imat[,i]], collapse = " + ")
+    mod <- paste0(mod, "s", i, " =~ ", str[[i]], " \n ")
+  }
+
+  return(out <- list(names = names, model = mod))
 }

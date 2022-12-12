@@ -123,17 +123,23 @@ bomegas <- function(
   # make sure only the data referenced in the model file is used, if a model file is specified
   if (!is.null(model)) {
     mod_opts <- modelSyntaxExtract(model, colnames(data))
-    data <- data[, mod_opts$var_names]
+    data <- data[, colnames(data) %in% mod_opts$var_names]
+    n.factors <- mod_opts$mod_n.factors
   } else {
     if (is.null(n.factors)) {
       stop("The number of factors needs to be specified when no model file is provided.")
     }
   }
 
+  # check model.type string
+  if (!(model.type %in% c("bi-factor", "second-order"))) {
+    stop("model.type invalid; needs to be 'bi-factor' or 'second-order'")
+  }
+
 
   # deal with missings
   listwise <- FALSE
-  pairwise <- FALSE
+  impute <- FALSE
   complete_cases <- nrow(data)
   if (anyNA(data)) {
     if (missing == "listwise") {
@@ -143,7 +149,7 @@ bomegas <- function(
       complete_cases <- ncomp
       listwise <- TRUE
     } else { # missing is impute
-      pairwise <- TRUE
+      impute <- TRUE
     }
   }
 
@@ -154,7 +160,7 @@ bomegas <- function(
 
   pb <- txtProgressBar(max = n.chains * n.iter, style = 3)
   sum_res <- bomegasMultiOut(data, n.factors, n.iter, n.burnin, thin, n.chains,
-                             interval, model, pairwise, a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0,
+                             interval, model, impute, a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0,
                              param.out, callback, pbtick = pb, model.type = model.type)
   close(pb)
 
@@ -162,7 +168,7 @@ bomegas <- function(
   sum_res$call <- match.call()
   sum_res$k <- ncol(data)
   sum_res$n.factors <- n.factors
-  sum_res$pairwise <- pairwise
+  sum_res$impute <- impute
   sum_res$listwise <- listwise
   sum_res$interval <- interval
   sum_res$prior_params <- list(a0 = a0, b0 = b0, l0 = l0, A0 = A0, c0 = c0, d0 = d0,

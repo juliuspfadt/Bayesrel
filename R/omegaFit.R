@@ -150,7 +150,7 @@ secoFit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .90) {
 
   data <- scale(data, scale = FALSE)
 
-  if (x$pairwise) {
+  if (x$impute) {
     sigma <- cov(data, use = "pairwise.complete.obs")
     n.data <- nrow(data)
   } else {

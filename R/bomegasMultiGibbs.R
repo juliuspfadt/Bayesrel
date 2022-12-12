@@ -1,7 +1,7 @@
 
 
 
-omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, pairwise,
+omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, impute,
                         a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0, param.out, callback, pbtick,
                         model.type) {
 
@@ -12,7 +12,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, p
   # ---- get the index matrix aka which items load on which factors ----
   idex <- model_opts$idex
   imat <- model_opts$imat
-  if (!is.null(model_opts$ns)) ns <- model_opts$ns
+
   # ---- check missingsness ----
   inds <- which(is.na(data), arr.ind = TRUE)
   imputed <- array(0, c(n.chains, n.iter, nrow(inds)))
@@ -52,7 +52,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, p
     phiw <- diag(1 / rgamma(ns + 1, shape = pars$p0w / 2, scale = 2 / diag(pars$R0winv)))
     wi <- genNormDataLegit(n, numeric(ns + 1), phiw)
 
-    if (pairwise) { # missing data
+    if (impute) { # missing data
       dat_filled <- data
       dat_filled[inds] <- colMeans(data, na.rm = TRUE)[inds[, 2]]
       ms <- rep(0, k)
@@ -198,35 +198,35 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex, imat) {
   # first the crossloadings, if any
   crsl <- which(rowSums(imat) > 1)
   for (ii in crsl) {
-    ids <- which(imat[ii, ])
-    Ak <- solve(1 / H0k[ids] + t(wi[, ids + 1]) %*% wi[, ids + 1])
-    ak <- Ak %*% (1 / H0k[ids] * (l0k[ii, ids]) + t(wi[, ids + 1]) %*% data[, ii])
+    idFacs <- which(imat[ii, ])
+    Ak <- solve(1 / H0k[idFacs] + t(wi[, idFacs + 1]) %*% wi[, idFacs + 1])
+    ak <- Ak %*% (1 / H0k[idFacs] * (l0k[ii, idFacs]) + t(wi[, idFacs + 1]) %*% data[, ii])
     bekk <- b0k + 0.5 * (t(data[, ii]) %*% data[, ii]
                          - t(ak) %*% solve(Ak) %*% ak
-                         + (t(l0k[ii, ids]) * (1 / H0k[ids])) %*% (l0k[ii, ids]))
+                         + (t(l0k[ii, idFacs]) * (1 / H0k[idFacs])) %*% (l0k[ii, idFacs]))
     bek <- diag(bekk)
     invpsi <- rgamma(1, n / 2 + a0k, bek)
     psi <- 1 / invpsi
-    lambda <- rnorm(length(ids), ak, sqrt(psi * diag(Ak)))
-    ll[ii, ids] <- lambda
+    lambda <- rnorm(length(idFacs), ak, sqrt(psi * diag(Ak)))
+    ll[ii, idFacs] <- lambda
     pp[ii] <- psi
   }
 
   # the non-crossloadings
-  for (ii in 1:ns) {
-    ids <- idex[[ii]][!(idex[[ii]] %in% crsl)]
-    Ak_inv <- 1 / H0k[ii] + sum(wi[, ii + 1]^2)
-    ak <- (c(1 / H0k[ii]) %*% t(l0k[ids, ii]) + wi[, ii + 1] %*% data[, ids]) / c(Ak_inv)
-    # computes the diagonal of bekk directly - maybe precompute diag_Xt_X(data[, ids] for all ids?
-    bekk <- b0k + 0.5 * (diag_Xt_X(data[, ids]) - diag_Xt_X(ak) * Ak_inv + diag_X_Xt(l0k[ids, ii, drop = FALSE]) / H0k[ii])
+  for (iii in 1:ns) {
+    idIts <- idex[[iii]][!(idex[[iii]] %in% crsl)]
+    Ak_inv <- 1 / H0k[iii] + sum(wi[, iii + 1]^2)
+    ak <- (c(1 / H0k[iii]) %*% t(l0k[idIts, iii]) + wi[, iii + 1] %*% data[, idIts]) / c(Ak_inv)
+    # computes the diagonal of bekk directly - maybe precompute diag_Xt_X(data[, idIts] for all idIts?
+    bekk <- b0k + 0.5 * (diag_Xt_X(data[, idIts]) - diag_Xt_X(ak) * Ak_inv + diag_X_Xt(l0k[idIts, iii, drop = FALSE]) / H0k[iii])
     bek <- bekk
 
-    invpsi <- rgamma(length(ids), n / 2 + a0k, bek)
+    invpsi <- rgamma(length(idIts), n / 2 + a0k, bek)
     psi <- 1 / invpsi
-    lambda <- rnorm(length(ids), ak, sqrt(psi * as.vector(1 / Ak_inv)))
+    lambda <- rnorm(length(idIts), ak, sqrt(psi * as.vector(1 / Ak_inv)))
 
-    ll[ids, ii] <- lambda
-    pp[ids] <- psi
+    ll[idIts, iii] <- lambda
+    pp[idIts] <- psi
   }
 
   # ------- structural equation -----

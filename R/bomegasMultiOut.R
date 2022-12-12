@@ -1,13 +1,13 @@
 
 
 bomegasMultiOut <- function(data, n.factors, n.iter, n.burnin, thin, n.chains,
-                            interval, model, pairwise, a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0,
+                            interval, model, impute, a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0,
                             param.out, callback, pbtick, model.type) {
 
 
   out <- list()
   om_out <- omegaMultiBayes(data, n.factors, n.iter, n.burnin,
-                         n.chains, thin, model, pairwise, a0, b0, l0, A0, c0,
+                         n.chains, thin, model, impute, a0, b0, l0, A0, c0,
                          d0, beta0, B0, p0, R0, param.out, callback, pbtick, model.type)
   out$omega_t$chains <- om_out$omt
   out$omega_t$mean <- mean(om_out$omt)
@@ -24,7 +24,7 @@ bomegasMultiOut <- function(data, n.factors, n.iter, n.burnin, thin, n.chains,
   if (param.out) {
     out$model$lambda <- om_out$lambda
     out$model$beta <- om_out$beta
-    out$model$theta <- om_out$lambda
+    out$model$theta <- om_out$theta
     out$model$psi <- om_out$psi
   }
   return(out)

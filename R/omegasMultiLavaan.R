@@ -4,7 +4,7 @@ omegaMultiF <- function(data, n.factors, interval, pairwise, model, model.type, 
   k <- ncol(data)
   model_opts <- indexMatrix(model, k, n.factors, colnames(data))
 
-  if (model.type == "higher-order") {
+  if (model.type == "second-order") {
 
     if (is.null(model)) {
       modfile <- lavMultiFileSeco(k, n.factors)

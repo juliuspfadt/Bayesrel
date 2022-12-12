@@ -95,3 +95,31 @@ test_that("Bayesian omegas are correct with altered prior hyperparameters", {
                tolerance = tol)
 
 })
+
+test_that("Bayesian omegas are correct with cross loadings", {
+
+  data(upps, package = "Bayesrel")
+  mod <- "
+  f1 =~ U17_r + U22_r + U29_r + U34_r + U19
+  f2 =~ U4 + U14 + U19 + U27
+  f3 =~ U6 + U16 + U28 + U48 + U29_r
+  f4 =~ U23_r + U31_r + U36_r + U46_r + U34_r
+  f5 =~ U10_r + U20_r + U35_r + U52_r + U19
+  "
+  set.seed(1234)
+  ee <- Bayesrel::bomegas(upps, n.iter = 200, n.burnin = 50, n.chains = 2,
+                          model = mod, missing = "listwise", param.out = TRUE)
+  ll <- apply(ee$model$lambda, c(3, 4), mean)
+
+  expect_equal(ll,
+               matrix(c(-0.5236519, -0.5287243, -0.4082028, -0.628011, 0, 0, 0.07909764, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.003327511, 0.004258746, -0.0007414194,
+                        0.001434998, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.001336209, 0, 0, 0, 0,
+                        0, -0.0008860797, 0.003827371, 0.002945267, -0.002850434, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0.005032167, 0, 0, 0, 0, 0, 0, 0, 0, -0.004571036, 0.001070471, -0.002486544,
+                        0.003125839, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.002564826, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0.003184005, 0.003274632, 0.003072611, -0.004328613), 20, 5),
+               tolerance = tol)
+
+})
+
