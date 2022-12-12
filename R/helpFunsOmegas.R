@@ -119,7 +119,7 @@ lavMultiFileSeco <- function(k, ns) {
   return(list(names = names, model = mod))
 }
 
-# generate balanced and simple model file for lavaan with specified syntax
+# generate model file for lavaan
 lavMultiFileSecoSyntax <- function(k, ns, model, colnams) {
 
   beta_names <- paste("gl", 1:ns, sep = "")
@@ -145,20 +145,20 @@ lavMultiFileSecoSyntax <- function(k, ns, model, colnams) {
 
   theta_names <- paste("e", 1:k, sep = "")
 
-  gen <- paste(paste(beta_names, "*", "s", 1:ns, sep = ""), collapse = " + " )
+  gen <- paste(paste(beta_names, "*", mod_out$fac_names, sep = ""), collapse = " + " )
   gen <- paste0("g =~ ", gen)
 
   modfile <- NULL
   for (i in 1:ns) {
-    modfile <- paste0(modfile, "s", i, " =~ ", paste(paste(lambda_names[[i]], "*", names[[i]], sep = ""),
+    modfile <- paste0(modfile, mod_out$fac_names[i], " =~ ", paste(paste(lambda_names[[i]], "*", names[[i]], sep = ""),
                                                      collapse = " + "), "\n")
   }
   modfile <- paste0(gen, " \n", modfile)
 
   # extra stuff for omega calc
   modfile <- paste0(modfile, "g ~~ 1*g\n")
-  modfile <- paste0(modfile, paste(paste(unlist(names), " ~~ ", theta_names, "*",
-                                         unlist(names), sep = ""), collapse = "\n"), "\n")
+  modfile <- paste0(modfile, paste(paste(unique(unlist(names)), " ~~ ", theta_names, "*",
+                                         unique(unlist(names)), sep = ""), collapse = "\n"), "\n")
 
   # define extra parameters
   gl <- NULL
@@ -167,9 +167,8 @@ lavMultiFileSecoSyntax <- function(k, ns, model, colnams) {
     gl <- c(gl, paste0(beta_names[i], "*", lambda_names[[i]]))
     sl <- paste0(sl, "ssum", i, " := ", paste0(lambda_names[[i]], collapse = " + "), "\n")
   }
-  gl <- paste0(gl, collapse = "+")
+  gl <- paste0(gl, collapse = " + ")
   sum_gl <- paste("g_loading :=", gl, "\n")
-
 
   sum_sl <- paste0("spec_loading := ", paste(paste0("ssum", 1:ns, "^2"), collapse = " + "), "\n")
   sum_errs <- paste("residual_var :=", paste(theta_names, collapse = " + "), "\n")
@@ -177,7 +176,7 @@ lavMultiFileSecoSyntax <- function(k, ns, model, colnams) {
   omega_t <- "omega_t := (g_loading^2 + spec_loading) / (g_loading^2 + spec_loading + residual_var) \n"
   model_out <- paste0(modfile, sl, sum_gl, sum_sl, sum_errs, omega_h, omega_t)
 
-  return(out <- list(names = names, model = model_out))
+  return(out <- list(model = model_out, factor_names = mod_out$fac_names))
 }
 
 
@@ -346,7 +345,8 @@ modelSyntaxExtract <- function(model, colnams) {
   mod_separated_tmp2 <- unlist(strsplit(paste(mod_separated2, collapse = " "), "[=~]"))
   mod_separated3 <- mod_separated_tmp2[nchar(mod_separated_tmp2) > 0]
 
-  return(list(mod = mod_separated3, mod_n.factors = mod_n.factors, var_names = var_names))
+  return(list(mod = mod_separated3, mod_n.factors = mod_n.factors, var_names = var_names,
+              fac_names = fac_names))
 }
 
 

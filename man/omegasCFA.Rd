@@ -6,9 +6,9 @@
 \usage{
 omegasCFA(
   data,
-  n.factors,
+  n.factors = NULL,
   model = NULL,
-  model.type = "higher-order",
+  model.type = "second-order",
   interval = 0.95,
   missing = "fiml",
   fit.measures = FALSE
@@ -34,7 +34,8 @@ and the model fit}
 
 \item{interval}{A number specifying the confidence interval, which is Wald-type}
 
-\item{missing}{A string denoting the missing data handling, can be "fiml" (full information ML) or "listwise".}
+\item{missing}{A string denoting the missing data handling, can be "fiml" (full information ML) or "listwise".
+Specifying "pairwise" will defulat to "fiml"}
 
 \item{fit.measures}{A logical denoting if fit.measures from the CFA should be computed,
 the output then contains the chisq statistic, chisq df, chisq p-value, cfi, tli,
@@ -64,7 +65,7 @@ f2 =~ U4 + U14 + U19 + U27
 f3 =~ U6 + U16 + U28 + U48
 f4 =~ U23_r + U31_r + U36_r + U46_r
 f5 =~ U10_r + U20_r + U35_r + U52_r"
-res <- omegasCFA(upps, n.factors = 5, model = model, model.type = "higher-order",
+res <- omegasCFA(upps, n.factors = 5, model = model, model.type = "second-order",
 missing = "listwise")
 
 }

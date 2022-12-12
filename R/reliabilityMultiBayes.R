@@ -29,7 +29,7 @@
 #' to the group factors. The items' names need to equal the column names in the data set,
 #' aka the variable names
 #' @param model.type A string indicating the factor model estimated, by default this is the "second-order" model.
-#' Another option is the "bi-factor" model
+#' Another option is the "bi-factor" model; and eventually the correlated factor model
 #' @param n.iter A number for the iterations of the Gibbs Sampler
 #' @param n.burnin A number for the burnin in the Gibbs Sampler
 #' @param n.chains A number for the chains to run for the MCMC sampling
@@ -132,8 +132,8 @@ bomegas <- function(
   }
 
   # check model.type string
-  if (!(model.type %in% c("bi-factor", "second-order"))) {
-    stop("model.type invalid; needs to be 'bi-factor' or 'second-order'")
+  if (!(model.type %in% c("bi-factor", "second-order", "correlated"))) {
+    stop("model.type invalid; needs to be 'bi-factor', 'second-order', or 'correlated'")
   }
 
 

@@ -1,5 +1,5 @@
 
-omegaMultiF <- function(data, n.factors, interval, pairwise, model, model.type, fit.measures) {
+omegaMultiFreq <- function(data, n.factors, interval, fiml, model, model.type, fit.measures) {
 
   k <- ncol(data)
   model_opts <- indexMatrix(model, k, n.factors, colnames(data))
@@ -12,9 +12,10 @@ omegaMultiF <- function(data, n.factors, interval, pairwise, model, model.type, 
 
     } else { # if model syntax is specified
       modfile <- lavMultiFileSecoSyntax(k, n.factors, model, colnames(data))
+
     }
 
-    if (pairwise) {
+    if (fiml) {
       fit <- lavaan::cfa(modfile$model, data, std.lv = TRUE, orthogonal = FALSE, missing = "ml")
     } else {
       fit <- lavaan::cfa(modfile$model, data, std.lv = TRUE, orthogonal = FALSE)
@@ -23,9 +24,9 @@ omegaMultiF <- function(data, n.factors, interval, pairwise, model, model.type, 
     sts <- lavaan::parameterestimates(fit, level = interval, standardized = TRUE)
     gloads <- sts$std.all[1:n.factors]
     lmat <- matrix(0, k, n.factors)
-    lmat[model_opts$imat] <- sts$std.all[(n.factors + 1):(n.factors + k)]
-    theta <- sts$std.all[(n.factors + k + 2):(n.factors + 2*k + 1)]
-    psi <- sts$std.all[(n.factors + 2*k + 2):(2*n.factors + 2*k + 1)]
+    lmat[model_opts$imat] <- sts$std.all[sts$op == "=~" & sts$lhs != "g"]
+    theta <- sts$std.all[sts$op == "~~" & sts$lhs %in% colnames(data)]
+    psi <- sts$std.all[sts$op == "~~" & sts$lhs %in% modfile$factor_names]
 
   } else if (model.type == "bi-factor") { # model.type is bifactor
     if (is.null(model)) {
@@ -37,7 +38,7 @@ omegaMultiF <- function(data, n.factors, interval, pairwise, model, model.type, 
       modfile <- lavMultiFileBifSyntax(k, n.factors, model, colnames(data))
     }
 
-    if (pairwise) {
+    if (fiml) {
       fit <- lavaan::cfa(modfile$model, data, std.lv = TRUE, orthogonal = TRUE, missing = "ml")
     } else {
       fit <- lavaan::cfa(modfile$model, data, std.lv = TRUE, orthogonal = TRUE)
@@ -55,7 +56,7 @@ omegaMultiF <- function(data, n.factors, interval, pairwise, model, model.type, 
 
   if (fit.measures) {
     modfile$fit.measures <- lavaan::fitmeasures(fit)
-    if (pairwise) {
+    if (fiml) {
       modfile$srmr.summary <- lavaan::lavResiduals(fit)$summary["total"]
     } else {
       modfile$srmr.summary <- lavaan::lavResiduals(fit)$summary["cov"]

@@ -123,3 +123,20 @@ test_that("Bayesian omegas are correct with cross loadings", {
 
 })
 
+
+test_that("Frequentist omegas are correct with cross loadings", {
+
+  data(upps, package = "Bayesrel")
+  mod <- "
+  f1 =~ U17_r + U22_r + U29_r + U34_r + U19
+  f2 =~ U4 + U14 + U19 + U27
+  f3 =~ U6 + U16 + U28 + U48 + U29_r
+  f4 =~ U23_r + U31_r + U36_r + U46_r + U34_r
+  f5 =~ U10_r + U20_r + U35_r + U52_r + U19
+  "
+  ee <- Bayesrel::omegasCFA(upps, model = mod, missing = "listwise")
+  expect_equal(as.numeric(c(unlist(ee[[1]]), unlist(ee[[2]]))),
+               c(0.8648853, 0.8466552, 0.8831155, 0.6464642, 0.5962111, 0.6967174),
+               tolerance = tol)
+
+})
