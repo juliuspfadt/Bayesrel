@@ -28,9 +28,9 @@ A model file can be specified in lavaan syntax style (f1=~.+.+.) to relate the i
 to the group factors. The items' names need to equal the column names in the data set,
 aka the variable names}
 
-\item{model.type}{A string denoting if the model that should be fit is the higher-order or
-bi-factor model. This comes down to the researcher's theory about the measurement
-and the model fit}
+\item{model.type}{A string denoting if the model that should be fit is the second-order or
+bi-factor model or the correlated factor model. This comes down to the researcher's theory about the measurement
+and the model fit.}
 
 \item{interval}{A number specifying the confidence interval, which is Wald-type}
 

@@ -46,7 +46,7 @@ to the group factors. The items' names need to equal the column names in the dat
 aka the variable names}
 
 \item{model.type}{A string indicating the factor model estimated, by default this is the "second-order" model.
-Another option is the "bi-factor" model}
+Another option is the "bi-factor" model; and eventually the correlated factor model}
 
 \item{n.iter}{A number for the iterations of the Gibbs Sampler}
 

@@ -28,8 +28,14 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
     l0mat[imat] <- l0
   }
 
-  beta0vec <- numeric(ns)
-  beta0vec[1:ns] <- beta0
+  if (model.type == "second-order") {
+    beta0vec <- numeric(ns)
+    beta0vec[1:ns] <- beta0
+  } else {
+    beta0vec <- numeric(k)
+    beta0vec[1:k] <- beta0
+  }
+
 
   pars <- list(H0k = rep(A0, ns), a0k = a0, b0k = b0, l0k = l0mat,
                H0kw = B0, a0kw = c0, b0kw = d0, beta0k = beta0vec,
@@ -41,7 +47,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
 
   if (param.out) {
     lambdas <- array(0, c(n.chains, n.iter, k, ns))
-    betas <- array(0, c(n.chains, n.iter, ns))
+    betas <- array(0, c(n.chains, n.iter, length(beta0vec)))
     thetas <- array(0, c(n.chains, n.iter, k))
     psis <- array(0, c(n.chains, n.iter, ns))
   }
@@ -58,14 +64,14 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
       ms <- rep(0, k)
 
       for (i in 1:n.iter) {
-        params <- sampleSecoParams(dat_filled, pars, wi, phiw, ns, idex, imat)
+        params <- sampleMultiParams(dat_filled, pars, wi, phiw, ns, idex, imat, model.type)
         wi <- params$wi
         phiw <- params$phiw
         # compute omega
         Lm <- cbind(0, params$lambda)
         Bm <- matrix(0, ns + 1, ns + 1)
         Bm[2:(ns + 1), 1] <- params$beta
-        oms <- omegasSeco(Lm, Bm, diag(params$theta), diag(c(1, params$psiw)))
+        oms <- omegasMulti(Lm, Bm, diag(params$theta), diag(c(1, params$psiw)))
 
         omsh[ai, i] <- oms[1]
         omst[ai, i] <- oms[2]
@@ -114,7 +120,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
     } else {
       for (i in 1:n.iter) {
 
-        params <- sampleSecoParams(data, pars, wi, phiw, ns, idex, imat)
+        params <- sampleMultiParams(data, pars, wi, phiw, ns, idex, imat, model.type)
         wi <- params$wi
         phiw <- params$phiw
 
@@ -122,7 +128,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
         Lm <- cbind(0, params$lambda)
         Bm <- matrix(0, ns + 1, ns + 1)
         Bm[2:(ns + 1), 1] <- params$beta
-        oms <- omegasSeco(Lm, Bm, diag(params$theta), diag(c(1, params$psiw)))
+        oms <- omegasMulti(Lm, Bm, diag(params$theta), diag(c(1, params$psiw)))
 
         omsh[ai, i] <- oms[1]
         omst[ai, i] <- oms[2]
@@ -173,7 +179,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
 }
 
 
-sampleSecoParams <- function(data, pars, wi, phiw, ns, idex, imat) {
+sampleMultiParams <- function(data, pars, wi, phiw, ns, idex, imat, model.type) {
 
   n <- nrow(data)
   k <- ncol(data)
@@ -195,69 +201,101 @@ sampleSecoParams <- function(data, pars, wi, phiw, ns, idex, imat) {
   ll <- matrix(0, k, ns)
   pp <- numeric(k)
 
-  # first the crossloadings, if any
-  crsl <- which(rowSums(imat) > 1)
-  for (ii in crsl) {
-    idFacs <- which(imat[ii, ])
-    Ak <- solve(1 / H0k[idFacs] + t(wi[, idFacs + 1]) %*% wi[, idFacs + 1])
-    ak <- Ak %*% (1 / H0k[idFacs] * (l0k[ii, idFacs]) + t(wi[, idFacs + 1]) %*% data[, ii])
-    bekk <- b0k + 0.5 * (t(data[, ii]) %*% data[, ii]
-                         - t(ak) %*% solve(Ak) %*% ak
-                         + (t(l0k[ii, idFacs]) * (1 / H0k[idFacs])) %*% (l0k[ii, idFacs]))
-    bek <- diag(bekk)
-    invpsi <- rgamma(1, n / 2 + a0k, bek)
-    psi <- 1 / invpsi
-    lambda <- rnorm(length(idFacs), ak, sqrt(psi * diag(Ak)))
-    ll[ii, idFacs] <- lambda
-    pp[ii] <- psi
+  if (model.type == "second-order") {
+    # first the crossloadings, if any
+    crsl <- which(rowSums(imat) > 1)
+    for (ii in crsl) {
+      idFacs <- which(imat[ii, ])
+      Ak <- solve(1 / H0k[idFacs] + t(wi[, idFacs + 1]) %*% wi[, idFacs + 1])
+      ak <- Ak %*% (1 / H0k[idFacs] * (l0k[ii, idFacs]) + t(wi[, idFacs + 1]) %*% data[, ii])
+      bekk <- b0k + 0.5 * (t(data[, ii]) %*% data[, ii]
+                           - t(ak) %*% solve(Ak) %*% ak
+                           + (t(l0k[ii, idFacs]) * (1 / H0k[idFacs])) %*% (l0k[ii, idFacs]))
+      bek <- diag(bekk)
+      invpsi <- rgamma(1, n / 2 + a0k, bek)
+      psi <- 1 / invpsi
+      lambda <- rnorm(length(idFacs), ak, sqrt(psi * diag(Ak)))
+      ll[ii, idFacs] <- lambda
+      pp[ii] <- psi
+    }
+
+    # the non-crossloadings
+    for (iii in 1:ns) {
+      idIts <- idex[[iii]][!(idex[[iii]] %in% crsl)]
+      Ak_inv <- 1 / H0k[iii] + sum(wi[, iii + 1]^2)
+      ak <- (c(1 / H0k[iii]) %*% t(l0k[idIts, iii]) + wi[, iii + 1] %*% data[, idIts]) / c(Ak_inv)
+      # computes the diagonal of bekk directly - maybe precompute diag_Xt_X(data[, idIts] for all idIts?
+      bekk <- b0k + 0.5 * (diag_Xt_X(data[, idIts]) - diag_Xt_X(ak) * Ak_inv + diag_X_Xt(l0k[idIts, iii, drop = FALSE]) / H0k[iii])
+      bek <- bekk
+
+      invpsi <- rgamma(length(idIts), n / 2 + a0k, bek)
+      psi <- 1 / invpsi
+      lambda <- rnorm(length(idIts), ak, sqrt(psi * as.vector(1 / Ak_inv)))
+
+      ll[idIts, iii] <- lambda
+      pp[idIts] <- psi
+    }
+
+    # ------- structural equation -----
+    Akw <- 1 / (1 / H0kw + c(crossprod(wi[, 1])))
+    akw <- Akw * (1 / H0kw * beta0k + crossprod(wi[, 1], wi[, 2:(ns + 1)]))
+
+    # computes the diagonal of bekk directly
+    bekkw <- b0kw + 0.5 * (diag_Xt_X(wi[, 2:(ns + 1)]) - diag_Xt_X(akw) / Akw + diag_Xt_X(matrix(beta0k, 1)) / H0kw)
+    bekw <- bekkw
+
+    invpsiw <- rgamma(ns, n / 2 + a0kw, bekw)
+    psiw <- 1 / invpsiw
+    beta <- rnorm(ns, akw * sqrt(phiw[1, 1]), sqrt(psiw * Akw))
+
+    # in Lee it says to replace the usual inv Phi matrix when sampling the factor scores with a function
+    # of the g-factor loadings and their residuals
+    betaMat <- matrix(0, ns + 1, ns + 1)
+    betaMat[2:(ns + 1), 1] <- beta
+    ident <- diag(ns + 1)
+    identInv <- ident + betaMat # note: (ident + betaMat) %*% (ident - betaMat) == ident
+
+    invsigW <- crossprod(sweep(ident - betaMat, 1L, c(1, sqrt(psiw)), `/`))
+
+    lll <- cbind(0, ll)
+    lll_temp <- sweep(lll, 1L, pp, `/`) # solve(diag(pp)) %*% lll
+    impM <- crossprod(lll_temp, lll)
+
+    # This solve can be optimized using blockwise inversion, assuming that (1) impM is always diagonal and (2) invsigW is diagonal except for the first row/ column
+    Vw <- solve(invsigW + impM)
+    mw <- Vw %*% tcrossprod(t(lll_temp), data)
+
+  } else {
+
+    H0 <- c(H0kw, H0k)
+    beta0 <- cbind(beta0k, l0k)
+    Aka_inv <- diag(1/(H0)) + crossprod(wi)
+    Aka <- solve(Aka_inv)
+    aka <- Aka %*% (1/H0 * t(beta0)  + crossprod(wi, data))
+    bekka <- b0k + 0.5 * (crossprod(data) - t(aka) %*% Aka_inv %*% aka + crossprod(t(beta0 * (1/H0)), t(beta0)))
+    beka <- diag(bekka)
+
+    invpsi_a <- rgamma(k, n / 2 + a0k, beka)
+    invPsi <- diag(invpsi_a)
+    psi_a <- 1/invpsi_a
+
+    lll <- matrix(0, k, ns + 1)
+    pp <- psi_a
+
+    imatb <- cbind(TRUE, imat)
+    mms <- (t(aka) %*% sqrt(phiw))[imatb]
+    dAka <- diag(Aka)
+    lll[imatb] <- rnorm(length(mms), mms, sqrt(c(psi_a * dAka[1], psi_a * rep(dAka[2:(ns + 1)], each = k/ns))))
+
+    invM <- diag(ns + 1)
+    tmpM <- t(lll) %*% invPsi %*% lll
+    mw <- solve(invM + tmpM) %*% t(lll) %*% invPsi %*% t(data)
+    Vw <- solve(invM + tmpM)
+
+    beta <- lll[, 1]
+    ll <- lll[, -1]
+    psiw <- rep(1, ns)
   }
-
-  # the non-crossloadings
-  for (iii in 1:ns) {
-    idIts <- idex[[iii]][!(idex[[iii]] %in% crsl)]
-    Ak_inv <- 1 / H0k[iii] + sum(wi[, iii + 1]^2)
-    ak <- (c(1 / H0k[iii]) %*% t(l0k[idIts, iii]) + wi[, iii + 1] %*% data[, idIts]) / c(Ak_inv)
-    # computes the diagonal of bekk directly - maybe precompute diag_Xt_X(data[, idIts] for all idIts?
-    bekk <- b0k + 0.5 * (diag_Xt_X(data[, idIts]) - diag_Xt_X(ak) * Ak_inv + diag_X_Xt(l0k[idIts, iii, drop = FALSE]) / H0k[iii])
-    bek <- bekk
-
-    invpsi <- rgamma(length(idIts), n / 2 + a0k, bek)
-    psi <- 1 / invpsi
-    lambda <- rnorm(length(idIts), ak, sqrt(psi * as.vector(1 / Ak_inv)))
-
-    ll[idIts, iii] <- lambda
-    pp[idIts] <- psi
-  }
-
-  # ------- structural equation -----
-  Akw <- 1 / (1 / H0kw + c(crossprod(wi[, 1])))
-  akw <- Akw * (1 / H0kw * beta0k + crossprod(wi[, 1], wi[, 2:(ns + 1)]))
-
-  # computes the diagonal of bekk directly
-  bekkw <- b0kw + 0.5 * (diag_Xt_X(wi[, 2:(ns + 1)]) - diag_Xt_X(akw) / Akw + diag_Xt_X(matrix(beta0k, 1)) / H0kw)
-  bekw <- bekkw
-
-  invpsiw <- rgamma(ns, n / 2 + a0kw, bekw)
-  psiw <- 1 / invpsiw
-  beta <- rnorm(ns, akw * sqrt(phiw[1, 1]), sqrt(psiw * Akw))
-
-  # in Lee it says to replace the usual inv Phi matrix when sampling the factor scores with a function
-  # of the g-factor loadings and their residuals
-  betaMat <- matrix(0, ns + 1, ns + 1)
-  betaMat[2:(ns + 1), 1] <- beta
-  ident <- diag(ns + 1)
-  identInv <- ident + betaMat # note: (ident + betaMat) %*% (ident - betaMat) == ident
-
-  invsigW <- crossprod(sweep(ident - betaMat, 1L, c(1, sqrt(psiw)), `/`))
-
-
-  lll <- cbind(0, ll)
-  lll_temp <- sweep(lll, 1L, pp, `/`) # solve(diag(pp)) %*% lll
-  impM <- crossprod(lll_temp, lll)
-
-  # This solve can be optimized using blockwise inversion, assuming that (1) impM is always diagonal and (2) invsigW is diagonal except for the first row/ column
-  Vw <- solve(invsigW + impM)
-  mw <- Vw %*% tcrossprod(t(lll_temp), data)
 
   wi <- genNormDataTweak(n, t(mw), Vw)
   # set factor variance to 1 to identify the model

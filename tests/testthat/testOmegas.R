@@ -5,7 +5,7 @@ test_that("Bayesian omegas are correct, missing pairwise, and fit indices are go
 
   data(upps, package = "Bayesrel")
   set.seed(1234)
-  ee <- Bayesrel::bomegas(upps, n.factors = 5, n.iter = 200, n.burnin = 50, n.chains = 2)
+  ee <- Bayesrel::bomegas(upps, n.factors = 5, n.iter = 200, n.burnin = 50, n.chains = 2, model.type = "second-order")
 
   expect_equal(c(ee$omega_t$mean, ee$omega_t$cred, ee$omega_h$mean, ee$omega_h$cred),
                c(0.8633604, 0.8448201, 0.8790073, 0.6399786, 0.5956023, 0.6922816),
@@ -30,7 +30,7 @@ test_that("Bayesian omegas are correct, missing listwise, model sytnax specified
   f5 =~ U10_r +U20_r +U35_r +U52_r
   "
   ee <- Bayesrel::bomegas(upps, n.factors = 5, n.iter = 200, n.burnin = 50, n.chains = 2,
-                          missing = "listwise", model = mod)
+                          missing = "listwise", model = mod, model.type = "second-order")
 
   expect_equal(c(ee$omega_t$mean, ee$omega_t$cred, ee$omega_h$mean, ee$omega_h$cred),
                c(0.8624262, 0.8451732, 0.8801895, 0.6402192, 0.5909983, 0.6860989), tolerance = tol)
@@ -88,7 +88,8 @@ test_that("Bayesian omegas are correct with altered prior hyperparameters", {
   data(upps, package = "Bayesrel")
   set.seed(1234)
   ee <- Bayesrel::bomegas(upps, n.factors = 5, n.iter = 200, n.burnin = 50, n.chains = 2,
-                          a0 = 6, b0 = 10, l0 = 1, c0 = 10, d0 = 6, beta0 = 2, p0 = 12, R0 = 5)
+                          a0 = 6, b0 = 10, l0 = 1, c0 = 10, d0 = 6, beta0 = 2, p0 = 12, R0 = 5,
+                          model.type = "second-order")
 
   expect_equal(c(ee$omega_t$mean, ee$omega_t$cred, ee$omega_h$mean, ee$omega_h$cred),
                c(0.8476525, 0.8275225, 0.8644323, 0.6255007, 0.5799303, 0.6704586),
@@ -108,7 +109,7 @@ test_that("Bayesian omegas are correct with cross loadings", {
   "
   set.seed(1234)
   ee <- Bayesrel::bomegas(upps, n.iter = 200, n.burnin = 50, n.chains = 2,
-                          model = mod, missing = "listwise", param.out = TRUE)
+                          model = mod, missing = "listwise", param.out = TRUE, model.type = "second-order")
   ll <- apply(ee$model$lambda, c(3, 4), mean)
 
   expect_equal(ll,

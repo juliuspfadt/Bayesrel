@@ -27,8 +27,12 @@ omegaBasic <- function(l, e) {
 }
 
 # omegas
-omegasSeco <- function (lambda, beta, theta, psi) {
-  gl <- lambda %*% beta
+omegasMulti <- function (lambda, beta, theta, psi) {
+  if (nrow(beta) == ncol(psi)) {
+    gl <- lambda %*% beta # second-order model
+  } else {
+    gl <- beta # bi-factor model
+  }
   sl <- lambda %*% sqrt(psi)
   sum_gl_glt <- sum_X_Xt(gl)
   sum_sl_slt <- sum_X_Xt(sl)
@@ -39,14 +43,14 @@ omegasSeco <- function (lambda, beta, theta, psi) {
   return(c(omh, omt))
 }
 
-omegasBif <- function(sl, gl, e, psi) {
-  sl <- sl %*% sqrt(psi)
-  omh <- sum(gl %*% t(gl)) / (sum(gl %*% t(gl)) + sum(sl %*% t(sl)) + sum(e))
-  omt <- (sum(gl %*% t(gl)) + sum(sl %*% t(sl))) / (sum(gl %*% t(gl)) + sum(sl %*% t(sl)) + sum(e))
-  return(c(
-    omh, omt
-  ))
-}
+# omegasBif <- function(sl, gl, e, psi) {
+#   sl <- sl %*% sqrt(psi)
+#   omh <- sum(gl %*% t(gl)) / (sum(gl %*% t(gl)) + sum(sl %*% t(sl)) + sum(e))
+#   omt <- (sum(gl %*% t(gl)) + sum(sl %*% t(sl))) / (sum(gl %*% t(gl)) + sum(sl %*% t(sl)) + sum(e))
+#   return(c(
+#     omh, omt
+#   ))
+# }
 
 # multivariate normal data with matrix of means and V
 genNormDataTweak <- function(n, m, Sigma){

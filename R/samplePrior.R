@@ -92,7 +92,7 @@ omegasPrior <- function(k, ns, nsamp = 2e3,
     lmat <- cbind(0, lmat)
     bmat <- matrix(0, ns + 1, ns + 1)
     bmat[2:(ns + 1), 1] <- beta
-    om_prior <- omegasSeco(lmat, bmat, diag(psi), diag(c(1, psiw)))
+    om_prior <- omegasMulti(lmat, bmat, diag(psi), diag(c(1, psiw)))
     omh_prior[i] <- om_prior[1]
     omt_prior[i] <- om_prior[2]
 
