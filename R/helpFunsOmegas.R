@@ -27,12 +27,8 @@ omegaBasic <- function(l, e) {
 }
 
 # omegas
-omegasMulti <- function (lambda, beta, theta, psi) {
-  if (nrow(beta) == ncol(psi)) {
-    gl <- lambda %*% beta # second-order model
-  } else {
-    gl <- beta # bi-factor model
-  }
+omegasSeco <- function (lambda, beta, theta, psi) {
+  gl <- lambda %*% beta
   sl <- lambda %*% sqrt(psi)
   sum_gl_glt <- sum_X_Xt(gl)
   sum_sl_slt <- sum_X_Xt(sl)
@@ -43,14 +39,15 @@ omegasMulti <- function (lambda, beta, theta, psi) {
   return(c(omh, omt))
 }
 
-# omegasBif <- function(sl, gl, e, psi) {
-#   sl <- sl %*% sqrt(psi)
-#   omh <- sum(gl %*% t(gl)) / (sum(gl %*% t(gl)) + sum(sl %*% t(sl)) + sum(e))
-#   omt <- (sum(gl %*% t(gl)) + sum(sl %*% t(sl))) / (sum(gl %*% t(gl)) + sum(sl %*% t(sl)) + sum(e))
-#   return(c(
-#     omh, omt
-#   ))
-# }
+omegasBif <- function(sl, gl, e, psi = 1) {
+  sl <- sl * psi
+  ll <- cbind(gl, sl)
+  glProd <- sum(tcrossprod(gl))
+  slProd <- sum(tcrossprod(sl))
+  omh <- glProd / (glProd + slProd + sum(e))
+  omt <- (glProd + slProd) / (glProd + slProd + sum(e))
+  return(c(omh, omt))
+}
 
 # multivariate normal data with matrix of means and V
 genNormDataTweak <- function(n, m, Sigma){
@@ -72,11 +69,18 @@ genNormDataLegit <- function(n, m, Sigma){
 }
 
 # get model implied covariance matrix
-implCovMulti <- function(s, b, theta, psi) {
+implCovMultiSeco <- function(s, b, theta, psi) {
   i <- diag(nrow(b))
   ib_inv <- solve(i-b)
   out <- s %*% ib_inv %*% psi %*% t(ib_inv) %*% t(s) + theta
   out <- make_symmetric(out)
+  return(out)
+}
+
+# get model implied covariance matrix
+implCovMultiBif <- function(s, b, theta, psi) {
+  mat_bi <- cbind(b, s)
+  out <- mat_bi %*% psi %*% t(mat_bi) + theta
   return(out)
 }
 

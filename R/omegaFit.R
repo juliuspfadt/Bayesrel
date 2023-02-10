@@ -120,9 +120,9 @@ omegaFit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .90) {
 
 
 
-#' model fit for the second-order factor model,
+#' model fit for the second-order and bi-factor model,
 #' @description
-#' Fit indices and posterior predictive check for the higher-factor model:
+#' Fit indices and posterior predictive check for the multidimensional model:
 #' comparison between posterior sample of model implied covariance matrices
 #' and sample covariance matrix. Gray bars should enclose the black dots for good fit.
 #' Also prints fit indices, LR (likelihood-ratio), RMSEA, SRMR.
@@ -137,7 +137,7 @@ omegaFit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .90) {
 #' cutoff value
 #' @param ci A value between 0 and 1 indicating the credible interval for the RMSEA
 #'
-#' @examples secoFit(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 150,
+#' @examples multiFit(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 150,
 #' n.burnin = 50, missing = "listwise"), upps)
 #'
 #' @references{
@@ -146,7 +146,7 @@ omegaFit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .90) {
 #'
 #' @importFrom stats complete.cases
 #' @export
-secoFit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .90) {
+multiFit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .90) {
 
   data <- scale(data, scale = FALSE)
 
@@ -215,7 +215,7 @@ secoFit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .90) {
   out <- list(LR = Dtm, srmr_pointEst = srmr_m, srmr_samp = srmr, rmsea_pointEst = mean(rmsea),
               rmsea_ci = rmsea_ci, p_rmsea = prob, rmsea_samp = rmsea)
 
-  class(out) <- "secoFit"
+  class(out) <- "multiFit"
   return(out)
 }
 

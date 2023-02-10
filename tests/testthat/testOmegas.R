@@ -11,7 +11,7 @@ test_that("Bayesian omegas are correct, missing pairwise, and fit indices are go
                c(0.8633604, 0.8448201, 0.8790073, 0.6399786, 0.5956023, 0.6922816),
                tolerance = tol)
 
-  ff <- secoFit(ee, upps, ppc = FALSE, cutoff = .06)
+  ff <- multiFit(ee, upps, ppc = FALSE, cutoff = .06)
   expect_equal(as.numeric(c(ff$LR, ff$srmr_pointEst, ff$rmsea_pointEst, ff$rmsea_ci, ff$p_rmsea)),
                c(409.03892661, 0.07028219, 0.05616901, 0.05424941, 0.05760252,
                  1.00000000), tolerance = tol)
@@ -97,7 +97,7 @@ test_that("Bayesian omegas are correct with altered prior hyperparameters", {
 
 })
 
-test_that("Bayesian omegas are correct with cross loadings", {
+test_that("Bayesian omegas are correct with cross loadings, also checks omega fit", {
 
   data(upps, package = "Bayesrel")
   mod <- "
@@ -122,6 +122,11 @@ test_that("Bayesian omegas are correct with cross loadings", {
                         0.003184005, 0.003274632, 0.003072611, -0.004328613), 20, 5),
                tolerance = tol)
 
+  ff <- multiFit(ee, upps, ppc = FALSE, cutoff = .06)
+  expect_equal(as.numeric(c(ff$LR, ff$srmr_pointEst, ff$rmsea_pointEst, ff$rmsea_ci, ff$p_rmsea)),
+               c(354.90075890, 0.06332863, 0.05226046, 0.05029409, 0.05479048,
+                 1.00000000), tolerance = tol)
+
 })
 
 
@@ -139,5 +144,22 @@ test_that("Frequentist omegas are correct with cross loadings", {
   expect_equal(as.numeric(c(unlist(ee[[1]]), unlist(ee[[2]]))),
                c(0.8648853, 0.8466552, 0.8831155, 0.6464642, 0.5962111, 0.6967174),
                tolerance = tol)
+
+})
+
+
+test_that("Bayesian omegas for bi-factor model are correct, missing pairwise, and fit indices are good", {
+
+  data(upps, package = "Bayesrel")
+  set.seed(1234)
+  ee <- Bayesrel::bomegas(upps, n.factors = 5, n.iter = 200, n.burnin = 50, n.chains = 2, model.type = "bi-factor")
+
+  expect_equal(c(ee$omega_t$mean, ee$omega_t$cred, ee$omega_h$mean, ee$omega_h$cred),
+               c(0.8677726, 0.8503604, 0.8845738, 0.6249922, 0.5724003, 0.6760027),
+               tolerance = tol)
+
+  ff <- multiFit(ee, upps, ppc = FALSE, cutoff = .06)
+  expect_equal(as.numeric(c(ff$LR, ff$srmr_pointEst, ff$rmsea_pointEst, ff$rmsea_ci, ff$p_rmsea)),
+               c(316.24190905, 0.05806143, 0.04942153, 0.04698159, 0.05242331, 1.00000000), tolerance = tol)
 
 })

@@ -1,7 +1,7 @@
 
 
 <!-- badges: start -->
-[![R build status](https://github.com/juliuspf/Bayesrel/workflows/R-CMD-check/badge.svg)](https://github.com/juliuspf/Bayesrel/actions)
+[![R build status](https://github.com/juliuspfadt/Bayesrel/workflows/R-CMD-check/badge.svg)](https://github.com/juliuspfadt/Bayesrel/actions)
 <!-- badges: end -->
 
 
@@ -15,7 +15,7 @@ install.packages("Bayesrel")
 or install the latest version of Bayesrel from [github] (https://github.com) with the help of the remotes-package:
 
 ```r
-remotes::install_github("juliuspf/Bayesrel")
+remotes::install_github("juliuspfadt/Bayesrel")
 ```
 
 ## Example
@@ -52,7 +52,7 @@ summary(res)
 ## return the probability that coefficient omega_t is larger than .70
 pOmegas(res, cutoff.t = .70)
 ## plot posterior predictive check for the higher-order (second-order) factor model
-secoFit(res, upps)
+multiFit(res, upps)
 ```
 
 In the example above we implicitly assumed that the items of the data set were ordered

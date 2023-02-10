@@ -25,8 +25,8 @@ Description: Functionality for reliability estimates. For 'unidimensional' tests
     'Gibbs' sampling from the conditional posterior distributions of 
     (1) the single factor model and (2) the second-order factor model
     ('Lee', 2007, <https://onlinelibrary.wiley.com/doi/book/10.1002/9780470024737>). 
-URL: https://github.com/juliuspf/Bayesrel
-BugReports: https://github.com/juliuspf/Bayesrel/issues
+URL: https://github.com/juliuspfadt/Bayesrel
+BugReports: https://github.com/juliuspfadt/Bayesrel/issues
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
