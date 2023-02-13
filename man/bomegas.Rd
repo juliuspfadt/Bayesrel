@@ -76,15 +76,15 @@ by default 0, can be a single value or a loading matrix}
 by default 1}
 
 \item{c0}{A number for the shape of the prior inverse gamma distribution for the latent residual variances,
-by default 2}
+by default 2, necessary only for the second-order model}
 
 \item{d0}{A number for the scale of the prior inverse gamma distribution for the latent residual variances,
-by default 1}
+by default 1, necessary only for the second-order model}
 
-\item{beta0}{A number for the mean of the prior normal distribution for the latent loadings,
+\item{beta0}{A number for the mean of the prior normal distribution for the g-factor loadings,
 by default 0, can be a single value or a vector}
 
-\item{B0}{A number for scaling the variance of the prior normal distribution for the latent loadings,
+\item{B0}{A number for scaling the variance of the prior normal distribution for the g-factor loadings,
 by default 1}
 
 \item{p0}{A number for the shape of the prior inverse gamma distribution for the variance of the g-factor,

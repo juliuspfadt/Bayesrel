@@ -148,7 +148,13 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
       }
     }
 # ---------- model bi factor -------- #
-  } else {
+  } else if (model.type == "bi-factor") {
+
+    model_opts <- indexMatrix(model, k, ns, colnames(data))
+    if (any(rowSums(model_opts$imat) > 1)) {
+      stop("Crossloadings cannot be specified with the bi-factor model.")
+    }
+
     for (ai in 1:n.chains) {
       phiw <- diag(1 / rgamma(ns + 1, shape = pars$p0w / 2, scale = 2 / diag(pars$R0winv)))
       wi <- genNormDataLegit(n, numeric(ns + 1), phiw)
@@ -220,8 +226,6 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
           omsh[ai, i] <- oms[1]
           omst[ai, i] <- oms[2]
 
-          omegasBif(params$lambda, params$beta, diag(params$theta), params$psiw)
-
           impl_covs[ai, i, , ] <- implCovMultiBif(params$lambda, params$beta, theta = diag(params$theta), psi = diag(c(1, params$psiw)))
 
           if (param.out) {
@@ -235,7 +239,8 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
         }
       }
     }
-
+  } else {
+    stop("Invalid model type entered.")
   }
 
   # burnin
@@ -381,8 +386,6 @@ sampleBifParams <- function(data, pars, wi, phiw, ns, idex, imat) {
   # -------------- structural equation -----------
   H0kw <- pars$H0kw
   beta0k <- pars$beta0k
-  a0kw <- pars$a0kw
-  b0kw <- pars$b0kw
 
   R0winv <- pars$R0winv
   p0w <- pars$p0w

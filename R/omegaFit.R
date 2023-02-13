@@ -213,7 +213,7 @@ multiFit <- function(x, data, ppc = TRUE, cutoff = .08, ci = .90) {
   rmsea_ci <- as.numeric(coda::HPDinterval(coda::mcmc(rmsea), prob = ci))
   names(rmsea_ci) <- paste0(ci*100, "% ",  c("lower", "upper"))
   out <- list(LR = Dtm, srmr_pointEst = srmr_m, srmr_samp = srmr, rmsea_pointEst = mean(rmsea),
-              rmsea_ci = rmsea_ci, p_rmsea = prob, rmsea_samp = rmsea)
+              rmsea_ci = rmsea_ci, p_rmsea = prob, rmsea_samp = rmsea, rmsea_cut = cutoff)
 
   class(out) <- "multiFit"
   return(out)

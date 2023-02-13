@@ -35,6 +35,11 @@ omegaMultiFreq <- function(data, n.factors, interval, fiml, model, model.type, f
       colnames(data) <- modfile$names
 
     } else { # if model syntax is specified
+
+      if (any(rowSums(model_opts$imat) > 1)) {
+        stop("Crossloadings cannot be specified with the bi-factor model.")
+      }
+
       modfile <- lavMultiFileBifSyntax(k, n.factors, model, colnames(data))
     }
 
@@ -51,6 +56,8 @@ omegaMultiFreq <- function(data, n.factors, interval, fiml, model, model.type, f
     psi <- sts$std.all[(2 * k + 2):(2 * k + 1 + n.factors)]
     theta <- sts$std.all[(2 * k + 2 + n.factors):(3 * k + 1 + n.factors)]
 
+  } else {
+    stop("Invalid model type specified.")
   }
 
 

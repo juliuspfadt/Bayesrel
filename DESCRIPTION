@@ -1,8 +1,8 @@
 Package: Bayesrel
 Type: Package
 Title: Bayesian Reliability Estimation
-Version: 0.7.5
-Date: 2022-11-18
+Version: 0.7.6
+Date: 2023-02-13
 Authors@R: c(person("Julius M.", "Pfadt", email = "julius.pfadt@gmail.com",
                   role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0758-5502")),
              person("Don", "van den Bergh",
@@ -23,7 +23,7 @@ Description: Functionality for reliability estimates. For 'unidimensional' tests
     <https://groups.seas.harvard.edu/courses/cs281/papers/murphy-2007.pdf>. 
     The Bayesian omegas (u, t, and h) are obtained by 
     'Gibbs' sampling from the conditional posterior distributions of 
-    (1) the single factor model and (2) the second-order factor model
+    (1) the single factor model, (2) the second-order factor model, (3) the bi-factor model
     ('Lee', 2007, <https://onlinelibrary.wiley.com/doi/book/10.1002/9780470024737>). 
 URL: https://github.com/juliuspfadt/Bayesrel
 BugReports: https://github.com/juliuspfadt/Bayesrel/issues

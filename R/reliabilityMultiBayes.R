@@ -48,12 +48,12 @@
 #' @param A0 A number for scaling the variance of the prior normal distribution for the manifest loadings,
 #' by default 1
 #' @param c0 A number for the shape of the prior inverse gamma distribution for the latent residual variances,
-#' by default 2
+#' by default 2, necessary only for the second-order model
 #' @param d0 A number for the scale of the prior inverse gamma distribution for the latent residual variances,
-#' by default 1
-#' @param beta0 A number for the mean of the prior normal distribution for the latent loadings,
+#' by default 1, necessary only for the second-order model
+#' @param beta0 A number for the mean of the prior normal distribution for the g-factor loadings,
 #' by default 0, can be a single value or a vector
-#' @param B0 A number for scaling the variance of the prior normal distribution for the latent loadings,
+#' @param B0 A number for scaling the variance of the prior normal distribution for the g-factor loadings,
 #' by default 1
 #' @param p0 A number for the shape of the prior inverse gamma distribution for the variance of the g-factor,
 #' by default set to q^2-q when q are the number of group factors
@@ -176,6 +176,8 @@ bomegas <- function(
   sum_res$interval <- interval
   sum_res$prior_params <- list(a0 = a0, b0 = b0, l0 = l0, A0 = A0, c0 = c0, d0 = d0,
                                beta0 = beta0, B0 = B0, p0 = p0, R0 = R0)
+  sum_res$model.type <- model.type
+
   class(sum_res) <- "bomegas"
 
   return(sum_res)

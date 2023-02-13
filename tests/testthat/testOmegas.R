@@ -97,7 +97,7 @@ test_that("Bayesian omegas are correct with altered prior hyperparameters", {
 
 })
 
-test_that("Bayesian omegas are correct with cross loadings, also checks omega fit", {
+test_that("Bayesian omegas are correct with cross loadings, checks omega fit, and prior/post prob", {
 
   data(upps, package = "Bayesrel")
   mod <- "
@@ -127,6 +127,10 @@ test_that("Bayesian omegas are correct with cross loadings, also checks omega fi
                c(354.90075890, 0.06332863, 0.05226046, 0.05029409, 0.05479048,
                  1.00000000), tolerance = tol)
 
+  tt <- pOmegas(ee)
+  expect_equal(as.numeric(tt),
+               c(0.2350000, 1.0000000, 0.2020000, 0.9333333), tolerance = tol)
+
 })
 
 
@@ -148,7 +152,8 @@ test_that("Frequentist omegas are correct with cross loadings", {
 })
 
 
-test_that("Bayesian omegas for bi-factor model are correct, missing pairwise, and fit indices are good", {
+test_that("Bayesian omegas for bi-factor model are correct, missing pairwise, fit indices are good,
+          prior and posterior prob work", {
 
   data(upps, package = "Bayesrel")
   set.seed(1234)
@@ -162,4 +167,11 @@ test_that("Bayesian omegas for bi-factor model are correct, missing pairwise, an
   expect_equal(as.numeric(c(ff$LR, ff$srmr_pointEst, ff$rmsea_pointEst, ff$rmsea_ci, ff$p_rmsea)),
                c(316.24190905, 0.05806143, 0.04942153, 0.04698159, 0.05242331, 1.00000000), tolerance = tol)
 
+  tt <- pOmegas(ee)
+  expect_equal(as.numeric(tt),
+               c(0.2730, 1.0000, 0.2725, 0.8200), tolerance = tol)
+
 })
+
+
+

@@ -1,8 +1,8 @@
 # this function samples priors for the estimates and the number of indicators
 
-priorSampUni <- function(p, estimates, n.samp = 2e3, k0, df0, a0, b0, m0){
-  if ("alpha" %in% estimates || "lambda2" %in% estimates || "lambda4" %in% estimates || "lambda6" %in% estimates ||
-      "glb" %in% estimates){
+priorSampUni <- function(p, estimate, n.samp = 2e3, k0, df0, a0, b0, m0){
+  group <- c("alpha", "lambda2", "lambda4", "lambda6", "glb")
+  if (estimate %in% group) {
     v0 <- df0
     k0 <- k0
     t <- diag(p)
@@ -13,27 +13,27 @@ priorSampUni <- function(p, estimates, n.samp = 2e3, k0, df0, a0, b0, m0){
     }
   }
   out <- list()
-  if ("alpha" %in% estimates) {
+  if (estimate == "alpha") {
     prioralpha <- apply(m, MARGIN = 1, applyalpha)
     out <- density(prioralpha, from = 0, to = 1, n = 512)
   }
-  if ("lambda2" %in% estimates) {
+  if (estimate == "lambda2") {
     priorlambda2 <- apply(m, MARGIN = 1, applylambda2)
     out <- density(priorlambda2, from = 0, to = 1, n = 512)
   }
-  if ("lambda4" %in% estimates) {
+  if (estimate == "lambda4") {
     priorlambda4 <- apply(m, MARGIN = 1, applylambda4NoCpp)
     out <- density(priorlambda4, from = 0, to = 1, n = 512)
   }
-  if ("lambda6" %in% estimates) {
+  if (estimate == "lambda6") {
     priorlambda6 <- apply(m, MARGIN = 1, applylambda6)
     out <- density(priorlambda6, from = 0, to = 1, n = 512)
   }
-  if ("glb" %in% estimates) {
+  if (estimate == "glb") {
     priorglb <- glbOnArrayCustom(m)
     out <- density(priorglb, from = 0, to = 1, n = 512)
   }
-  if ("omega" %in% estimates) {
+  if (estimate == "omega") {
     H0 <- 1 # prior multiplier matrix for lambdas variance
     l0k <- rep(m0, p) # prior lambdas
     a0k <- a0 # prior gamma function for psis
@@ -53,16 +53,11 @@ priorSampUni <- function(p, estimates, n.samp = 2e3, k0, df0, a0, b0, m0){
 }
 
 
-omegasPrior <- function(k, ns, nsamp = 2e3,
-                        a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0) {
+omegasSecoPrior <- function(k, ns, nsamp = 2e3,
+                        a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0, modelfile) {
 
-  # index matrix for lambdas
-  idex <- matrix(seq(1:k), ns, k / ns, byrow = TRUE)
-  imat <- matrix(FALSE, k, ns)
-  for (i in 1:ns) {
-    imat[idex[i, ], i] <- TRUE
-  }
-
+  idex <- modelfile$idex
+  imat <- modelfile$imat
   # ---- sampling start --------
   l0mat <- matrix(0, k, ns)
   l0mat[imat] <- l0
@@ -72,6 +67,7 @@ omegasPrior <- function(k, ns, nsamp = 2e3,
   pars <- list(H0k = rep(A0, ns), a0k = a0, b0k = b0, l0k = l0mat,
                H0kw = B0, a0kw = c0, b0kw = d0, beta0k = beta0vec,
                p0w = p0, R0winv = R0)
+
   omh_prior <- numeric(nsamp)
   omt_prior <- numeric(nsamp)
 
@@ -81,7 +77,7 @@ omegasPrior <- function(k, ns, nsamp = 2e3,
 
     invpsi <- rgamma(k, pars$a0k, pars$b0k)
     psi <- 1 / invpsi
-    lambda <- rnorm(k, pars$l0k[imat], sqrt(psi * rep(pars$H0k, each = k / ns)))
+    lambda <- rnorm(sum(imat), pars$l0k[imat], sqrt(psi * rep(pars$H0k, each = k / ns)))
     # structural parameters
     invpsiw <- rgamma(ns, pars$a0kw, pars$b0kw)
     psiw <- 1 / invpsiw
@@ -93,6 +89,50 @@ omegasPrior <- function(k, ns, nsamp = 2e3,
     bmat <- matrix(0, ns + 1, ns + 1)
     bmat[2:(ns + 1), 1] <- beta
     om_prior <- omegasSeco(lmat, bmat, diag(psi), diag(c(1, psiw)))
+    omh_prior[i] <- om_prior[1]
+    omt_prior[i] <- om_prior[2]
+
+  }
+
+  return(list(omh_prior = omh_prior, omt_prior = omt_prior))
+
+}
+
+
+omegasBifPrior <- function(k, ns, nsamp = 2e3,
+                           a0, b0, l0, A0, beta0, B0, p0, R0, modelfile) {
+
+  idex <- modelfile$idex
+  imat <- modelfile$imat
+  # ---- sampling start --------
+  l0mat <- matrix(0, k, ns)
+  l0mat[imat] <- l0
+  beta0vec <- numeric(k)
+  beta0vec[1:k] <- beta0
+  H0k <- rep(A0, ns)
+
+  pars <- list(H0k = rep(A0, ns), a0k = a0, b0k = b0, l0k = l0mat,
+               H0kw = B0, beta0k = beta0vec,
+               p0w = p0, R0winv = R0)
+
+  omh_prior <- numeric(nsamp)
+  omt_prior <- numeric(nsamp)
+
+  for (i in 1:nsamp) {
+
+    phi <- 1 / rgamma(1, shape = p0 / 2, scale = 2 / R0)
+
+    invpsi <- rgamma(k, a0, b0)
+    psi <- 1 / invpsi
+
+    imatb <- cbind(TRUE, imat)
+    lmat <- cbind(beta0vec, l0mat)
+    m0 <- lmat[imatb]
+
+    lambda <- rnorm(length(m0), m0 * sqrt(phi), sqrt(c(psi * B0, psi * rep(H0k, each = k / ns))))
+    lmat[imatb] <- lambda
+
+    om_prior <- omegasBif(lmat[, -1], lmat[, 1], diag(psi))
     omh_prior[i] <- om_prior[1]
     omt_prior[i] <- om_prior[2]
 

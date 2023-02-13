@@ -184,6 +184,7 @@ strel <- function(data = NULL,
       checkMCMCSettings(n.iter, n.burnin, n.chains, thin)
     }
 
+    if (is.null(df0)) df0 <- ncol(data)
     sum_res$Bayes <- gibbsFun(data, estimates, n.iter, n.burnin, thin, n.chains, interval, item.dropped, pairwise,
                               callback, k0, df0, a0, b0, m0)
     sum_res$n.iter <- n.iter

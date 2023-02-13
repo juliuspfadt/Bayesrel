@@ -217,7 +217,9 @@ print.omegasCFA <- function(x, ...) {
 
 #'@export
 print.multiFit <- function(x, ...) {
+
   out <- list(LR = x$LR, BSRMR = x$srmr_pointEst, BRMSEA = x$rmsea_pointEst,
-              BRMSEA_90_CI = x$rmsea_ci, BRMSEA_p.05 = x$p_rmsea)
+              BRMSEA_90_CI = x$rmsea_ci, x$p_rmsea)
+  names(out)[5] <- paste0("p(BRMSEA<", x$rmsea_cut, ")")
   print(out)
 }

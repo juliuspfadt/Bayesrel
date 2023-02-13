@@ -465,3 +465,4 @@ lavMultiFileCross <- function(imat) {
 
   return(out <- list(names = names, model = mod))
 }
+
