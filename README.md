@@ -5,7 +5,7 @@
 <!-- badges: end -->
 
 
-## Installation
+# Installation
 
 You can install the released version of Bayesrel from [CRAN](https://CRAN.R-project.org) with:
 
@@ -18,9 +18,9 @@ or install the latest version of Bayesrel from [github] (https://github.com) wit
 remotes::install_github("juliuspfadt/Bayesrel")
 ```
 
-## Example
+# Example
 
-### Unidimensional data
+## Unidimensional data
 This is a basic example which shows you how to compute alpha, lambda2, the glb, and omega for an example real data set:
 
 ``` r
@@ -38,15 +38,16 @@ pStrel(res, estimate = "alpha", low.bound = .70)
 median(res$Bayes$samp$Bayes_alpha)
 ```
 
-### Multidimensional data
+## Multidimensional data
+### Second-order model
 This is a basic example which shows you how to compute omega_t and omega_h for an example real data set. 
-The data follow a second-order factor model with no crossloadings (required):
+The data follow a second-order factor model with no crossloadings:
 
 ``` r
 library(Bayesrel)
 ## basic example code
 ## run the Bayesian omegas, specify 5 group factors
-res <- bomegas(upps, n.factors = 5, missing = "listwise")
+res <- bomegas(upps, n.factors = 5, missing = "impute")
 ## get a full result output
 summary(res)
 ## return the probability that coefficient omega_t is larger than .70
@@ -69,10 +70,33 @@ model <- "
   f4 =~ U23_r + U31_r + U36_r + U46_r
   f5 =~ U10_r + U20_r + U35_r + U52_r
   "
+res <- bomegas(upps, n.factors = 5, model = model, missing = "impute")
 ```
 
-The reliability is then estimated as follows: 
+#### Crossloadings
+If crossloadings are to be specified, you need a model syntax file to pass to the `bomegas` function.
+For instance, assume that item U29_r and U34_r load on f3 and f4, respectively.
+``` r
+model <- "
+  f1 =~ U17_r + U22_r + U29_r + U34_r
+  f2 =~ U4 + U14 + U19 + U27
+  f3 =~ U6 + U16 + U28 + U48 + U29_r
+  f4 =~ U23_r + U31_r + U36_r + U46_r + U34_r
+  f5 =~ U10_r + U20_r + U35_r + U52_r
+  "
+res <- bomegas(upps, n.factors = 5, model = model, missing = "impute")
+```
 
-```r
-res <- bomegas(upps, n.factors = 5, model = model, missing = "listwise")
+### Bi-factor model
+The necessary code to infer omega_t and omega_h from a bi-factor model is analogue to the second-order model, 
+except that the `model.type` changes from the default `second-order` to `bi-factor`:
+``` r
+model <- "
+  f1 =~ U17_r + U22_r + U29_r + U34_r
+  f2 =~ U4 + U14 + U19 + U27
+  f3 =~ U6 + U16 + U28 + U48
+  f4 =~ U23_r + U31_r + U36_r + U46_r
+  f5 =~ U10_r + U20_r + U35_r + U52_r
+  "
+res <- bomegas(upps, n.factors = 5, model = model, missing = "impute", model.type = "bi-factor")
 ```
