@@ -37,9 +37,9 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
   }
 
 
-  pars <- list(H0k = rep(A0, ns), a0k = a0, b0k = b0, l0k = l0mat,
+  pars <- list(H0k = rep.int(A0, ns), a0k = a0, b0k = b0, l0k = l0mat,
                H0kw = B0, a0kw = c0, b0kw = d0, beta0k = beta0vec,
-               R0winv = diag(rep(R0, ns + 1)), p0w = p0)
+               R0winv = diag(rep.int(R0, ns + 1)), p0w = p0)
 
   omsh <- matrix(0, n.chains, n.iter)
   omst <- matrix(0, n.chains, n.iter)
@@ -62,7 +62,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
       if (impute) { # missing data
         dat_filled <- data
         dat_filled[inds] <- colMeans(data, na.rm = TRUE)[inds[, 2]]
-        ms <- rep(0, k)
+        ms <- rep.int(0, k)
 
         for (i in 1:n.iter) {
           params <- sampleSecoParams(dat_filled, pars, wi, phiw, ns, idex, imat)
@@ -162,7 +162,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
       if (impute) { # missing data
         dat_filled <- data
         dat_filled[inds] <- colMeans(data, na.rm = TRUE)[inds[, 2]]
-        ms <- rep(0, k)
+        ms <- rep.int(0, k)
 
         for (i in 1:n.iter) {
           params <- sampleBifParams(dat_filled, pars, wi, phiw, ns, idex, imat)
@@ -411,7 +411,8 @@ sampleBifParams <- function(data, pars, wi, phiw, ns, idex, imat) {
   imatb <- cbind(TRUE, imat)
   mms <- (t(aka) %*% sqrt(phiw))[imatb]
   dAka <- diag(Aka)
-  lll[imatb] <- rnorm(length(mms), mms, sqrt(c(psi_a * dAka[1], psi_a * rep(dAka[2:(ns + 1)], each = k/ns))))
+  lll[imatb] <- rnorm(length(mms), mms,
+                      sqrt(c(psi_a * dAka[1], psi_a * rep.int(dAka[2:(ns + 1)], times = colSums(imat)))))
 
   invM <- diag(ns + 1)
   tmpM <- t(lll) %*% invPsi %*% lll

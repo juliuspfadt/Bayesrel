@@ -28,11 +28,11 @@ library(Bayesrel)
 ## basic example code
 ## load example data set from the package
 ## run the main reliability function
-res <- strel(asrm)
+res <- strel(data = asrm)
 ## get a full result output
 summary(strel)
 ## return the probability that coefficient alpha is larger than .70
-pStrel(res, estimate = "alpha", low.bound = .70)
+pStrel(x = res, estimate = "alpha", low.bound = .70)
 
 ## get the posterior median of, e.g., alpha instead of the mean:
 median(res$Bayes$samp$Bayes_alpha)
@@ -47,13 +47,13 @@ The data follow a second-order factor model with no crossloadings:
 library(Bayesrel)
 ## basic example code
 ## run the Bayesian omegas, specify 5 group factors
-res <- bomegas(upps, n.factors = 5, missing = "impute")
+res <- bomegas(data = upps, n.factors = 5, missing = "impute")
 ## get a full result output
 summary(res)
 ## return the probability that coefficient omega_t is larger than .70
-pOmegas(res, cutoff.t = .70)
+pOmegas(x = res, cutoff.t = .70)
 ## plot posterior predictive check for the higher-order (second-order) factor model
-multiFit(res, upps)
+multiFit(x = res, data = upps)
 ```
 
 In the example above we implicitly assumed that the items of the data set were ordered
@@ -70,7 +70,7 @@ model <- "
   f4 =~ U23_r + U31_r + U36_r + U46_r
   f5 =~ U10_r + U20_r + U35_r + U52_r
   "
-res <- bomegas(upps, n.factors = 5, model = model, missing = "impute")
+res <- bomegas(data = upps, n.factors = 5, model = model, missing = "impute")
 ```
 
 #### Crossloadings
@@ -84,7 +84,7 @@ model <- "
   f4 =~ U23_r + U31_r + U36_r + U46_r + U34_r
   f5 =~ U10_r + U20_r + U35_r + U52_r
   "
-res <- bomegas(upps, n.factors = 5, model = model, missing = "impute")
+res <- bomegas(data = upps, n.factors = 5, model = model, missing = "impute")
 ```
 
 ### Bi-factor model
@@ -98,5 +98,6 @@ model <- "
   f4 =~ U23_r + U31_r + U36_r + U46_r
   f5 =~ U10_r + U20_r + U35_r + U52_r
   "
-res <- bomegas(upps, n.factors = 5, model = model, missing = "impute", model.type = "bi-factor")
+res <- bomegas(data = upps, n.factors = 5, model = model, missing = "impute", model.type = "bi-factor")
 ```
+
