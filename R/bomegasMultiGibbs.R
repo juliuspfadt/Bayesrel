@@ -2,7 +2,7 @@
 
 
 omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, impute,
-                        a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0, param.out, callback, pbtick,
+                        prior.params, param.out, callback, pbtick,
                         model.type) {
 
   n <- nrow(data)
@@ -21,25 +21,26 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
 
   # ---- sampling start --------
 
-  if (is.matrix(l0) || is.data.frame(l0)) {
-    l0mat <- l0
+  if (is.matrix(prior.params["l0"]) || is.data.frame(prior.params["l0"])) {
+    l0mat <- prior.params["l0"]
   } else {
     l0mat <- matrix(0, k, ns)
-    l0mat[imat] <- l0
+    l0mat[imat] <- prior.params["l0"]
   }
 
   if (model.type == "second-order") {
     beta0vec <- numeric(ns)
-    beta0vec[1:ns] <- beta0
+    beta0vec[1:ns] <- prior.params["beta0"]
   } else {
     beta0vec <- numeric(k)
-    beta0vec[1:k] <- beta0
+    beta0vec[1:k] <- prior.params["beta0"]
   }
 
 
-  pars <- list(H0k = rep.int(A0, ns), a0k = a0, b0k = b0, l0k = l0mat,
-               H0kw = B0, a0kw = c0, b0kw = d0, beta0k = beta0vec,
-               R0winv = diag(rep.int(R0, ns + 1)), p0w = p0)
+  pars <- list(H0k = rep.int(prior.params["A0"], ns), a0k = prior.params["a0"], b0k = prior.params["b0"],
+               l0k = l0mat, H0kw = prior.params["B0"], a0kw = prior.params["c0"], b0kw = prior.params["d0"],
+               beta0k = beta0vec, R0winv = diag(rep.int(prior.params["R0"], ns + 1)), p0w = prior.params["p0"])
+
 
   omsh <- matrix(0, n.chains, n.iter)
   omst <- matrix(0, n.chains, n.iter)
@@ -91,7 +92,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
           # see https://en.wikipedia.org/wiki/Multivariate_normal_distribution#Conditional_distributions
           for (ic in seq_along(unique_cols)) {
             ccc <- unique_cols[[ic]]
-            #
+
             # for (ccc in cols) {
             rows <- inds[which(inds[, 2] == ccc), 1]
             mu1 <- ms[ccc]

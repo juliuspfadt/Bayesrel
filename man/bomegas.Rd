@@ -15,16 +15,16 @@ bomegas(
   thin = 1,
   interval = 0.95,
   missing = "impute",
-  a0 = 2,
-  b0 = 1,
-  l0 = 0,
-  A0 = 1,
-  c0 = 2,
-  d0 = 1,
-  beta0 = 0,
-  B0 = 2.5,
-  p0 = NULL,
-  R0 = NULL,
+  a0 = NA,
+  b0 = NA,
+  l0 = NA,
+  A0 = NA,
+  c0 = NA,
+  d0 = NA,
+  beta0 = NA,
+  B0 = NA,
+  p0 = NA,
+  R0 = NA,
   param.out = FALSE,
   callback = function() {
  },
@@ -64,34 +64,36 @@ With impute the missing data will be estimated during the MCMC sampling
 as further unknown parameters}
 
 \item{a0}{A number for the shape of the prior inverse gamma distribution for the manifest residual variances,
-by default 2}
+when left as NA, the default value is set to 2}
 
 \item{b0}{A number for the scale of the prior inverse gamma distribution for the manifest residual variances,
-by default 1}
+when left as NA, the default value is set to 1}
 
 \item{l0}{A number for the mean of the prior normal distribution for the manifest loadings,
-by default 0, can be a single value or a loading matrix}
+when left as NA, the default value is set to 0; can be a single value or a loading matrix}
 
 \item{A0}{A number for scaling the variance of the prior normal distribution for the manifest loadings,
-by default 1}
+when left as NA, the default value is set to 1}
 
 \item{c0}{A number for the shape of the prior inverse gamma distribution for the latent residual variances,
-by default 2, necessary only for the second-order model}
+when left as NA, the default value is set to 2; necessary only for the second-order model}
 
 \item{d0}{A number for the scale of the prior inverse gamma distribution for the latent residual variances,
-by default 1, necessary only for the second-order model}
+when left as NA, the default value is set to 1, necessary only for the second-order model}
 
 \item{beta0}{A number for the mean of the prior normal distribution for the g-factor loadings,
-by default 0, can be a single value or a vector}
+when left as NA, the default value is set to 0, can be a single value or a vector}
 
 \item{B0}{A number for scaling the variance of the prior normal distribution for the g-factor loadings,
-by default 1}
+when left as NA, the default value is set to 2.5}
 
 \item{p0}{A number for the shape of the prior inverse gamma distribution for the variance of the g-factor,
-by default set to q^2-q when q are the number of group factors}
+when left as NA, the default value is set to q^2-q when q are the number of group factors for the second-order
+and bi-factor model}
 
 \item{R0}{A number for the scale of the prior inverse gamma distribution for the variance of the g-factor,
-by default set to the number of items}
+when left as NA, the default value is set to the number of items for the second-order
+and bi-factor model}
 
 \item{param.out}{A logical indicating if loadings and residual variances should be attached to the result,
 by default FALSE because it saves memory}

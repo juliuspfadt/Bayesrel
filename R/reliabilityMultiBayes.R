@@ -40,25 +40,27 @@
 #' With impute the missing data will be estimated during the MCMC sampling
 #' as further unknown parameters
 #' @param a0 A number for the shape of the prior inverse gamma distribution for the manifest residual variances,
-#' by default 2
+#' when left as NA, the default value is set to 2
 #' @param b0 A number for the scale of the prior inverse gamma distribution for the manifest residual variances,
-#' by default 1
+#' when left as NA, the default value is set to 1
 #' @param l0 A number for the mean of the prior normal distribution for the manifest loadings,
-#' by default 0, can be a single value or a loading matrix
+#' when left as NA, the default value is set to 0; can be a single value or a loading matrix
 #' @param A0 A number for scaling the variance of the prior normal distribution for the manifest loadings,
-#' by default 1
+#' when left as NA, the default value is set to 1
 #' @param c0 A number for the shape of the prior inverse gamma distribution for the latent residual variances,
-#' by default 2, necessary only for the second-order model
+#' when left as NA, the default value is set to 2; necessary only for the second-order model
 #' @param d0 A number for the scale of the prior inverse gamma distribution for the latent residual variances,
-#' by default 1, necessary only for the second-order model
+#' when left as NA, the default value is set to 1, necessary only for the second-order model
 #' @param beta0 A number for the mean of the prior normal distribution for the g-factor loadings,
-#' by default 0, can be a single value or a vector
+#' when left as NA, the default value is set to 0, can be a single value or a vector
 #' @param B0 A number for scaling the variance of the prior normal distribution for the g-factor loadings,
-#' by default 1
+#' when left as NA, the default value is set to 2.5
 #' @param p0 A number for the shape of the prior inverse gamma distribution for the variance of the g-factor,
-#' by default set to q^2-q when q are the number of group factors
+#' when left as NA, the default value is set to q^2-q when q are the number of group factors for the second-order
+#' and bi-factor model
 #' @param R0 A number for the scale of the prior inverse gamma distribution for the variance of the g-factor,
-#' by default set to the number of items
+#' when left as NA, the default value is set to the number of items for the second-order
+#' and bi-factor model
 #' @param param.out A logical indicating if loadings and residual variances should be attached to the result,
 #' by default FALSE because it saves memory
 #' @param callback An empty function for implementing a progressbar call
@@ -105,11 +107,16 @@ bomegas <- function(
   thin = 1,
   interval = .95,
   missing = "impute",
-  a0 = 2, b0 = 1,
-  l0 = 0, A0 = 1,
-  c0 = 2, d0 = 1,
-  beta0 = 0, B0 = 2.5,
-  p0 = NULL, R0 = NULL,
+  a0 = NA,
+  b0 = NA,
+  l0 = NA,
+  A0 = NA,
+  c0 = NA,
+  d0 = NA,
+  beta0 = NA,
+  B0 = NA,
+  p0 = NA,
+  R0 = NA,
   param.out = FALSE,
   callback = function(){},
   disableMCMCCheck = FALSE
@@ -155,14 +162,22 @@ bomegas <- function(
 
   data <- scale(data, scale = FALSE)
 
-  if (is.null(p0)) p0 <- n.factors^2 - n.factors
-  if (is.null(R0)) R0 <- ncol(data)
+  # handle the prior hyperparameters
+  defaults <- c(a0 = 2, b0 = 1, c0 = 2, d0 = 1, l0 = 0, A0 = 1, beta0 = 0, B0 = 2.5,
+                p0 = n.factors^2 - n.factors, R0 = ncol(data))
+  set <- c(a0, c0, b0, d0, l0, A0, beta0, B0, p0, R0)
+  prior.params <- ifelse(is.na(set), defaults, set)
+  names(prior.params) <- names(defaults)
 
+  if(model.type == "correlated") {
+    prior.params["p0"] <- n.factors * 2
+    prior.params["R0"] <- matrix(n.factors, n.factors, n.factors)
+  }
 
   pb <- txtProgressBar(max = n.chains * n.iter, style = 3)
 
   sum_res <- bomegasMultiOut(data, n.factors, n.iter, n.burnin, thin, n.chains,
-                             interval, model, impute, a0, b0, l0, A0, c0, d0, beta0, B0, p0, R0,
+                             interval, model, impute, prior.params,
                              param.out, callback, pbtick = pb, model.type = model.type)
   close(pb)
 
@@ -174,8 +189,7 @@ bomegas <- function(
   sum_res$impute <- impute
   sum_res$listwise <- listwise
   sum_res$interval <- interval
-  sum_res$prior_params <- list(a0 = a0, b0 = b0, l0 = l0, A0 = A0, c0 = c0, d0 = d0,
-                               beta0 = beta0, B0 = B0, p0 = p0, R0 = R0)
+  sum_res$prior_params <- prior.params
   sum_res$model.type <- model.type
 
   class(sum_res) <- "bomegas"
