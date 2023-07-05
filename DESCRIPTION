@@ -1,8 +1,8 @@
 Package: Bayesrel
 Type: Package
 Title: Bayesian Reliability Estimation
-Version: 0.7.6
-Date: 2023-04-17
+Version: 0.7.6.1
+Date: 2023-07-05
 Authors@R: c(person("Julius M.", "Pfadt", email = "julius.pfadt@gmail.com",
                   role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0758-5502")),
              person("Don", "van den Bergh",
@@ -45,6 +45,6 @@ RdMacros: Rdpack
 RoxygenNote: 7.2.3
 Depends: R (>= 2.10)
 Suggests: 
-    testthat (>= 2.1.0),
     knitr,
-    rmarkdown
+    rmarkdown, 
+    tinytest
