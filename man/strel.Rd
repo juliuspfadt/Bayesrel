@@ -30,7 +30,7 @@ strel(
   a0 = 2,
   b0 = 1,
   m0 = 0,
-  disableMCMCCheck = FALSE
+  disableMcmcCheck = FALSE
 )
 }
 \arguments{
@@ -98,7 +98,7 @@ variances in the single factor model for omega}
 
 \item{m0}{The prior mean of the normal distribution on the factor loadings for omega}
 
-\item{disableMCMCCheck}{A logical disabling the MCMC settings check for running tests and the likes}
+\item{disableMcmcCheck}{A logical disabling the MCMC settings check for running tests and the likes}
 }
 \value{
 The basic output displays the interval bounds of the coefficients,

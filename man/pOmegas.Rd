@@ -20,5 +20,5 @@ or smaller than an arbitrary value
 }
 \examples{
 pOmegas(bomegas(upps, n.factors = 5, n.chains = 2, n.iter = 150, n.burnin = 50,
-disableMCMCCheck = TRUE, missing = "listwise"))
+disableMcmcCheck = TRUE, missing = "listwise"))
 }

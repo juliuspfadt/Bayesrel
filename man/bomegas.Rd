@@ -28,7 +28,7 @@ bomegas(
   param.out = FALSE,
   callback = function() {
  },
-  disableMCMCCheck = FALSE
+  disableMcmcCheck = FALSE
 )
 }
 \arguments{
@@ -46,7 +46,7 @@ to the group factors. The items' names need to equal the column names in the dat
 aka the variable names}
 
 \item{model.type}{A string indicating the factor model estimated, by default this is the "second-order" model.
-Another option is the "bi-factor" model; and eventually the correlated factor model}
+Another option is the "bi-factor" model; and eventually "correlated" for the correlated factor model}
 
 \item{n.iter}{A number for the iterations of the Gibbs Sampler}
 
@@ -101,7 +101,7 @@ by default FALSE because it saves memory}
 \item{callback}{An empty function for implementing a progressbar call
 from a higher program (e.g., JASP)}
 
-\item{disableMCMCCheck}{A logical disabling the MCMC settings check for running tests and the likes}
+\item{disableMcmcCheck}{A logical disabling the MCMC settings check for running tests and the likes}
 }
 \value{
 The posterior means and the highest posterior density intervals for
@@ -140,7 +140,7 @@ f5 =~ U10_r + U20_r + U35_r + U52_r"
 # Note that the iterations are set very low for smoother running examples, you should use
 # at least the defaults:
 res <- bomegas(upps, n.factors = 5, model = NULL, n.iter = 200, n.burnin = 50,
-n.chains = 2, missing = "listwise")
+n.chains = 2, missing = "listwise", model.type = "second-order")
 
 
 }

@@ -29,7 +29,7 @@
 #' to the group factors. The items' names need to equal the column names in the data set,
 #' aka the variable names
 #' @param model.type A string indicating the factor model estimated, by default this is the "second-order" model.
-#' Another option is the "bi-factor" model; and eventually the correlated factor model
+#' Another option is the "bi-factor" model; and eventually "correlated" for the correlated factor model
 #' @param n.iter A number for the iterations of the Gibbs Sampler
 #' @param n.burnin A number for the burnin in the Gibbs Sampler
 #' @param n.chains A number for the chains to run for the MCMC sampling
@@ -65,7 +65,7 @@
 #' by default FALSE because it saves memory
 #' @param callback An empty function for implementing a progressbar call
 #' from a higher program (e.g., JASP)
-#' @param disableMCMCCheck A logical disabling the MCMC settings check for running tests and the likes
+#' @param disableMcmcCheck A logical disabling the MCMC settings check for running tests and the likes
 #'
 #'
 #' @return The posterior means and the highest posterior density intervals for
@@ -84,7 +84,7 @@
 #' # Note that the iterations are set very low for smoother running examples, you should use
 #' # at least the defaults:
 #' res <- bomegas(upps, n.factors = 5, model = NULL, n.iter = 200, n.burnin = 50,
-#' n.chains = 2, missing = "listwise")
+#' n.chains = 2, missing = "listwise", model.type = "second-order")
 #'
 
 #'
@@ -95,6 +95,8 @@
 #'}
 #'
 #' @importFrom utils setTxtProgressBar txtProgressBar
+#' @importFrom stats cov2cor
+#'
 #' @export
 bomegas <- function(
   data,
@@ -119,12 +121,12 @@ bomegas <- function(
   R0 = NA,
   param.out = FALSE,
   callback = function(){},
-  disableMCMCCheck = FALSE
+  disableMcmcCheck = FALSE
 ) {
 
   # check mcmc settings
-  if (!disableMCMCCheck) {
-    checkMCMCSettings(n.iter, n.burnin, n.chains, thin)
+  if (!disableMcmcCheck) {
+    checkMcmcSettings(n.iter, n.burnin, n.chains, thin)
   }
 
   # make sure only the data referenced in the model file is used, if a model file is specified
@@ -139,9 +141,13 @@ bomegas <- function(
   }
 
   # check model.type string
-  if (!(model.type %in% c("bi-factor", "second-order", "correlated"))) {
+  if (!(model.type %in% c("bi-factor", "bifactor", "second-order", "correlated", "secondorder", "hierarchical",
+                          "secondOrder", "biFactor"))) {
     stop("model.type invalid; needs to be 'bi-factor', 'second-order', or 'correlated'")
   }
+
+  if (model.type %in% c("bifactor", "biFactor")) model.type <- "bi-factor"
+  if (model.type %in% c("secondorder", "hierarchical", "secondOrder")) model.type <- "second-order"
 
 
   # deal with missings
@@ -163,16 +169,19 @@ bomegas <- function(
   data <- scale(data, scale = FALSE)
 
   # handle the prior hyperparameters
-  defaults <- c(a0 = 2, b0 = 1, c0 = 2, d0 = 1, l0 = 0, A0 = 1, beta0 = 0, B0 = 2.5,
-                p0 = n.factors^2 - n.factors, R0 = ncol(data))
-  set <- c(a0, c0, b0, d0, l0, A0, beta0, B0, p0, R0)
+  if (model.type != "correlated") {
+    defaults <- list(a0 = 2, b0 = 1, c0 = 2, d0 = 1, l0 = 0, A0 = 1, beta0 = 0, B0 = 2.5,
+                     p0 = n.factors^2 - n.factors, R0 = ncol(data))
+  } else {
+    defaults <- list(a0 = 2, b0 = 1, c0 = 2, d0 = 1, l0 = 0, A0 = 1, beta0 = 0, B0 = 2.5,
+                     p0 = n.factors + 2, R0 = matrix(n.factors, n.factors, n.factors))
+    diag(defaults[["R0"]]) <- ncol(data)
+
+  }
+
+  set <- list(a0, c0, b0, d0, l0, A0, beta0, B0, p0, R0)
   prior.params <- ifelse(is.na(set), defaults, set)
   names(prior.params) <- names(defaults)
-
-  if(model.type == "correlated") {
-    prior.params["p0"] <- n.factors * 2
-    prior.params["R0"] <- matrix(n.factors, n.factors, n.factors)
-  }
 
   pb <- txtProgressBar(max = n.chains * n.iter, style = 3)
 

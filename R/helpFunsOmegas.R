@@ -466,3 +466,10 @@ lavMultiFileCross <- function(imat) {
   return(out <- list(names = names, model = mod))
 }
 
+omegaCorr <- function(ll, phi, tt) {
+  return(sum(colSums(ll) * colSums(ll) %*% phi) / (sum(colSums(ll) * colSums(ll) %*% phi) + sum(tt)))
+}
+
+implCovCorr <- function(lambda, phi, theta) {
+  return(lambda %*% phi %*% t(lambda) + theta)
+}

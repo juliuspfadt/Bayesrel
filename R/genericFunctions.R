@@ -164,10 +164,17 @@ print.summary.strel <- function(x, ...) {
 
 #'@export
 print.bomegas <- function(x, ...) {
+
   # prepare output matrix
-  out <- rbind(as.numeric(sprintf("%.5f", c(x$omega_t$mean, x$omega_t$cred))),
-               as.numeric(sprintf("%.5f", c(x$omega_h$mean, x$omega_h$cred))))
-  rownames(out) <- c("omega_t", "omega_h")
+  if (x$model.type != "correlated") {
+    out <- rbind(as.numeric(sprintf("%.5f", c(x$omega_t$mean, x$omega_t$cred))),
+                 as.numeric(sprintf("%.5f", c(x$omega_h$mean, x$omega_h$cred))))
+    rownames(out) <- c("omega_t", "omega_h")
+  } else {
+    out <- matrix(as.numeric(sprintf("%.5f", c(x$omega_t$mean, x$omega_t$cred))), ncol = 3)
+    rownames(out) <- "omega_t"
+  }
+
   colnames(out) <- c("posterior mean", paste0(x$interval * 100, "% CI lower"),
                       paste0(x$interval * 100, "% CI upper"))
 

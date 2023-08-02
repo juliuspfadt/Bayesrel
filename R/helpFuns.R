@@ -117,7 +117,7 @@ getApproxDensity <- function(x) {
   )
 }
 
-checkMCMCSettings <- function(n.iter, n.burnin, n.chains, thin) {
+checkMcmcSettings <- function(n.iter, n.burnin, n.chains, thin) {
 
   if (n.chains < 2) stop("The number of chains needs to be at least 2.")
   if (n.iter <= n.burnin) stop("Too few samples remain after burnin.")
