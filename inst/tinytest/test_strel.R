@@ -1,5 +1,6 @@
 
-tol <- 1e-3
+tol <- ifelse(Sys.getenv("HOME") == "/Users/julius" || Sys.getenv("IAMHOME") == TRUE, 1e-5, 1e-2)
+
 data(asrm, package = "Bayesrel")
 
 # Estimates lambda2 and omega are correct

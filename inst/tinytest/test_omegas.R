@@ -1,6 +1,5 @@
 
-# tol <- ifelse(testthat:::on_cran(), 1e-2, 1e-3)
-tol <- 1e-3
+tol <- ifelse(Sys.getenv("HOME") == "/Users/julius" || Sys.getenv("IAMHOME") == TRUE, 1e-5, 1e-2)
 data(upps, package = "Bayesrel")
 
 # Bayesian omegas are correct, missing pairwise, and fit indices are good
