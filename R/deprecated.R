@@ -336,10 +336,7 @@ p_omegas <- function(x, cutoff.t = .80, cutoff.h = .60) {
   post_prob_h <- 1 - objh(cutoff.h)
 
   # prior prob
-  priors <- omegasSecoPrior(x$k, x$n.factors, nsamp = 2e3, x$prior_params$a0, x$prior_params$b0,
-                        x$prior_params$l0, x$prior_params$A0,
-                        x$prior_params$c0, x$prior_params$d0,
-                        x$prior_params$beta0, x$prior_params$B0)
+  priors <- omegasSecoPrior(x, nsamp = 2e3)
 
   priort <- ecdf(priors$omt_prior)
   priorh <- ecdf(priors$omh_prior)

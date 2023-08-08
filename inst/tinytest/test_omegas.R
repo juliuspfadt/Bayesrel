@@ -147,5 +147,29 @@ expect_equal(as.numeric(tt),
              c(0.2730, 1.0000, 0.2725, 0.8200), tolerance = tol)
 
 
+# Bayesian omegas are correct from correlated model, missing data, and crossloadings
+mod <- "
+f1 =~ U17_r + U22_r + U29_r + U34_r + U19
+f2 =~ U4 + U14 + U19 + U27
+f3 =~ U6 + U16 + U28 + U48 + U29_r
+f4 =~ U23_r + U31_r + U36_r + U46_r + U34_r
+f5 =~ U10_r + U20_r + U35_r + U52_r + U19
+"
+set.seed(1234)
+ee <- bomegas(upps, n.iter = 200, n.burnin = 50, n.chains = 2,
+              model = mod, missing = "impute", param.out = TRUE, model.type = "correlated")
+oo <- ee$omega_t$cred
+ll <- apply(ee$model$lambda, c(3, 4), mean)
 
+expect_equal(as.numeric(oo), c(0.8458204, 0.8838559), tolerance = tol)
+expect_equal(ll, matrix(c(0.001341535, -0.001977715, -0.004433084, -0.01164047, 0, 0, -0.02388549,
+                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.4025975, 0.5298808,
+                          0.4298299, 0.4088522, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.199566,
+                          0, 0, 0, 0, 0, 0.4158991, 0.4981815, 0.4208077, 0.5908278, 0, 0, 0, 0, 0,
+                          0, 0, 0, 0, 0, 0, 0.005519423, 0, 0, 0, 0, 0, 0, 0, 0, 0.004320349, -0.0002076825,
+                          0.0006509845, -0.002636276, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.02787843,
+                          0, 0, 0, 0, 0, 0, 0, 0, 0, -0.000498282, -0.001190331, -0.001030626, 0.001875177),
+                        20, 5), tolerance = tol)
 
+pp <- pOmegas(ee)
+expect_equal(as.numeric(pp), c(0.748, 1.000), tolerance = tol)

@@ -44,7 +44,7 @@
 #' @param b0 The scale parameter of the inverse gamma prior distribution for the residual
 #' variances in the single factor model for omega
 #' @param m0 The prior mean of the normal distribution on the factor loadings for omega
-#' @param disableMCMCCheck A logical disabling the MCMC settings check for running tests and the likes
+#' @param disableMcmcCheck A logical disabling the MCMC settings check for running tests and the likes
 #'
 #' @details Reported are point estimates (posterior mean), Bayesian credible intervals
 #' (highest posterior density) and frequentist confidence intervals
@@ -137,7 +137,7 @@ strel <- function(data = NULL,
                   a0 = 2,
                   b0 = 1,
                   m0 = 0,
-                  disableMCMCCheck = FALSE) {
+                  disableMcmcCheck = FALSE) {
 
   default <- c("alpha", "lambda2", "lambda4", "lambda6", "glb", "omega")
   mat <- match(default, estimates)
@@ -180,8 +180,8 @@ strel <- function(data = NULL,
   data <- scale(data, scale = FALSE) # needed for Bayes omega
 
   if (Bayes) {
-    if (!disableMCMCCheck) {
-      checkMCMCSettings(n.iter, n.burnin, n.chains, thin)
+    if (!disableMcmcCheck) {
+      checkMcmcSettings(n.iter, n.burnin, n.chains, thin)
     }
 
     if (is.null(df0)) df0 <- ncol(data)
