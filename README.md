@@ -2,6 +2,7 @@
 
 <!-- badges: start -->
 [![R build status](https://github.com/juliuspfadt/Bayesrel/workflows/R-CMD-check/badge.svg)](https://github.com/juliuspfadt/Bayesrel/actions)
+[![codecov](https://app.codecov.io/gh/juliuspfadt/Bayesrel/branch/master/graph/badge.svg?token=k559H2COd8)](https://app.codecov.io/gh/juliuspfadt/Bayesrel)
 <!-- badges: end -->
 
 
@@ -21,7 +22,8 @@ remotes::install_github("juliuspfadt/Bayesrel")
 # Example
 
 ## Unidimensional data
-This is a basic example which shows you how to compute alpha, lambda2, the glb, and omega for an example real data set:
+This is a basic example which shows you how to compute alpha, lambda2, the glb, and omega for an example real data set.
+The output includes both Bayesian and frequentist estimates. 
 
 ``` r
 library(Bayesrel)
@@ -30,7 +32,7 @@ library(Bayesrel)
 ## run the main reliability function
 res <- strel(data = asrm)
 ## get a full result output
-summary(strel)
+summary(res)
 ## return the probability that coefficient alpha is larger than .70
 pStrel(x = res, estimate = "alpha", low.bound = .70)
 
@@ -39,7 +41,8 @@ median(res$Bayes$samp$Bayes_alpha)
 ```
 
 ## Multidimensional data
-### Second-order model
+### Bayesian estimation
+#### Second-order model
 This is a basic example which shows you how to compute omega_t and omega_h for an example real data set. 
 The data follow a second-order factor model with no crossloadings:
 
@@ -87,17 +90,21 @@ model <- "
 res <- bomegas(data = upps, n.factors = 5, model = model, missing = "impute")
 ```
 
-### Bi-factor model
+#### Bi-factor and correlated factor model
 The necessary code to infer omega_t and omega_h from a bi-factor model is analogue to the second-order model, 
-except that the `model.type` changes from the default `second-order` to `bi-factor`:
-``` r
-model <- "
-  f1 =~ U17_r + U22_r + U29_r + U34_r
-  f2 =~ U4 + U14 + U19 + U27
-  f3 =~ U6 + U16 + U28 + U48
-  f4 =~ U23_r + U31_r + U36_r + U46_r
-  f5 =~ U10_r + U20_r + U35_r + U52_r
-  "
-res <- bomegas(data = upps, n.factors = 5, model = model, missing = "impute", model.type = "bi-factor")
+except that the `model.type` changes from the default `second-order` to `bi-factor`.
+Note, that crossloadings are not permitted in the bi-factor model at this point. 
+If `model.type = "correlated"` the correlated factor model is fit to the data. Crosslaodings are allowed. 
+Only omega_t may be estimated. The remaining code stays the same as in the examples above. 
+Which factor model is appropriate for the data is up to theoretical considerations and model fit.
+
+
+### Frequentist estimation
+The frequentist estimation roughly follows the same steps as the Bayesian one. For instance, with the 
+correlated factor model: 
+
+```r
+res <- omegasCFA(data = upps, n.factors = 5, model.type = "correlated")
+res
 ```
 

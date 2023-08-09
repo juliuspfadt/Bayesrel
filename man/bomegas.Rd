@@ -2,7 +2,7 @@
 % Please edit documentation in R/reliabilityMultiBayes.R
 \name{bomegas}
 \alias{bomegas}
-\title{Estimate Bayesian reliability estimates for multidimensional scales following a second-order factor model}
+\title{Estimate Bayesian reliability estimates for multidimensional scales following common factor models}
 \usage{
 bomegas(
   data,
@@ -105,27 +105,30 @@ from a higher program (e.g., JASP)}
 }
 \value{
 The posterior means and the highest posterior density intervals for
-omega_t and omega_h
+omega_t and omega_h (for the second-order and bi-factor model)
 }
 \description{
 When supplying a multidimensional data set
 the function estimates the reliability of the set by means of omega_total
 and the general factor saturation of the set by means of omega_hierarchical.
-The data must follow a simple second-order factor model structure with no crossloadings
-and no error covariances. Otherwise the estimation will fail.
+The data may follow multiple multi-factorial factor models:
+a) the second-order factor model (crossloadings possible),
+b) the bi-factor model (no crossloadings),
+c) the correlated factor model (crossloadings possible, only omega_t)
+Error-covariances are not estimable.
 
 The prior distributions of omega_t and omega_h are computed from
-the prior distributions of the second-order factor model.
-Specifically, a multivariate normal distribution for the group factor loadings and
-the factor scores; a normal distribution for the general factor loadings;
+the prior distributions of the respective factor model parameters.
+Specifically, normal distributions for the factor loadings and factor scores;
 an inverse gamma distribution for the manifest and latent residuals;
-an inverse Wishart distribution for the covariance matrix of the latent variables.
+an inverse Wishart distribution for the covariance matrix of the latent variables (correlated model).
 A Gibbs sampler iteratively draws samples from the conditional posterior distributions
-of the second-order factor model parameters. The posterior distributions of omega_t
+of the factor model parameters. The posterior distributions of omega_t
 and omega_h are computed from the posterior samples of the factor model parameters.
 
-The output contains the posterior distributions of omega_t and omega_h,
-their mean and credible intervals.
+The output contains the posterior distributions of omega_t and omega_h (only for second-order and bi-factor model),
+their mean, and credible intervals. If desired, one may also find the posterior implied covariance matrices,
+and the posterior factor model parameters in the output.
 }
 \examples{
 # specify the model syntax relating the group factors to the items:

@@ -192,9 +192,15 @@ print.bomegas <- function(x, ...) {
 #'@export
 print.omegasCFA <- function(x, ...) {
   # prepare output matrix
-  out <- rbind(as.numeric(sprintf("%.5f", c(x$omega_t$est, x$omega_t$conf))),
-               as.numeric(sprintf("%.5f", c(x$omega_h$est, x$omega_h$conf))))
-  rownames(out) <- c("omega_t", "omega_h")
+  if (x$model.type != "correlated") {
+    out <- rbind(as.numeric(sprintf("%.5f", c(x$omega_t$est, x$omega_t$conf))),
+                 as.numeric(sprintf("%.5f", c(x$omega_h$est, x$omega_h$conf))))
+    rownames(out) <- c("omega_t", "omega_h")
+  } else {
+    out <- matrix(as.numeric(sprintf("%.5f", c(x$omega_t$est, x$omega_t$conf))), ncol = 3)
+    rownames(out) <- "omega_t"
+  }
+
   colnames(out) <- c("point est", paste0(x$interval * 100, "% CI lower"),
                       paste0(x$interval * 100, "% CI upper"))
 
