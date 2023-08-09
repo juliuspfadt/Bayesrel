@@ -44,16 +44,17 @@ unbiased srmr, unbiased srmr 90\% ci lower, unbiased srmr 90\% ci upper, unbiase
 }
 \value{
 The point estimates and the Wald-type confidence intervals for
-omega_t and omega_h
+omega_t and omega_h (for the second-order and bi-factor model)
 }
 \description{
 When supplying a data set that is multidimensional
 the function estimates the reliability of the set by means of omega_total
 and the general factor saturation of the set by means of omega_hierarchical
 The procedure entails fitting a hierarchical factor model using a CFA.
-Both the higher-order (second-order) and the bi-factor model can be used in the CFA.
-The CFA is fit using lavaan 'Yves Rosseel', <https://CRAN.R-project.org/package=lavaan>.
-Coefficients omega_t and omega_h can be computed from the factor model parameters.
+The second-order (hierarchical, higher-order), the bi-factor, and the correlated factor model
+can be used in the CFA. The CFA is performed using lavaan 'Yves Rosseel', <https://CRAN.R-project.org/package=lavaan>.
+Coefficients omega_t and omega_h (only for second-order and bi-factor model)
+can be computed from the factor model parameters.
 }
 \examples{
 res <- omegasCFA(upps, n.factors = 5, model = NULL, model.type = "bi-factor",

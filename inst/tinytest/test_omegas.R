@@ -172,3 +172,20 @@ expect_equal(ll, matrix(c(0.001341535, -0.001977715, -0.004433084, -0.01164047, 
 
 pp <- pOmegas(ee)
 expect_equal(as.numeric(pp), c(0.748, 1.000), tolerance = tol)
+
+
+
+# Frequentist omegas are correct with correlated model, missing listwise, crossloadings
+mod <- "
+f1 =~ U17_r + U22_r + U29_r + U34_r + U19
+f2 =~ U4 + U14 + U19 + U27
+f3 =~ U6 + U16 + U28 + U48 + U29_r
+f4 =~ U23_r + U31_r + U36_r + U46_r + U34_r
+f5 =~ U10_r + U20_r + U35_r + U52_r + U19
+"
+data(upps, package = "Bayesrel")
+set.seed(1234)
+ee <- omegasCFA(upps, n.factors = 5, model.type = "correlated", missing = "listwise", model = mod)
+
+expect_equal(c(ee$omega_t$est, ee$omega_t$conf),
+             c(0.8675540, 0.8495873, 0.8855208), tolerance = tol)
