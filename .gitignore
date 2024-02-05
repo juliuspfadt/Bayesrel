@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 .DS_Store
+.Rprofile
 R/.DS_Store
 inst/doc
 autom4te.cache

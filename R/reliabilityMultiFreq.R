@@ -46,6 +46,8 @@
 #' res <- omegasCFA(upps, n.factors = 5, model = model, model.type = "second-order",
 #' missing = "listwise")
 #'
+#' @importFrom utils combn
+#'
 #' @export
 omegasCFA <- function(
   data,
