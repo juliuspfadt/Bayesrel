@@ -26,11 +26,12 @@ applylambda6 <- function(M, callback = function(){}){
   return(lambda6)
 }
 
-applyomegaPFA <- function(m, callback = function(){}){
+applyomegaPFA <- function(m, callback = function(){}, loadings = FALSE){
 
   f <- try(pfaArma(m), silent = TRUE)
   if (inherits(f, "try-error")) {
     om <- NaN
+    l_fa <- NaN
     warning("singular bootstrapped covariance matrices encountered when computing omega")
   } else {
     l_fa <- f$loadings
@@ -42,7 +43,11 @@ applyomegaPFA <- function(m, callback = function(){}){
 
   callback()
 
-  return(om)
+  if (loadings) {
+    return(list(om = om, loadings = l_fa))
+  } else {
+    return(om)
+  }
 }
 
 # old functions without Cpp

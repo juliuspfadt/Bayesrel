@@ -128,7 +128,7 @@ lavMultiFileSeco <- function(k, ns) {
 }
 
 # generate model file for lavaan
-lavMultiFileSecoSyntax <- function(k, ns, model, colnams, model_opts) {
+lavMultiFileSecoSyntax <- function(k, ns, model, colnams) {
 
   beta_names <- paste("gl", 1:ns, sep = "")
 
@@ -139,8 +139,8 @@ lavMultiFileSecoSyntax <- function(k, ns, model, colnams, model_opts) {
     ns <- mod_out$mod_n.factors
   }
 
-  imat <- model_opts$imat
-  idex <- model_opts$idex
+  imat <- matrix(FALSE, k, ns)
+  idex <- list()
   lambda_names <- list()
   names <- list()
   for (i in seq_len(length(mod))) {
@@ -448,7 +448,6 @@ sum_X_Xt <- function(X) {
 
 # convert a index matrix to a lavaan syntax -> helps with simulations
 # model file for seco model with crossloadings
-# also works for the correlated model
 lavMultiFileCross <- function(imat) {
   k <- nrow(imat)
   ns <- ncol(imat)
@@ -474,129 +473,3 @@ omegaCorr <- function(ll, phi, tt) {
 implCovCorr <- function(lambda, phi, theta) {
   return(lambda %*% phi %*% t(lambda) + theta)
 }
-
-
-# generate lav model file from no input
-
-lavMultiFileCorr <- function(k, ns) {
-
-  lambda_names <- matrix(paste("sl", 1:k, sep = ""), k/ns, ns)
-  names <- matrix(paste("x", 1:k, sep = ""), k/ns, ns)
-  theta_names <- paste("e", 1:k, sep = "")
-
-  mod <- NULL
-  ss <- paste0("s", 1:ns)
-  for (i in 1:ns) {
-    mod <- paste0(mod, ss[i], " =~ ", paste(paste(lambda_names[, i], "*", names[, i], sep = ""),
-                                                                   collapse = " + "), "\n")
-  }
-
-  ss_comb <- combn(ss, m = 2)
-  rho_names <- paste("rl", 1:ncol(ss_comb), sep = "")
-  rhos <- NULL
-  vars <- paste0(ss, " ~~ ", "1*", ss, "\n", collapse = "")
-  for (i in 1:ncol(ss_comb)) {
-    rhos <- paste0(rhos, ss_comb[1, i], " ~~ ", paste0(rho_names[i], "*", ss_comb[2, i]), "\n")
-  }
-
-  mod <- paste0(mod, "\n", rhos, "\n", vars, "\n")
-
-  # correlation matrix for latents:
-  cor_mat <- matrix(NA, ns, ns)
-  diag(cor_mat) <- 1
-  cor_mat[lower.tri(cor_mat)] <- rho_names
-  cor_mat[upper.tri(cor_mat)] <- t(cor_mat)[upper.tri(cor_mat)]
-
-  # extra stuff for omega calc
-  mod <- paste0(mod, paste(paste(c(names), " ~~ ", theta_names, "*",
-                                 c(names), sep = ""), collapse = "\n"), "\n")
-
-  # define extra parameters
-  sl <- NULL
-  tp <- NULL
-  for (i in 1:ns) {
-    sl <- paste0(sl, "ssum", i, " := ", paste0(lambda_names[, i], collapse = " + "), "\n")
-    tp <- paste0(tp, "sm", i, " := (", paste0("ssum", 1:ns, "*", cor_mat[, i], collapse = " + "),
-                 ")*ssum", i, "\n")
-  }
-
-  sum_sl <- paste0("spec_loading := ", paste0("sm", 1:ns, collapse = " + "), "\n")
-  sum_errs <- paste("residual_var :=", paste(theta_names, collapse = " + "), "\n")
-  omega_t <- "omega_t := (spec_loading) / (spec_loading + residual_var) \n"
-  mod <- paste0(mod, sl, tp, sum_sl, sum_errs, omega_t)
-
-  return(list(names = names, model = mod))
-}
-
-
-# generate model file for lavaan from input model file
-lavMultiFileCorrSyntax <- function(k, ns, model, colnams, model_opts) {
-
-  mod_out <- model_opts$mod_out
-  mod <- mod_out$mod
-
-  if (ns != model_opts$mod_out$mod_n.factors) {
-    warning("n.factors is unequal to specified factors in model syntax")
-    ns <- model_opts$mod_out$mod_n.factors
-  }
-
-  imat <- model_opts$imat
-  idex <- model_opts$idex
-  lambda_names <- list()
-  names <- list()
-  for (i in seq_len(length(mod))) {
-    tmp_mod <- unlist(strsplit(mod[[i]], " "))
-    idex[[i]] <- which(colnams %in% tmp_mod)
-    imat[idex[[i]], i] <- TRUE
-    lambda_names[[i]] <- paste0("l", i, seq_len(length(idex[[i]])))
-    names[[i]] <- tmp_mod[nchar(tmp_mod) > 0]
-  }
-
-  theta_names <- paste("e", 1:k, sep = "")
-
-  modfile <- NULL
-  for (i in 1:ns) {
-    modfile <- paste0(modfile, mod_out$fac_names[i], " =~ ", paste(paste(lambda_names[[i]], "*", names[[i]], sep = ""),
-                                                                   collapse = " + "), "\n")
-  }
-
-  vars <- mod_out$fac_names
-  vars <- paste0(vars, " ~~ ", "1*", vars, "\n", collapse = "")
-  ss <- mod_out$fac_names
-  ss_comb <- combn(ss, m = 2)
-  rho_names <- paste("rl", 1:ncol(ss_comb), sep = "")
-
-  rhos <- NULL
-  for (i in 1:ncol(ss_comb)) {
-    rhos <- paste0(rhos, ss_comb[1, i], " ~~ ", paste0(rho_names[i], "*", ss_comb[2, i]), "\n")
-  }
-
-  modfile <- paste(modfile, "\n", rhos, "\n", vars, "\n")
-
-  # correlation matrix for latents:
-  cor_mat <- matrix(NA, ns, ns)
-  diag(cor_mat) <- 1
-  cor_mat[lower.tri(cor_mat)] <- rho_names
-  cor_mat[upper.tri(cor_mat)] <- t(cor_mat)[upper.tri(cor_mat)]
-
-  # extra stuff for omega calc
-  modfile <- paste0(modfile, paste(paste(unique(unlist(names)), " ~~ ", theta_names, "*",
-                                         unique(unlist(names)), sep = ""), collapse = "\n"), "\n")
-
-  sl <- NULL
-  tp <- NULL
-  for (i in 1:ns) {
-    sl <- paste0(sl, "ssum", i, " := ", paste0(lambda_names[[i]], collapse = " + "), "\n")
-    tp <- paste0(tp, "sm", i, " := (", paste0("ssum", 1:ns, "*", cor_mat[, i], collapse = " + "),
-                 ")*ssum", i, "\n")
-  }
-
-  sum_sl <- paste0("spec_loading := ", paste0("sm", 1:ns, collapse = " + "), "\n")
-  sum_errs <- paste("residual_var :=", paste(theta_names, collapse = " + "), "\n")
-  omega_t <- "omega_t := (spec_loading) / (spec_loading + residual_var) \n"
-  model_out <- paste0(modfile, sl, tp, sum_sl, sum_errs, omega_t)
-
-  return(out <- list(model = model_out, factor_names = mod_out$fac_names))
-}
-
-
