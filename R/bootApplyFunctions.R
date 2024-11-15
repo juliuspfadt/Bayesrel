@@ -67,11 +67,12 @@ applylambda2NoCpp <- function(M, callback = function(){}){
 }
 
 applylambda4NoCpp <- function(M, callback = function(){}){
-  if (ncol(M) < 15)
+  if (ncol(M) < 15) {
     out <- MaxSplitExhaustive(M)
-  else
+  } else {
     l4 <- quant.lambda4(M)
-  out <- quantile(l4, prob = 1)
+    out <- quantile(l4, prob = 1)
+  }
   callback()
   return(out)
 }
