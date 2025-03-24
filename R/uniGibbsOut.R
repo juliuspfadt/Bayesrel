@@ -78,7 +78,8 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
   }
 
   if ("glb" %in% estimates) {
-    res$samp$Bayes_glb <- coda::mcmc(t(apply(C, c(1), glbOnArrayCustom, callback)))
+
+    res$samp$Bayes_glb <- coda::mcmc(t(apply(C, c(1, 2), applyGlbNoCpp, callback)))
     if (sum(is.na(res$samp$Bayes_glb) > 0)) {
       int <- c(NA, NA)
     } else {
@@ -88,7 +89,7 @@ gibbsFun <- function(data, estimates, n.iter, n.burnin, thin, n.chains, interval
     res$cred$up$Bayes_glb <- int[2]
     res$est$Bayes_glb <- mean(res$samp$Bayes_glb)
     if (item.dropped){
-      res$ifitem$samp$glb <- aperm(apply(Ctmp, c(1, 3), glbOnArrayCustom, callback), c(2, 1, 3))
+      res$ifitem$samp$glb <- (apply(Ctmp, c(1, 2, 3), applyGlbNoCpp, callback))
       res$ifitem$est$glb <- apply(res$ifitem$samp$glb, 3, mean)
       res$ifitem$cred$glb <- coda::HPDinterval(coda::mcmc(apply(res$ifitem$samp$glb, 3, as.vector)),
                                                prob = interval)

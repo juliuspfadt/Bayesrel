@@ -51,6 +51,14 @@ applyomegaPFA <- function(m, callback = function(){}, loadings = FALSE){
 }
 
 # old functions without Cpp
+
+applyGlbNoCpp <- function(M, callback = function(){}){
+  glbObj <- psych::glb.algebraic(M)
+  glb <- glbObj$glb
+  callback()
+  return(glb)
+}
+
 applyalphaNoCpp <- function(M, callback = function(){}){
   p <- ncol(M)
   a <- (p / (p - 1)) * (1 - (sum(diag((M))) / sum(M)))

@@ -11,7 +11,7 @@ omegaMultiFreq <- function(data, n.factors, interval, fiml, model, model.type, f
       colnames(data) <- modfile$names
 
     } else { # if model syntax is specified
-      modfile <- lavMultiFileSecoSyntax(k, n.factors, model, colnames(data), model_opts)
+      modfile <- lavMultiFileSecoSyntax(k, n.factors, model, colnames(data))
 
     }
 
@@ -63,7 +63,7 @@ omegaMultiFreq <- function(data, n.factors, interval, fiml, model, model.type, f
       colnames(data) <- modfile$names
 
     } else { # if model syntax is specified
-      modfile <- lavMultiFileCorrSyntax(k, n.factors, model, colnames(data), model_opts)
+      modfile <- lavMultiFileCorrSyntax(k, n.factors, model, colnames(data))
 
     }
 

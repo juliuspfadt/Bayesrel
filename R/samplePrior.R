@@ -30,7 +30,7 @@ priorSampUni <- function(p, estimate, n.samp = 2e3, k0, df0, a0, b0, m0){
     out <- density(priorlambda6, from = 0, to = 1, n = 512)
   }
   if (estimate == "glb") {
-    priorglb <- glbOnArrayCustom(m)
+    priorglb <- applyGlbNoCpp(m)
     out <- density(priorglb, from = 0, to = 1, n = 512)
   }
   if (estimate == "omega") {

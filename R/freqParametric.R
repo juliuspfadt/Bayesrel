@@ -110,8 +110,8 @@ freqFunPara <- function(data, n.boot, estimates, interval, omega.freq.method,
   }
 
   if ("glb" %in% estimates) {
-    res$est$freq_glb <- glbOnArrayCustom(cc)
-    glb_obj <- glbOnArrayCustom(boot_cov, callback)
+    res$est$freq_glb <- applyGlbNoCpp(cc)
+    glb_obj <- apply(boot_cov, 1, applyGlbNoCpp, callback)
     if (length(unique(round(glb_obj, 4))) == 1) {
       res$conf$low$freq_glb <- NA
       res$conf$up$freq_glb <- NA
@@ -121,7 +121,7 @@ freqFunPara <- function(data, n.boot, estimates, interval, omega.freq.method,
     }
     res$boot$glb <- glb_obj
     if (item.dropped) {
-      res$ifitem$glb <- glbOnArrayCustom(Ctmp)
+      res$ifitem$glb <- apply(Ctmp, 1, applyGlbNoCpp)
     }
   }
 
