@@ -51,6 +51,14 @@ applyomegaPFA <- function(m, callback = function(){}, loadings = FALSE){
 }
 
 # old functions without Cpp
+
+applyGlbNoCpp <- function(M, callback = function(){}){
+  glbObj <- psych::glb.fa(M)
+  glb <- glbObj$glb
+  callback()
+  return(glb)
+}
+
 applyalphaNoCpp <- function(M, callback = function(){}){
   p <- ncol(M)
   a <- (p / (p - 1)) * (1 - (sum(diag((M))) / sum(M)))
@@ -67,11 +75,12 @@ applylambda2NoCpp <- function(M, callback = function(){}){
 }
 
 applylambda4NoCpp <- function(M, callback = function(){}){
-  if (ncol(M) < 15)
+  if (ncol(M) < 15) {
     out <- MaxSplitExhaustive(M)
-  else
+  } else {
     l4 <- quant.lambda4(M)
-  out <- quantile(l4, prob = 1)
+    out <- quantile(l4, prob = 1)
+  }
   callback()
   return(out)
 }

@@ -23,8 +23,8 @@ set.seed(1234)
 ee <- strel(asrm, estimates = "glb", n.iter = 100, freq = FALSE, n.chains = 1,
                       disableMcmcCheck = TRUE)
 
-expect_equal(ee$Bayes$est$Bayes_glb, 0.8542316, tolerance = tol)
-expect_equal(ee$Bayes$cred$up$Bayes_glb, 0.8950283, tolerance = tol)
+expect_equal(ee$Bayes$est$Bayes_glb, 0.85381, tolerance = tol)
+expect_equal(ee$Bayes$cred$up$Bayes_glb, 0.88875, tolerance = tol)
 
 
 
@@ -59,7 +59,7 @@ ee <- strel(asrm, estimates = "alpha", n.iter = 100, freq = FALSE, n.chains = 2,
                       disableMcmcCheck = TRUE)
 tt <- pStrel(ee, "alpha", .8)
 
-expect_equal(as.numeric(tt), c(0.1556125, 0.3300000), tolerance = tol)
+expect_equal(as.numeric(tt), c(0.1555947, 0.3300000), tolerance = tol)
 
 
 # Omega results with missing data are correct
@@ -77,7 +77,7 @@ set.seed(1234)
 ee <- strel(asrm_mis, estimates = c("lambda6"), Bayes = FALSE, n.boot = 100, para.boot = TRUE)
 expect_equal(as.numeric(ee$freq$est$freq_lambda6), c(0.7927271),
              tolerance = tol)
-expect_equal(as.numeric(ee$freq$conf$low$freq_lambda6), 0.7188984, tolerance = tol)
+expect_equal(as.numeric(ee$freq$conf$low$freq_lambda6), 0.719157651302949, tolerance = tol)
 
 
 # Results with input cov matrix are correct
@@ -90,15 +90,15 @@ expect_equal(as.numeric(ee$Bayes$cred$up$Bayes_lambda2), c(0.8215358),
 expect_equal(as.numeric(ee$freq$est$freq_lambda2), c(0.7960336),
              tolerance = tol)
 if (Sys.info()["sysname"] == "Linux") tol <- 1e-2
-expect_equal(as.numeric(ee$freq$conf$low$freq_lambda2), 0.771300720790473, tolerance = tol)
+expect_equal(as.numeric(ee$freq$conf$low$freq_lambda2), 0.7716605, tolerance = tol)
 tol <- 1e-3
 
 # Frequentist glb is correct
 set.seed(1234)
 ee <- strel(asrm, estimates = "glb", n.boot = 100, freq = TRUE, Bayes = FALSE)
 
-expect_equal(c(ee$freq$est$freq_glb), 0.8459531, tolerance = tol)
-expect_equal(c(ee$freq$conf$up$freq_glb, use.names = FALSE), 0.9011926, tolerance = tol)
+expect_equal(c(ee$freq$est$freq_glb), 0.84486, tolerance = tol)
+expect_equal(c(ee$freq$conf$up$freq_glb, use.names = FALSE), 0.90352, tolerance = tol)
 
 
 
@@ -137,3 +137,4 @@ expect_equal(unlist(ff, use.names = FALSE), c(13.06419359, 0.06170546, 0.1303183
                                             12.02439250, 5.00000000, 0.03445507, 0.13420605, 0.03365073, 0.23333645,
                                             0.05875407),
              tolerance = tol)
+

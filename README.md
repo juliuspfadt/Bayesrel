@@ -2,7 +2,7 @@
 
 <!-- badges: start -->
 [![R build status](https://github.com/juliuspfadt/Bayesrel/workflows/R-CMD-check/badge.svg)](https://github.com/juliuspfadt/Bayesrel/actions)
-[![codecov](https://codecov.io/gh/juliuspfadt/Bayesrel/branch/master/graph/badge.svg?token=k559H2COd8)](https://codecov.io/gh/juliuspfadt/Bayesrel)
+[![codecov](https://codecov.io/gh/juliuspfadt/Bayesrel/branch/master/graph/badge.svg?token=k559H2COd8)](https://app.codecov.io/gh/juliuspfadt/Bayesrel
 <!-- badges: end -->
 
 
