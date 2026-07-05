@@ -134,6 +134,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
 
           ticks <- ticks + 1
           setTxtProgressBar(pbtick, ticks)
+          callback()
         }
 
       } else {
@@ -162,6 +163,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
           }
           ticks <- ticks + 1
           setTxtProgressBar(pbtick, ticks)
+          callback()
         }
       }
     }
@@ -229,6 +231,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
 
           ticks <- ticks + 1
           setTxtProgressBar(pbtick, ticks)
+          callback()
         }
 
       } else {
@@ -253,6 +256,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
           }
           ticks <- ticks + 1
           setTxtProgressBar(pbtick, ticks)
+          callback()
         }
       }
     }
@@ -320,6 +324,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
 
           ticks <- ticks + 1
           setTxtProgressBar(pbtick, ticks)
+          callback()
         }
 
       } else {
@@ -343,6 +348,7 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
 
           ticks <- ticks + 1
           setTxtProgressBar(pbtick, ticks)
+          callback()
         }
       }
     }
