@@ -61,7 +61,8 @@ omegaMultiBayes <- function(data, ns, n.iter, n.burnin, n.chains, thin, model, i
       lambdas <- array(0, c(n.chains, n.iter, k, ns))
       betas <- array(0, c(n.chains, n.iter, length(beta0vec)))
       thetas <- array(0, c(n.chains, n.iter, k))
-      psis <- array(0, c(n.chains, n.iter, ns))
+      # the bi-factor psiw includes the g-factor, hence ns + 1
+      psis <- array(0, c(n.chains, n.iter, if (model.type == "bi-factor") ns + 1 else ns))
     } else {
       lambdas <- array(0, c(n.chains, n.iter, k, ns))
       thetas <- array(0, c(n.chains, n.iter, k))
