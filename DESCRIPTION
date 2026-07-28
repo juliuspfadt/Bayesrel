@@ -46,7 +46,5 @@ LinkingTo: Rcpp, RcppArmadillo
 RdMacros: Rdpack
 RoxygenNote: 7.3.3
 Depends: R (>= 2.10)
-Suggests: 
-    knitr,
-    rmarkdown, 
+Suggests:
     tinytest
