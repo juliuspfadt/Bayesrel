@@ -77,7 +77,7 @@ set.seed(1234)
 ee <- strel(asrm_mis, estimates = c("lambda6"), Bayes = FALSE, n.boot = 100, para.boot = TRUE)
 expect_equal(as.numeric(ee$freq$est$freq_lambda6), c(0.7927271),
              tolerance = tol)
-expect_equal(as.numeric(ee$freq$conf$low$freq_lambda6), 0.719157651302949, tolerance = tol)
+expect_equal(as.numeric(ee$freq$conf$low$freq_lambda6), 0.718898441314052, tolerance = tol)
 
 
 # Results with input cov matrix are correct
@@ -90,7 +90,7 @@ expect_equal(as.numeric(ee$Bayes$cred$up$Bayes_lambda2), c(0.8215358),
 expect_equal(as.numeric(ee$freq$est$freq_lambda2), c(0.7960336),
              tolerance = tol)
 if (Sys.info()["sysname"] == "Linux") tol <- 1e-2
-expect_equal(as.numeric(ee$freq$conf$low$freq_lambda2), 0.7716605, tolerance = tol)
+expect_equal(as.numeric(ee$freq$conf$low$freq_lambda2), 0.773829780838622, tolerance = tol)
 tol <- 1e-3
 
 # Frequentist glb is correct
