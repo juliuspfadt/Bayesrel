@@ -15,3 +15,5 @@ Makevars
 *.a
 .vscode/
 CRAN-SUBMISSION
+.claude/settings.local.json
+.mcp.json

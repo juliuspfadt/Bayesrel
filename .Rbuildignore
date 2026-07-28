@@ -4,7 +4,16 @@
 ^\.Rproj\.user$
 \.o$
 \.a$
+\.so$
+\.DS_Store$
+^\.Rhistory$
 ^\.github$
 cran-comments.md
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+^Csdp/lib/.*\.(o|a|ts)$
+^src/Csdp/lib/.*\.(o|a|ts)$
+^autom4te.cache$
+^cleanup$
+^\.claude$
+^\.mcp\.json$
