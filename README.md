@@ -2,7 +2,7 @@
 
 <!-- badges: start -->
 [![R build status](https://github.com/juliuspfadt/Bayesrel/workflows/R-CMD-check/badge.svg)](https://github.com/juliuspfadt/Bayesrel/actions)
-[![codecov](https://codecov.io/gh/juliuspfadt/Bayesrel/branch/master/graph/badge.svg?token=k559H2COd8)](https://app.codecov.io/gh/juliuspfadt/Bayesrel
+[![codecov](https://codecov.io/gh/juliuspfadt/Bayesrel/branch/master/graph/badge.svg?token=k559H2COd8)](https://app.codecov.io/gh/juliuspfadt/Bayesrel)
 <!-- badges: end -->
 
 
@@ -13,7 +13,7 @@ You can install the released version of Bayesrel from [CRAN](https://CRAN.R-proj
 ``` r
 install.packages("Bayesrel")
 ```
-or install the latest version of Bayesrel from [github] (https://github.com) with the help of the remotes-package:
+or install the latest version of Bayesrel from [GitHub](https://github.com/juliuspfadt/Bayesrel) with the help of the remotes-package:
 
 ```r
 remotes::install_github("juliuspfadt/Bayesrel")
