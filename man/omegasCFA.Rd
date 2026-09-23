@@ -44,7 +44,14 @@ unbiased srmr, unbiased srmr 90\% ci lower, unbiased srmr 90\% ci upper, unbiase
 }
 \value{
 The point estimates and the Wald-type confidence intervals for
-omega_t and omega_h (for the second-order and bi-factor model)
+omega_t and omega_h (for the second-order and bi-factor model).
+The returned object also contains \code{diagnostics}, a list with the entries
+\code{converged}, \code{admissible}, and \code{se.available}, and \code{lavaan.fit},
+the fitted lavaan object. When \code{se.available} is \code{FALSE} the confidence
+intervals are \code{NA}, because the Wald interval of a defined parameter collapses
+onto the point estimate when the information matrix cannot be inverted. This happens
+in particular for the second-order model with fewer than three group factors, where
+the general factor is not identified.
 }
 \description{
 When supplying a data set that is multidimensional

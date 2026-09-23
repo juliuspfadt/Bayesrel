@@ -31,7 +31,14 @@
 #' unbiased srmr, unbiased srmr 90\% ci lower, unbiased srmr 90\% ci upper, unbiased srmr<.05 p-value
 #'
 #' @return The point estimates and the Wald-type confidence intervals for
-#' omega_t and omega_h (for the second-order and bi-factor model)
+#' omega_t and omega_h (for the second-order and bi-factor model).
+#' The returned object also contains \code{diagnostics}, a list with the entries
+#' \code{converged}, \code{admissible}, and \code{se.available}, and \code{lavaan.fit},
+#' the fitted lavaan object. When \code{se.available} is \code{FALSE} the confidence
+#' intervals are \code{NA}, because the Wald interval of a defined parameter collapses
+#' onto the point estimate when the information matrix cannot be inverted. This happens
+#' in particular for the second-order model with fewer than three group factors, where
+#' the general factor is not identified.
 #'
 #' @examples
 #' res <- omegasCFA(upps, n.factors = 5, model = NULL, model.type = "bi-factor",
@@ -107,6 +114,22 @@ omegasCFA <- function(
   sum_res$interval <- interval
   sum_res$model.type <- model.type
   class(sum_res) <- "omegasCFA"
+
+  # the coefficients are returned in all cases, but a solution the optimizer never reached,
+  # or one without standard errors, must not pass for an ordinary result
+  if (!sum_res$diagnostics$converged) {
+    warning("The factor model did not converge. The coefficients should not be interpreted.",
+            call. = FALSE)
+  } else if (!sum_res$diagnostics$se.available) {
+    warning(paste("Standard errors could not be computed, so the confidence intervals are NA.",
+                  "The factor model is likely not identified; note that the second-order model",
+                  "requires at least three group factors."), call. = FALSE)
+  }
+  if (!sum_res$diagnostics$admissible) {
+    warning(paste("The factor model solution is inadmissible, for instance because of a negative",
+                  "variance estimate. The coefficients may lie outside the interval [0, 1]."),
+            call. = FALSE)
+  }
 
   return(sum_res)
 }

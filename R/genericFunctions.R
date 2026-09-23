@@ -214,7 +214,16 @@ print.omegasCFA <- function(x, ...) {
     cat(x$complete_cases)
   }
 
-  if (!is.null(x$model$fit.measures)) {
+  if (!is.null(x$diagnostics)) {
+    if (!x$diagnostics$converged)
+      cat("\nWarning: the factor model did not converge.\n")
+    else if (!x$diagnostics$se.available)
+      cat("\nWarning: standard errors unavailable, the model is likely not identified.\n")
+    if (!x$diagnostics$admissible)
+      cat("\nWarning: the solution is inadmissible.\n")
+  }
+
+  if (!is.null(x$model$fit.measures) && !is.null(x$model$srmr.summary)) {
     fit_names <- c("chisq", "df", "pvalue", "cfi", "tli",
                    "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue",
                    "aic", "bic", "usrmr", "usrmr.ci.lower", "usrmr.ci.upper", "usrmr.closefit.pvalue")

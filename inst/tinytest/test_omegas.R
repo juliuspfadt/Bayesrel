@@ -189,3 +189,66 @@ ee <- omegasCFA(upps, n.factors = 5, model.type = "correlated", missing = "listw
 
 expect_equal(c(ee$omega_t$est, ee$omega_t$conf),
              c(0.8675540, 0.8495873, 0.8855208), tolerance = tol)
+
+
+# ---- diagnostics of the frequentist factor model ----------------------------------------
+
+# A well-behaved model reports all three diagnostics as TRUE and a proper interval
+data(upps, package = "Bayesrel")
+mod5 <- "f1 =~ U17_r + U22_r + U29_r + U34_r
+f2 =~ U4 + U14 + U19 + U27
+f3 =~ U6 + U16 + U28 + U48
+f4 =~ U23_r + U31_r + U36_r + U46_r
+f5 =~ U10_r + U20_r + U35_r + U52_r"
+ee <- omegasCFA(upps, model = mod5, model.type = "second-order", missing = "listwise")
+
+expect_equal(unlist(ee$diagnostics), c(converged = TRUE, admissible = TRUE, se.available = TRUE))
+expect_false(anyNA(ee$omega_t$conf))
+
+
+# The second-order model is not identified with only two group factors: the general factor has
+# two loadings but the group factors supply a single correlation. lavaan then returns the point
+# estimate as both interval bounds, which must be reported as NA instead.
+mod2 <- "f1 =~ U17_r + U22_r + U29_r + U34_r
+f2 =~ U4 + U14 + U19 + U27"
+ee <- suppressWarnings(omegasCFA(upps[, 1:8], model = mod2, model.type = "second-order",
+                                 missing = "listwise"))
+
+expect_false(ee$diagnostics$se.available)
+expect_true(all(is.na(ee$omega_t$conf)))
+expect_true(all(is.na(ee$omega_h$conf)))
+expect_warning(omegasCFA(upps[, 1:8], model = mod2, model.type = "second-order", missing = "listwise"))
+
+# the point estimates are still returned, only the intervals are withheld
+expect_false(is.na(ee$omega_t$est))
+
+
+# That under-identification is structural, not a property of these data: it persists for data
+# generated from a second-order model with strong loadings, and disappears at three group factors
+set.seed(1234)
+n <- 1000
+g <- rnorm(n)
+simDat <- do.call(cbind, lapply(1:3, function(j) {
+  f <- 0.7 * g + sqrt(1 - 0.7^2) * rnorm(n)
+  sapply(1:4, function(i) 0.7 * f + sqrt(1 - 0.7^2) * rnorm(n))
+}))
+colnames(simDat) <- paste0("i", 1:12)
+simDat <- as.data.frame(simDat)
+
+modSim2 <- "f1 =~ i1 + i2 + i3 + i4\nf2 =~ i5 + i6 + i7 + i8"
+modSim3 <- "f1 =~ i1 + i2 + i3 + i4\nf2 =~ i5 + i6 + i7 + i8\nf3 =~ i9 + i10 + i11 + i12"
+
+ee2 <- suppressWarnings(omegasCFA(simDat[, 1:8], model = modSim2, model.type = "second-order",
+                                  missing = "listwise"))
+ee3 <- omegasCFA(simDat, model = modSim3, model.type = "second-order", missing = "listwise")
+
+expect_false(ee2$diagnostics$se.available)
+expect_true(ee3$diagnostics$se.available)
+
+
+# An inadmissible solution (here a negative residual variance) is flagged rather than passed on
+ee <- suppressWarnings(omegasCFA(upps[, 1:8], model = mod2, model.type = "bi-factor",
+                                 missing = "listwise"))
+
+expect_false(ee$diagnostics$admissible)
+expect_warning(omegasCFA(upps[, 1:8], model = mod2, model.type = "bi-factor", missing = "listwise"))
